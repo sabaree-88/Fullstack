@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import RegValidation from "./validation/RegisterValidation";
 
 const Signup = () => {
@@ -8,6 +9,7 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const [error, setError] = useState({});
   const handleInputs = (event) => {
@@ -20,6 +22,15 @@ const Signup = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(RegValidation(values));
+    if (error.name === "" && error.email === "" && error.password) {
+      axios
+        .post("http://localhost:8081/log", values)
+        .then((res) => {
+          alert();
+          navigate("/");
+        })
+        .catch((err) => console.error(err));
+    }
   };
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
@@ -59,7 +70,7 @@ const Signup = () => {
             <input
               type="password"
               className="form-control"
-              id="examplepasswordnputPassword1"
+              id="password"
               placeholder="Password"
               name="password"
               onChange={handleInputs}

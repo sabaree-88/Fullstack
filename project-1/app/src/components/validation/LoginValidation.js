@@ -1,5 +1,5 @@
 function LogValidation(value) {
-  alert("Test");
+
   let error = {};
   let emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;

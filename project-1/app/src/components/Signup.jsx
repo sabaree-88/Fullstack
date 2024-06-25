@@ -1,10 +1,30 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import RegValidation from "./validation/RegisterValidation";
 
 const Signup = () => {
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = useState({});
+  const handleInputs = (event) => {
+    setValues((prev) => ({
+      ...prev,
+      [event.target.name]: [event.target.value],
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setError(RegValidation(values));
+  };
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
       <div className="w-25 bg-white rounded p-3 ">
-        <form>
+        <form onSubmit={handleSubmit}>
           <h2>Register</h2>
           <div className="form-group mt-2">
             <label htmlFor="name">Name</label>
@@ -14,7 +34,11 @@ const Signup = () => {
               id="name"
               placeholder="Enter name"
               name="name"
+              onChange={handleInputs}
             />
+            {error.name && (
+              <span className="text-danger fs-6">{error.name}</span>
+            )}
           </div>
           <div className="form-group mt-2">
             <label htmlFor="email">Email</label>
@@ -24,7 +48,11 @@ const Signup = () => {
               id="email"
               placeholder="Enter email"
               name="email"
+              onChange={handleInputs}
             />
+            {error.email && (
+              <span className="text-danger fs-6">{error.email}</span>
+            )}
           </div>
           <div className="form-group mt-2">
             <label htmlFor="password">Password</label>
@@ -34,13 +62,19 @@ const Signup = () => {
               id="examplepasswordnputPassword1"
               placeholder="Password"
               name="password"
+              onChange={handleInputs}
             />
+            {error.password && (
+              <span className="text-danger fs-6">{error.password}</span>
+            )}
           </div>
           <button type="submit" className="btn btn-primary mt-2 w-100">
-            Login
+            Register
           </button>
         </form>
-        <p className="my-2">If you have an account please <Link to={"/"}>login</Link></p>
+        <p className="my-2">
+          If you have an account please <Link to={"/"}>login</Link>
+        </p>
       </div>
     </div>
   );

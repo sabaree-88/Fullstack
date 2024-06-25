@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import LogValidation from "./validation/LoginValidation";
 
 const Login = () => {
   const [values, setValues] = useState({
@@ -17,12 +18,12 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+    setError(LogValidation(values));
   };
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
       <div className="w-25 bg-white rounded p-3 ">
-        <form>
+        <form onSubmit={handleSubmit}>
           <h2>Login</h2>
           <div className="form-group mt-2">
             <label htmlFor="exampleInputEmail1">Email address</label>
@@ -32,7 +33,9 @@ const Login = () => {
               id="email"
               placeholder="Enter email"
               name="email"
+              onChange={handleInputs}
             />
+            {error.email && <span className="text-danger fs-6">{error.email}</span>}
           </div>
           <div className="form-group mt-2">
             <label htmlFor="password">Password</label>
@@ -42,7 +45,9 @@ const Login = () => {
               id="examplepasswordnputPassword1"
               placeholder="Password"
               name="password"
+              onChange={handleInputs}
             />
+            {error.password && <span className="text-danger fs-6">{error.password}</span>}
           </div>
           <button type="submit" className="btn btn-primary mt-2 w-100">
             Login

@@ -5,7 +5,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/signup", router); 
+app.use("/log", router); 
 
 const PORT = 8081;
 app.listen(PORT, () => {

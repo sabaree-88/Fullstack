@@ -35,7 +35,7 @@ const Signup = () => {
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
       <div className="w-25 bg-white rounded p-3 ">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} action="">
           <h2>Register</h2>
           <div className="form-group mt-2">
             <label htmlFor="name">Name</label>

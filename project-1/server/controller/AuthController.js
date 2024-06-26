@@ -13,7 +13,7 @@ const show = (req, res) => {
 const register = (req, res) => {
   const { name, email, password } = req.body;
   const values = [name, email, password];
-  console.log("Registering user with values:", values); // Log values being inserted
+  console.log("Registering user with values:", values);
   Auth.register(values, (err, data) => {
     if (err) {
       console.log("Error saving data:", err);
@@ -30,7 +30,11 @@ const login = (req, res) => {
       console.log("Error", err);
       return res.status(500).json("Error");
     }
-    return res.json(data);
+    if(data.length > 0){
+      return res.json("Success");
+    }else{
+      return res.json("Failed");
+    }
   });
 };
 

@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LogValidation from "./validation/LoginValidation";
+import axios from "axios";
 
 const Login = () => {
   const [values, setValues] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const [error, setError] = useState({});
   const handleInputs = (event) => {
@@ -19,6 +21,16 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(LogValidation(values));
+    const validationErrors = LogValidation(values);
+    setError(validationErrors);
+    if (error.email === "" && error.password === "") {
+      axios
+        .post("http://localhost:8081/login", values)
+        .then((res) => {
+          navigate("/home");
+        })
+        .catch((err) => console.error("Error posting data:", err));
+    }
   };
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
@@ -35,27 +47,31 @@ const Login = () => {
               name="email"
               onChange={handleInputs}
             />
-            {error.email && <span className="text-danger fs-6">{error.email}</span>}
+            {error.email && (
+              <span className="text-danger fs-6">{error.email}</span>
+            )}
           </div>
           <div className="form-group mt-2">
             <label htmlFor="password">Password</label>
             <input
               type="password"
               className="form-control"
-              id="examplepasswordnputPassword1"
+              id="password"
               placeholder="Password"
               name="password"
               onChange={handleInputs}
             />
-            {error.password && <span className="text-danger fs-6">{error.password}</span>}
+            {error.password && (
+              <span className="text-danger fs-6">{error.password}</span>
+            )}
           </div>
           <button type="submit" className="btn btn-primary mt-2 w-100">
             Login
           </button>
         </form>
         <p className="my-2">
-          If you don't have an accout please{" "}
-          <Link to={"/signup"}>sign up?</Link>
+          Don't have an account yet? {" "}
+          <Link to={"/signup"}>Sign Up</Link>
         </p>
       </div>
     </div>

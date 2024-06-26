@@ -1,33 +1,33 @@
 const db = require("../config/db");
 
 const Auth = {
-  show: (callback) => {
+  show: (view) => {
     const sql = "SELECT * FROM reg";
     db.query(sql, (err, data) => {
       if (err) {
-        return callback(err, null);
+        return view(err, null);
       }
-      return callback(null, data);
+      return view(null, data);
     });
   },
 
-  register: (values, callback) => {
+  register: (values, store) => {
     const sql = "INSERT INTO `reg`(`name`, `email`, `password`) VALUES (?,?,?)";
     db.query(sql, values, (err, data) => {
       if (err) {
-        return callback(err, null);
+        return store(err, null);
       }
-      return callback(null, data);
+      return store(null, data);
     });
   },
 
-  login: (values, callback) => {
+  login: (values, verifyUser) => {
     const sql = "SELECT * FROM reg WHERE `email` = ? AND `password` = ?";
     db.query(sql, values, (err, data) => {
       if (err) {
-        return callback(err, null);
+        return verifyUser(err, null);
       }
-      return callback(null, data);
+      return verifyUser(null, data);
     });
   },
 };

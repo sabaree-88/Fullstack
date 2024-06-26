@@ -24,19 +24,18 @@ const Signup = () => {
     event.preventDefault();
     const validationErrors = RegValidation(values);
     setError(validationErrors);
-  
-    // if (Object.keys(validationErrors).length === 0) {
-    //   console.log("Sending data:", values); // Log data being sent
+    console.log(validationErrors);
+    if (error.name === "" && error.email === "" && error.password === "") {
       axios
-        .post("http://localhost:8081/log", values)
+        .post("http://localhost:8081/register", values)
         .then((res) => {
           console.log("Server response:", res.data); // Log server response
           alert("User registered successfully!");
           navigate("/");
         })
         .catch((err) => console.error("Error posting data:", err));
-    // }
-  };  
+    }
+  };
 
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
@@ -93,7 +92,7 @@ const Signup = () => {
           </button>
         </form>
         <p className="my-2">
-          If you have an account please <Link to={"/"}>login</Link>
+          Already have an account.{" "}<Link to={"/"} >Login</Link>
         </p>
       </div>
     </div>

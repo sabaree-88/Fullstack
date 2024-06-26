@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import RegValidation from "./validation/RegisterValidation";
@@ -9,33 +9,39 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
-  const [error, setError] = useState({});
   const handleInputs = (event) => {
+    const { name, value } = event.target;
     setValues((prev) => ({
       ...prev,
-      [event.target.name]: [event.target.value],
+      [name]: value, // Fix state update
     }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setError(RegValidation(values));
-    if (error.name === "" && error.email === "" && error.password) {
+    const validationErrors = RegValidation(values);
+    setError(validationErrors);
+  
+    // if (Object.keys(validationErrors).length === 0) {
+    //   console.log("Sending data:", values); // Log data being sent
       axios
         .post("http://localhost:8081/log", values)
         .then((res) => {
-          alert();
+          console.log("Server response:", res.data); // Log server response
+          alert("User registered successfully!");
           navigate("/");
         })
-        .catch((err) => console.error(err));
-    }
-  };
+        .catch((err) => console.error("Error posting data:", err));
+    // }
+  };  
+
   return (
     <div className="d-flex bg-dark vh-100 justify-content-center align-items-center">
-      <div className="w-25 bg-white rounded p-3 ">
-        <form onSubmit={handleSubmit} action="">
+      <div className="w-25 bg-white rounded p-3">
+        <form onSubmit={handleSubmit}>
           <h2>Register</h2>
           <div className="form-group mt-2">
             <label htmlFor="name">Name</label>
@@ -45,6 +51,7 @@ const Signup = () => {
               id="name"
               placeholder="Enter name"
               name="name"
+              value={values.name}
               onChange={handleInputs}
             />
             {error.name && (
@@ -59,6 +66,7 @@ const Signup = () => {
               id="email"
               placeholder="Enter email"
               name="email"
+              value={values.email}
               onChange={handleInputs}
             />
             {error.email && (
@@ -73,6 +81,7 @@ const Signup = () => {
               id="password"
               placeholder="Password"
               name="password"
+              value={values.password}
               onChange={handleInputs}
             />
             {error.password && (

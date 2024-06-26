@@ -9,8 +9,11 @@ const show = (req, res) => {
     return res.json(data);
   });
 };
+
 const register = (req, res) => {
-  const values = [req.body.name, req.body.email, req.body.password];
+  const { name, email, password } = req.body;
+  const values = [name, email, password];
+  console.log("Registering user with values:", values); // Log values being inserted
   Auth.register(values, (err, data) => {
     if (err) {
       console.log("Error saving data:", err);
@@ -21,7 +24,8 @@ const register = (req, res) => {
 };
 
 const login = (req, res) => {
-  Auth.login([req.body.email, req.body.password], (err, data) => {
+  const { email, password } = req.body;
+  Auth.login([email, password], (err, data) => {
     if (err) {
       console.log("Error", err);
       return res.status(500).json("Error");

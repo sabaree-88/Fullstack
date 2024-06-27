@@ -27,14 +27,11 @@ const Login = () => {
       axios
         .post("http://localhost:8081/login", values)
         .then((res) => {
-          if (res.data.error) {
-            setBackendError(res.data.error);
+          if (res.data.Login) {
+            localStorage.setItem("token", res.data.token);
+            navigate("/home");
           } else {
-            if (res.data.Login) {
-              navigate("/home");
-            } else {
-              alert("No record found!");
-            }
+            alert("No record found!");
           }
         })
         .catch((err) => console.error("Error posting data:", err));

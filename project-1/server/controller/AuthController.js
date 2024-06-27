@@ -1,5 +1,5 @@
 const Auth = require("../model/AuthModel");
-import jwt from 'jsonwebtoken';
+const jwt = require("jsonwebtoken");
 
 const show = (req, res) => {
   Auth.show((err, data) => {
@@ -31,18 +31,39 @@ const login = (req, res) => {
       console.log("Error", err);
       return res.status(500).json("Error");
     }
-    if(data.length > 0){
+    if (data.length > 0) {
       const id = data[0].id;
-      const tkn = jwt.sign({id}, "screateKey", {expiresIn:300});
-      return res.json({Login:true, tkn, data});
-    }else{
+      const token = jwt.sign({ id }, "screateKey", { expiresIn: 300 });
+      return res.json({ Login: true, token, data });
+    } else {
       return res.json("Failed");
     }
   });
+};
+
+const verifyJwt = (req, res, next) => {
+  const token = req.headers["access-token"];
+  if (!token) {
+    return res.json("Need token for the next step!");
+  } else {
+    jwt.verify(token, "screateKey", (err, decoded) => {
+      if (err) {
+        res.json("Not Authenticated");
+      } else {
+        req.userId = decoded.id;
+        next();
+      }
+    });
+  }
+};
+const checkAuth = (req, res) => {
+  return res.json("Authenticated");
 };
 
 module.exports = {
   register,
   show,
   login,
+  checkAuth,
+  verifyJwt,
 };

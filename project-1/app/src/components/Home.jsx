@@ -11,7 +11,7 @@ const Home = () => {
     .catch(err => console.log(err))
   }
   return <div>
-    <h1>Home</h1>
+    <h1>Home</h1> 
     <button onClick={handleCheckAuth} className="btn btn-primary">CheckAuth</button>
   </div>;
 };

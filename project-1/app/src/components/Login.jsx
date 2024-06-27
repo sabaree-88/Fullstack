@@ -27,7 +27,15 @@ const Login = () => {
       axios
         .post("http://localhost:8081/login", values)
         .then((res) => {
-          navigate("/home");
+          if (res.data.error) {
+            setBackendError(res.data.error);
+          } else {
+            if (res.data.Login) {
+              navigate("/home");
+            } else {
+              alert("No record found!");
+            }
+          }
         })
         .catch((err) => console.error("Error posting data:", err));
     }
@@ -70,8 +78,7 @@ const Login = () => {
           </button>
         </form>
         <p className="my-2">
-          Don't have an account yet? {" "}
-          <Link to={"/signup"}>Sign Up</Link>
+          Don't have an account yet? <Link to={"/signup"}>Sign Up</Link>
         </p>
       </div>
     </div>

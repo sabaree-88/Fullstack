@@ -1,4 +1,5 @@
 const Auth = require("../model/AuthModel");
+import jwt from 'jsonwebtoken';
 
 const show = (req, res) => {
   Auth.show((err, data) => {
@@ -31,7 +32,9 @@ const login = (req, res) => {
       return res.status(500).json("Error");
     }
     if(data.length > 0){
-      return res.json("Success");
+      const id = data[0].id;
+      const tkn = jwt.sign({id}, "screateKey", {expiresIn:300});
+      return res.json({Login:true, tkn, data});
     }else{
       return res.json("Failed");
     }

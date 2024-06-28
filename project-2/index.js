@@ -8,10 +8,10 @@ app.use(express.json());
 
 connectDB();
 
-app.use("/students", studentRoutes);
+app.use("/api", studentRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API is running");
+  res.send("Running");
 });
 
 const PORT = process.env.PORT || 3000;

@@ -6,7 +6,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllStudents);
-router.post("/", createStudent);
+router.get("/getuser", getAllStudents);
+router.post("/storeStudent", createStudent);
 
 export default router;

@@ -8,10 +8,10 @@ import {
 } from "../controllers/BookController.js";
 const router = express.Router();
 
-router.post("/addBook", addBook);
-router.get("/getBooks", getBooks);
-router.get("/getBookById/:id", getBooksByID);
-router.put("/updateBookById/:id", updateBookById);
-router.delete("/deleteBook/:id", deleteBook);
+router.post("/", addBook);
+router.get("/", getBooks);
+router.get("/:id", getBooksByID);
+router.put("/:id", updateBookById);
+router.delete("/:id", deleteBook);
 
 export default router;

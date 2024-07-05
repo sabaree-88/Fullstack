@@ -1,9 +1,46 @@
-import React from 'react'
+import axios from "axios";
+import { FaWindowClose } from "react-icons/fa";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const DeleteBook = () => {
-  return (
-    <div>DeleteBook</div>
-  )
-}
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-export default DeleteBook
+  const handleDelete = () => {
+    axios
+      .delete(`http://localhost:3000/book/${id}`)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Error deleting the book:", err);
+        alert("Failed to delete the book. Please try again.");
+      });
+  };
+
+  return (
+    <div className="bg-gray-800 min-h-[100vh] w-full flex justify-center items-center">
+      <div className="w-6/12 bg-white p-5 rounded shadow-lg">
+        <div className="flex justify-end">
+          <Link to="/">
+            <FaWindowClose className="text-red-600 text-2xl" />
+          </Link>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-center text-2xl">
+            Are you sure you want to delete this book!
+          </h3>
+          <button
+            className="bg-red-600 px-8 py-2 text-white w-full my-4"
+            onClick={handleDelete}
+          >
+            Delete book
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DeleteBook;

@@ -9,7 +9,7 @@ const Home = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/getBooks")
+      .get("http://localhost:3000/book")
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -24,7 +24,7 @@ const Home = () => {
       <div className="grid grid-cols-3 gap-4">
         {data.map((item, index) => {
           return (
-            <div key={index} className="bg-white rounded-md p-3">
+            <div key={data._id} className="bg-white rounded-md p-3">
               <div className="details border-b-2">
                 <div className="top flex justify-between pb-5">
                   <h2>Book Name: {item.title}</h2>
@@ -36,17 +36,17 @@ const Home = () => {
               </div>
               <div className="actions flex justify-around p-3">
                 <div className="views">
-                  <Link to="/view/:id">
+                  <Link to={`/view/${item._id}`}>
                     <FaRegEye className="text-2xl text-green-600" />
                   </Link>
                 </div>
                 <div className="edit">
-                  <Link to="/edit/:id">
+                  <Link to={`/edit/${item._id}`}>
                     <FaRegEdit className="text-2xl text-blue-600" />
                   </Link>
                 </div>
                 <div className="delete">
-                  <Link to="/delete/:id">
+                  <Link to={`/delete/${item._id}`}>
                     <IoTrashBinSharp className="text-2xl text-red-600" />
                   </Link>
                 </div>

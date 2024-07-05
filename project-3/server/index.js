@@ -10,11 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res)=>{
-    res.status(200).send("Running");
-})
-
-app.use('/api', router);
+app.use('/book', router);
 
 const PORT = process.env.PORT;
 const ConnURI = process.env.MONGODBURI;

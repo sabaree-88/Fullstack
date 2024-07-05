@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaRegEye } from "react-icons/fa";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEye, FaRegPlusSquare, FaRegEdit } from "react-icons/fa";
 import { IoTrashBinSharp } from "react-icons/io5";
-import { FaRegPlusSquare } from "react-icons/fa";
+
 const Home = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
@@ -16,7 +15,7 @@ const Home = () => {
 
   return (
     <div className="bg-slate-800 min-h-[100vh] p-10">
-      <div className="add flex justify-end ">
+      <div className="add flex justify-end mb-4">
         <Link to={"/add"}>
           <FaRegPlusSquare className="text-green-600 text-3xl" />
         </Link>
@@ -24,7 +23,7 @@ const Home = () => {
       <div className="grid grid-cols-3 gap-4">
         {data.map((item, index) => {
           return (
-            <div key={data._id} className="bg-white rounded-md p-3">
+            <div key={item._id} className="bg-white rounded-md p-3">
               <div className="details border-b-2">
                 <div className="top flex justify-between pb-5">
                   <h2>Book Name: {item.title}</h2>

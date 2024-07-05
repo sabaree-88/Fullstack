@@ -1,9 +1,119 @@
-import React from 'react'
+import React, { useState } from "react";
+import { FaWindowClose } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import Validate from "./validation/validate";
+import axios from "axios";
 
 const AddBook = () => {
-  return (
-    <div>AddBook</div>
-  )
-}
+  const [values, setValues] = useState({
+    title: "",
+    author: "",
+    year: "",
+  });
+  const [error, setError] = useState({});
+  const navigate = useNavigate();
 
-export default AddBook
+  const handleInputs = (event) => {
+    const { name, value } = event.target;
+    setValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationErrors = Validate(values);
+    setError(validationErrors);
+    
+    if (error.title === "" && error.author === "" && error.year === "") {
+      try {
+        const res = await axios.post("http://localhost:3000/book", values);
+        console.log(res);
+        navigate("/");
+        alert("Book added successfully!");
+      } catch (err) {
+        console.error("Error posting data:", err);
+      }
+    }
+  };
+  return (
+    <div className="bg-gray-800 min-h-[100vh] w-full flex justify-center items-center">
+      <div className="w-6/12 bg-white p-5 rounded shadow-lg">
+        <div className="flex justify-end">
+          <Link to="/">
+            <FaWindowClose className="text-red-600 text-2xl" title="close" />
+          </Link>
+        </div>
+        <h1 className="max-w-md mx-auto font-bold text-2xl mb-2">Add Book</h1>
+        <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="text"
+              name="title"
+              id="floating_title"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              onChange={handleInputs}
+            />
+            <label
+              htmlFor="floating_title"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              Book Title
+            </label>
+            {error.title && (
+              <span className="text-red-500 text-sm">{error.title}</span>
+            )}
+          </div>
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="text"
+              name="author"
+              id="floating_author"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              onChange={handleInputs}
+            />
+            <label
+              htmlFor="floating_author"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              Author
+            </label>
+            {error.author && (
+              <span className="text-red-500 text-sm">{error.author}</span>
+            )}
+          </div>
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="number"
+              name="year"
+              id="year"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              onChange={handleInputs}
+            />
+            <label
+              htmlFor="year"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              Year
+            </label>
+            {error.year && (
+              <span className="text-red-500 text-sm">{error.year}</span>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="text-white bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center"
+          >
+            Add
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddBook;

@@ -1,24 +1,52 @@
 import { Books } from "../models/BookModel.js";
+import multer from "multer";
+import path from "path";
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/image");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = ["image/jpg", "image/jpeg", "image/png"];
+  if (allowedFileTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type"), false);
+  }
+};
+
+let upload = multer({ storage, fileFilter });
 
 export const addBook = async (req, res) => {
-  try {
-    if (!req.body.title || !req.body.author || !req.body.year) {
-      return res.status(400).send({
-        message: "Send all required data: title, author, year",
-      });
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).send({ message: err.message });
     }
-    const newBook = {
-      title: req.body.title,
-      author: req.body.author,
-      year: req.body.year,
-    };
+    try {
+      const { title, author, year } = req.body;
+      if (!title || !author || !year) {
+        return res.status(400).send({
+          message: "Send all required data: title, author, year",
+        });
+      }
 
-    const book = await Books.create(newBook);
-    return res.status(200).send(book);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: error.message });
-  }
+      const newBook = { title, author, year };
+      if (req.file) {
+        newBook.imagePath = `public/image/${req.file.filename}`;
+      }
+
+      const book = await Books.create(newBook);
+      return res.status(200).send(book);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: error.message });
+    }
+  });
 };
 
 export const getBooks = async (req, res) => {
@@ -31,35 +59,52 @@ export const getBooks = async (req, res) => {
   }
 };
 
-export const getBooksByID = async (req, res) => {
+export const getBookByID = async (req, res) => {
   try {
     const { id } = req.params;
     const book = await Books.findById(id);
+    if (!book) {
+      return res.status(404).send({ message: "Book not found!" });
+    }
     return res.status(200).send(book);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({ message: error.message });
   }
 };
 
 export const updateBookById = async (req, res) => {
-  try {
-    if (!req.body.title || !req.body.author || !req.body.year) {
-      return res
-        .status(400)
-        .send({ message: "Send all records: title, author, year" });
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).send({ message: err.message });
     }
-    const { id } = req.params;
-    const result = await Books.findByIdAndUpdate(id, req.body);
+    try {
+      const { title, author, year } = req.body;
+      if (!title || !author || !year) {
+        return res.status(400).send({
+          message: "Send all required data: title, author, year",
+        });
+      }
 
-    if (!result) {
-      return res.status(500).json({ message: "Book not Found!" });
+      const { id } = req.params;
+      const updateData = { title, author, year };
+
+      if (req.file) {
+        updateData.imagePath = `public/image/${req.file.filename}`;
+      }
+
+      const updatedBook = await Books.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+      if (!updatedBook) {
+        return res.status(404).json({ message: "Book not found!" });
+      }
+      return res.status(200).send(updatedBook);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: error.message });
     }
-    return res.status(200).send({ message: "Book Updated successfully!" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: error.message });
-  }
+  });
 };
 
 export const deleteBook = async (req, res) => {
@@ -67,11 +112,11 @@ export const deleteBook = async (req, res) => {
     const { id } = req.params;
     const result = await Books.findByIdAndDelete(id);
     if (!result) {
-      return res.status(500).json({ message: "Book not Found!" });
+      return res.status(404).json({ message: "Book not found!" });
     }
     return res.status(200).send({ message: "Book deleted successfully!" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({ message: error.message });
   }
 };

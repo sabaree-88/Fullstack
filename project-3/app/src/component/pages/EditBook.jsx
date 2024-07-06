@@ -9,6 +9,7 @@ const EditBook = () => {
     title: "",
     author: "",
     year: "",
+    image: null,
   });
   const [error, setError] = useState({});
   const navigate = useNavigate();
@@ -38,16 +39,38 @@ const EditBook = () => {
     }));
   };
 
+  const handleImage = (e) => {
+    setValues((prev) => ({
+      ...prev,
+      image: e.target.files[0],
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = Validate(values);
     setError(validationErrors);
 
-    if (error.title === "" && error.author === "" && error.year === "") {
+    if (
+      error.title === "" &&
+      error.author === "" &&
+      error.year === "" &&
+      error.image
+    ) {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("author", values.author);
+      formData.append("year", values.year);
+
+      if (values.image) {
+        formData.append("image", values.image);
+      }
+
       axios
-        .put(`http://localhost:3000/book/${id}`, values)
+        .put(`http://localhost:3000/book/${id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         .then((res) => {
-          alert("Book updated successfully");
           navigate("/");
         })
         .catch((err) => console.log(err));
@@ -62,7 +85,11 @@ const EditBook = () => {
           </Link>
         </div>
         <h1 className="max-w-md mx-auto font-bold text-2xl mb-2">Edit Book</h1>
-        <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
+        <form
+          className="max-w-md mx-auto"
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+        >
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
@@ -75,7 +102,7 @@ const EditBook = () => {
             />
             <label
               htmlFor="floating_title"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               Book Title
             </label>
@@ -95,7 +122,7 @@ const EditBook = () => {
             />
             <label
               htmlFor="floating_author"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               Author
             </label>
@@ -121,6 +148,25 @@ const EditBook = () => {
             </label>
             {error.year && (
               <span className="text-red-500 text-sm">{error.year}</span>
+            )}
+          </div>
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="file"
+              name="image"
+              id="floating_image"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              accept=".png, .jpg, .jpeg"
+              onChange={handleImage}
+            />
+            <label
+              htmlFor="floating_image"
+              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              Upload Book Image
+            </label>
+            {error.image && (
+              <span className="text-red-500 text-sm">{error.image}</span>
             )}
           </div>
           <button

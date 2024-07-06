@@ -28,6 +28,13 @@ const ViewBook = () => {
         <h1 className="text-2xl font-bold mb-4">{data.title}</h1>
         <h2 className="text-xl mb-2">{data.author}</h2>
         <h3 className="text-lg">{data.year}</h3>
+        {data.imagePath && (
+        <img
+          src={`http://localhost:3000/${data.imagePath}`}
+          alt={data.title}
+          className="max-w-40"
+        />
+      )}
       </div>
     </div>
   );

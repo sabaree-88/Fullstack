@@ -33,7 +33,7 @@ const ViewBook = () => {
           className="w-6/12 bg-white min-h-[50vh] p-5 rounded shadow-lg"
         >
           <div className="flex justify-end">
-            <Link to="/">
+            <Link to="/home">
               <FaWindowClose className="text-red-600 text-2xl" />
             </Link>
           </div>

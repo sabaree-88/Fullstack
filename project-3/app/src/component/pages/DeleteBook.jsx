@@ -14,7 +14,7 @@ const DeleteBook = () => {
       .delete(`http://localhost:3000/book/${id}`)
       .then((res) => {
         setLoading(false);
-        navigate("/");
+        navigate("/home");
       })
       .catch((err) => {
         setLoading(false);
@@ -30,7 +30,7 @@ const DeleteBook = () => {
       ) : (
         <div className="w-6/12 bg-white p-5 rounded shadow-lg">
           <div className="flex justify-end">
-            <Link to="/">
+            <Link to="/home">
               <FaWindowClose className="text-red-600 text-2xl" />
             </Link>
           </div>

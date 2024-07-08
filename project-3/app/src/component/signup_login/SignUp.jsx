@@ -1,31 +1,30 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const { signup } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    axios
-      .post("http://localhost:3000/user/signup", { email, password })
-      .then((res) => {
-        setLoading(false);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        navigate("/login");
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
+    try {
+      await signup(email, password);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error signing up:", error);
+      setError(error);
+      setLoading(false);
+    }
   };
+
   return (
     <section className="bg-slate-800 dark:bg-gray-900">
       {loading ? (
@@ -36,7 +35,7 @@ const SignUp = () => {
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               {error && (
                 <div className="text-red-600 px-3 py-1.5 bg-red-200 rounded-sm w-full">
-                  {error.response.data.error}
+                  {error.response?.data?.error || error.message}
                 </div>
               )}
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -84,7 +83,7 @@ const SignUp = () => {
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
                   <Link
-                    to={"/login"}
+                    to={"/"}
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Login here

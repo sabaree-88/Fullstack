@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../Spinner";
 
 const Login = () => {
@@ -8,23 +8,21 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    axios
-      .post("http://localhost:3000/user/login", { email, password })
-      .then((res) => {
-        setLoading(false);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        navigate("/");
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
+
+    try {
+      await login(email, password);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+    }
   };
+
   return (
     <section className="bg-slate-800 dark:bg-gray-900">
       {loading ? (
@@ -35,7 +33,7 @@ const Login = () => {
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               {error && (
                 <div className="text-red-600 px-3 py-1.5 bg-red-200 rounded-sm w-full">
-                  {error.response.data.error}
+                  {error.response?.data?.error || "An error occurred."}
                 </div>
               )}
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -55,7 +53,9 @@ const Login = () => {
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
                 </div>
                 <div>
@@ -70,8 +70,10 @@ const Login = () => {
                     name="password"
                     id="password"
                     placeholder="••••••••"
+                    value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
                   />
                 </div>
                 <button

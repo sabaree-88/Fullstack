@@ -1,3 +1,5 @@
+// src/App.jsx
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EditBook from "./component/pages/EditBook";
 import DeleteBook from "./component/pages/DeleteBook";
@@ -6,22 +8,23 @@ import Home from "./component/pages/Home";
 import AddBook from "./component/pages/AddBook";
 import Login from "./component/signup_login/Login";
 import SignUp from "./component/signup_login/SignUp";
+import { AuthProvider } from "./context/AuthContext.jsx";
+
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/edit/:id" element={<EditBook />}></Route>
-          <Route path="/delete/:id" element={<DeleteBook />}></Route>
-          <Route path="/view/:id" element={<ViewBook />}></Route>
-          <Route path="/add" element={<AddBook />}></Route>
-          // routes for SignUp and Login
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/signup" element={<SignUp />}></Route>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/edit/:id" element={<EditBook />} />
+          <Route path="/delete/:id" element={<DeleteBook />} />
+          <Route path="/view/:id" element={<ViewBook />} />
+          <Route path="/add" element={<AddBook />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 

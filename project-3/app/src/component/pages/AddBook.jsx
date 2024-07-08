@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Validate from "./validation/validate";
 import axios from "axios";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const AddBook = () => {
   const [values, setValues] = useState({
@@ -14,6 +15,7 @@ const AddBook = () => {
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleInputs = (event) => {
@@ -46,12 +48,17 @@ const AddBook = () => {
         formData.append("image", values.image);
 
         const res = await axios.post("http://localhost:3000/book", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user.token}`,
+          },
         });
+
         setLoading(false);
-        navigate("/");
+        navigate("/home");
       } catch (err) {
         setLoading(false);
+        setError({ api: "Failed to add book. Please try again." });
         console.error("Error posting data:", err);
       }
     }
@@ -64,7 +71,7 @@ const AddBook = () => {
       ) : (
         <div className="w-6/12 bg-white p-5 rounded shadow-lg">
           <div className="flex justify-end">
-            <Link to="/">
+            <Link to="/home">
               <FaWindowClose className="text-red-600 text-2xl" title="close" />
             </Link>
           </div>
@@ -126,7 +133,7 @@ const AddBook = () => {
               />
               <label
                 htmlFor="year"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Year
               </label>
@@ -153,6 +160,9 @@ const AddBook = () => {
                 <span className="text-red-500 text-sm">{error.image}</span>
               )}
             </div>
+            {error.api && (
+              <div className="text-red-500 text-sm mb-3">{error.api}</div>
+            )}
             <button
               type="submit"
               className="text-white bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center"

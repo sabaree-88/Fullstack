@@ -1,35 +1,61 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegPlusSquare, FaRegEdit } from "react-icons/fa";
+import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoTrashBinSharp } from "react-icons/io5";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get("http://localhost:3000/book")
-      .then((res) => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get("http://localhost:3000/book");
         setData(res.data);
         setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
     <div className="bg-slate-800 min-h-[100vh] p-10">
-      <div className="add flex justify-end mb-4">
+      <div className="flex justify-between mb-5">
         <Link to={"/add"}>
           <FaRegPlusSquare className="text-green-600 text-3xl" />
         </Link>
+        <button
+          onClick={handleLogout}
+          className="flex gap-3 font-semibold bg-red-800 px-5 py-2.5 rounded-md text-white"
+        >
+          LogOut
+          <RiLogoutBoxLine
+            className="text-white text-2xl"
+            title="logout"
+          />{" "}
+        </button>
       </div>
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <div className="text-red-500">Error loading data: {error.message}</div>
       ) : (
         <div className="grid grid-cols-3 gap-4">
           {data.map((item, index) => {

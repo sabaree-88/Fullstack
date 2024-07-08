@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
-import Spinner from "./component/Spinner";
+import Spinner from "../Spinner";
 
 const ViewBook = () => {
   const [data, setData] = useState({});

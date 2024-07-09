@@ -47,7 +47,7 @@ const AddBook = () => {
         formData.append("year", values.year);
         formData.append("image", values.image);
 
-        const res = await axios.post("http://localhost:3000/book", formData, {
+        axios.post("http://localhost:3000/book", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${user.token}`,

@@ -6,7 +6,9 @@ import {
   updateBookById,
   deleteBook,
 } from "../controllers/BookController.js";
+import requireAuth from "../middleware/authMiddleware.js";
 const router = express.Router();
+router.use(requireAuth);
 
 router.post("/", addBook);
 router.get("/", getBooks);

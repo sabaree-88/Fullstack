@@ -84,6 +84,7 @@ const EditBook = () => {
         })
         .catch((err) => {
           console.log(err);
+          setError(err);
           setLoading(false);
         });
     }

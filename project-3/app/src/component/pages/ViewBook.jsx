@@ -11,8 +11,11 @@ const ViewBook = () => {
 
   useEffect(() => {
     setLoading(true);
+    const token = localStorage.getItem("token");
     axios
-      .get(`http://localhost:3000/book/${id}`)
+      .get(`http://localhost:3000/book/${id}`, {
+        headers: {Authorization: `Bearer ${token}`}
+      })
       .then((res) => {
         setData(res.data);
         setLoading(false);

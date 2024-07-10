@@ -10,8 +10,11 @@ const DeleteBook = () => {
   const [loading, setLoading] = useState(false);
   const handleDelete = () => {
     setLoading(true);
+    const token = localStorage.getItem('token');
     axios
-      .delete(`http://localhost:3000/book/${id}`)
+      .delete(`http://localhost:3000/book/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         setLoading(false);
         navigate("/home");

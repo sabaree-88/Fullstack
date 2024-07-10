@@ -46,11 +46,11 @@ const AddBook = () => {
         formData.append("author", values.author);
         formData.append("year", values.year);
         formData.append("image", values.image);
-
+        const token = localStorage.getItem("token");
         axios.post("http://localhost:3000/book", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -58,7 +58,7 @@ const AddBook = () => {
         navigate("/home");
       } catch (err) {
         setLoading(false);
-        setError({ api: "Failed to add book. Please try again." });
+        setError({ err: "Failed to add book. Please try again." });
         console.error("Error posting data:", err);
       }
     }
@@ -68,6 +68,8 @@ const AddBook = () => {
     <div className="bg-gray-800 min-h-[100vh] w-full flex justify-center items-center flex-col">
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <div className="text-red-500">Error loading data: {error.err}</div>
       ) : (
         <div className="w-6/12 bg-white p-5 rounded shadow-lg">
           <div className="flex justify-end">

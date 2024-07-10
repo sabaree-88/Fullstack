@@ -3,18 +3,22 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const ViewBook = () => {
   const [data, setData] = useState({});
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-
+  const { user } = useAuth();
   useEffect(() => {
     setLoading(true);
+    if (!user) {
+      return;
+    }
     const token = localStorage.getItem("token");
     axios
       .get(`http://localhost:3000/book/${id}`, {
-        headers: {Authorization: `Bearer ${token}`}
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         setData(res.data);

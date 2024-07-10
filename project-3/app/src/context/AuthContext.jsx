@@ -1,12 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -22,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, navigate) => {
     try {
       const res = await axios.post("http://localhost:3000/user/login", {
         email,
@@ -38,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (email, password) => {
+  const signup = async (email, password, navigate) => {
     try {
       const res = await axios.post("http://localhost:3000/user/signup", {
         email,
@@ -53,7 +51,8 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
-  const logout = () => {
+
+  const logout = (navigate) => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");

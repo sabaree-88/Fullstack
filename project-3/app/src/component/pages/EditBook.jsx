@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { FaWindowClose } from "react-icons/fa";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const EditBook = () => {
   const [values, setValues] = useState({
@@ -16,6 +17,7 @@ const EditBook = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
 
   useEffect(() => {
     setLoading(true);
@@ -56,6 +58,9 @@ const EditBook = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!user) {
+      return;
+    }
     const validationErrors = Validate(values);
     setError(validationErrors);
 

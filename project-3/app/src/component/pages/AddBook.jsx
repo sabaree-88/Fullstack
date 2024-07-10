@@ -34,6 +34,10 @@ const AddBook = () => {
   };
 
   const handleSubmit = async (event) => {
+    if (!user) {
+      setError("Your are not logged in!");
+      return;
+    }
     event.preventDefault();
     const validationErrors = Validate(values);
     setError(validationErrors);
@@ -68,8 +72,6 @@ const AddBook = () => {
     <div className="bg-gray-800 min-h-[100vh] w-full flex justify-center items-center flex-col">
       {loading ? (
         <Spinner />
-      ) : error ? (
-        <div className="text-red-500">Error loading data: {error.err}</div>
       ) : (
         <div className="w-6/12 bg-white p-5 rounded shadow-lg">
           <div className="flex justify-end">

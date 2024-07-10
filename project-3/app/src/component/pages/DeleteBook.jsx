@@ -3,14 +3,19 @@ import { useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Spinner from "../Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const DeleteBook = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   const handleDelete = () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
+    if (!user) {
+      return;
+    }
+    const token = localStorage.getItem("token");
     axios
       .delete(`http://localhost:3000/book/${id}`, {
         headers: { Authorization: `Bearer ${token}` },

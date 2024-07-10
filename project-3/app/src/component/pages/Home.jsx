@@ -12,7 +12,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -21,12 +21,15 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if(!user){
+        return
+      }
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:3000/book", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
           },
         });
         setData(res.data);
@@ -59,8 +62,6 @@ const Home = () => {
       </div>
       {loading ? (
         <Spinner />
-      ) : error ? (
-        <div className="text-red-500">Error loading data: {error.message}</div>
       ) : (
         <div className="grid grid-cols-3 gap-4">
           {data.map((item, index) => {

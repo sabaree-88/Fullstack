@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -20,14 +22,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = async (email, password, navigate) => {
+  const login = async (email, password) => {
     try {
       const res = await axios.post("http://localhost:3000/user/login", {
         email,
         password,
       });
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
       navigate("/home");
@@ -36,14 +38,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (email, password, navigate) => {
+  const signup = async (email, password) => {
     try {
       const res = await axios.post("http://localhost:3000/user/signup", {
         email,
         password,
       });
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
       navigate("/");
@@ -52,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = (navigate) => {
+  const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");

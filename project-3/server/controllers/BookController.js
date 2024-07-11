@@ -29,13 +29,14 @@ export const addBook = async (req, res) => {
     }
     try {
       const { title, author, year } = req.body;
+      const user_id = req.user._id;
       if (!title || !author || !year) {
         return res.status(400).send({
           message: "Send all required data: title, author, year",
         });
       }
 
-      const newBook = { title, author, year };
+      const newBook = { title, author, year, user_id };
       if (req.file) {
         newBook.imagePath = `public/image/${req.file.filename}`;
       }

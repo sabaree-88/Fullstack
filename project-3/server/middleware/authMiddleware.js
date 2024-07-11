@@ -10,10 +10,15 @@ const requireAuth = async (req, res, next) => {
 
   try {
     const { _id } = jwt.verify(token, process.env.SECRET);
-    req.user = await User.findOne({ _id }).select("_id");
-    if (!req.user) {
+    const user = await User.findOne({ _id });
+
+    if (!user) {
       return res.status(401).json({ error: "User not found!" });
     }
+
+    const isAdmin = User.isAdmin(user.email); // Check if user is admin
+    req.user = { _id, email: user.email, role: isAdmin ? "admin" : "user" };
+
     next();
   } catch (error) {
     console.error(error);

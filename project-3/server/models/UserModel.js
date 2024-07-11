@@ -11,9 +11,15 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+    required: true,
+  },
 });
 
-UserSchema.statics.signUp = async function (email, password) {
+UserSchema.statics.signUp = async function (email, password, role = "user") {
   if (!email || !password) {
     throw new Error("All fields must be filled.");
   }
@@ -32,7 +38,7 @@ UserSchema.statics.signUp = async function (email, password) {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ email, password: hash });
+  const user = await this.create({ email, password: hash, role });
   return user;
 };
 
@@ -47,12 +53,16 @@ UserSchema.statics.logIn = async function (email, password) {
   }
 
   const match = await bcrypt.compare(password, user.password);
-
-  if(!match){
+  if (!match) {
     throw new Error("Invalid credentials");
   }
-  
+
   return user;
+};
+
+UserSchema.statics.isAdmin = function (email) {
+  const adminEmail = "admin@example.com";
+  return email === adminEmail;
 };
 
 export const User = mongoose.model("User", UserSchema);

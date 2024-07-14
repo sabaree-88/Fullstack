@@ -28,13 +28,21 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+      console.log(res.data.user);
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-      navigate("/home");
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${res.data.token}`;
+
+      if (res.data.user.role === "admin") {
+        navigate("/home");
+      } else {
+        navigate("/user-dashboard");
+      }
     } catch (error) {
-      throw error;
+      throw new Error(error.response?.data?.error || "Login failed");
     }
   };
 
@@ -47,10 +55,12 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${res.data.token}`;
       navigate("/");
     } catch (error) {
-      throw error;
+      throw new Error(error.response?.data?.error || "Signup failed");
     }
   };
 

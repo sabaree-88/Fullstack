@@ -16,9 +16,7 @@ const requireAuth = async (req, res, next) => {
       return res.status(401).json({ error: "User not found!" });
     }
 
-    const isAdmin = User.isAdmin(user.email); // Check if user is admin
-    req.user = { _id, email: user.email, role: isAdmin ? "admin" : "user" };
-
+    req.user = { _id, email: user.email, role: user.role };
     next();
   } catch (error) {
     console.error(error);

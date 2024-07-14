@@ -14,12 +14,8 @@ const BookSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    imagePath: { 
-      type: String
-    },
-    user_id: {
+    imagePath: {
       type: String,
-      required: true,
     },
   },
   {

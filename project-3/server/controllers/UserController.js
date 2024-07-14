@@ -10,11 +10,9 @@ export const Login = async (req, res) => {
   try {
     const user = await User.logIn(email, password);
 
-    const isAdmin = User.isAdmin(email);
-    const role = isAdmin ? "admin" : "user";
     const token = createToken(user._id);
-    
-    res.status(200).json({ user: { _id: user._id, email: user.email, role }, token });
+
+    res.status(200).json({ user: { _id: user._id, email: user.email, role: user.role }, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -25,10 +23,10 @@ export const SignUp = async (req, res) => {
   try {
     const user = await User.signUp(email, password);
 
-    const isAdmin = User.isAdmin(email);
-    const role = isAdmin ? "admin" : "user";
     const token = createToken(user._id);
-    res.status(201).json({ user: { _id: user._id, email: user.email, role }, token });
+    res
+      .status(201)
+      .json({ user: { _id: user._id, email: user.email }, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

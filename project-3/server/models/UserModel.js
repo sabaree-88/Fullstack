@@ -15,7 +15,6 @@ const UserSchema = mongoose.Schema({
     type: String,
     enum: ["admin", "user"],
     default: "user",
-    required: true,
   },
 });
 
@@ -58,11 +57,6 @@ UserSchema.statics.logIn = async function (email, password) {
   }
 
   return user;
-};
-
-UserSchema.statics.isAdmin = function (email) {
-  const adminEmail = "admin@example.com";
-  return email === adminEmail;
 };
 
 export const User = mongoose.model("User", UserSchema);

@@ -20,7 +20,7 @@ const SignUp = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error signing up:", error);
-      setError(error);
+      setError(error.response?.data?.error || error.message || "Signup failed");
       setLoading(false);
     }
   };
@@ -35,7 +35,7 @@ const SignUp = () => {
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               {error && (
                 <div className="text-red-600 px-3 py-1.5 bg-red-200 rounded-sm w-full">
-                  {error.response?.data?.error || error.message}
+                  {error}
                 </div>
               )}
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaRegEye, FaRegPlusSquare, FaRegEdit } from "react-icons/fa";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoTrashBinSharp } from "react-icons/io5";
@@ -13,7 +13,6 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   const { logout, user } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
@@ -21,15 +20,15 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if(!user){
-        return
+      if (!user) {
+        return;
       }
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:3000/book", {
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setData(res.data);
@@ -46,9 +45,10 @@ const Home = () => {
   return (
     <div className="bg-slate-800 min-h-[100vh] p-10">
       <div className="flex justify-between mb-5">
-        <Link to={"/add"}>
+        <Link to="/add">
           <FaRegPlusSquare className="text-green-600 text-3xl" />
         </Link>
+
         <button
           onClick={handleLogout}
           className="flex gap-3 font-semibold bg-red-800 px-5 py-2.5 rounded-md text-white"

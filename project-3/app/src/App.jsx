@@ -1,33 +1,52 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import EditBook from "./component/pages/EditBook";
-import DeleteBook from "./component/pages/DeleteBook";
-import ViewBook from "./component/pages/ViewBook";
-import Home from "./component/pages/Home";
-import AddBook from "./component/pages/AddBook";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./component/signup_login/Login";
 import SignUp from "./component/signup_login/SignUp";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import AdminDashboard from "./component/AdminDashboard";
+import UserDashboard from "./component/UserDashboard";
+import Home from "./component/pages/Home";
+import ViewBook from "./component/pages/ViewBook";
+import AddBook from "./component/pages/AddBook";
+import EditBook from "./component/pages/EditBook";
+import DeleteBook from "./component/pages/DeleteBook";
 
-const App = () => {
+const AuthRouteProvider = () => {
   const { user } = useAuth();
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={user ? <Navigate to="/home" /> : <Login />} />
-          <Route path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
-          <Route path="/home" element={!user ? <Navigate to="/" /> : (
-            user.role === "admin" ? <Home /> : <HomeUser />
-          )} />
-          <Route path="/edit/:id" element={user && user.role === "admin" ? <EditBook /> : <Navigate to="/" />} />
-          <Route path="/delete/:id" element={user && user.role === "admin" ? <DeleteBook /> : <Navigate to="/" />} />
-          <Route path="/view/:id" element={<ViewBook />} />
-          <Route path="/add" element={user && user.role === "admin" ? <AddBook /> : <Navigate to="/" />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      {user && user.role === "admin" && (
+        <Route path="/home" element={<Home />} />
+      )}
+      {user && user.role === "admin" && (
+        <Route path="/add" element={<AddBook />} />
+      )}
+      {user && user.role === "admin" && (
+        <Route path="/edit/:id" element={<EditBook />} />
+      )}
+      {user && user.role === "admin" && (
+        <Route path="/view/:id" element={<ViewBook />} />
+      )}
+      {user && user.role === "admin" && (
+        <Route path="/delete/:id" element={<DeleteBook />} />
+      )}
+      {user && user.role === "user" && (
+        <Route path="/user-dashboard" element={<UserDashboard />} />
+      )}
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AuthRouteProvider />
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 

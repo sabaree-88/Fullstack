@@ -6,14 +6,15 @@ import {
   updateBookById,
   deleteBook,
 } from "../controllers/BookController.js";
-import requireAuth, { requireAdmin } from "../middleware/authMiddleware.js";
+import requireAuth from "../middleware/authMiddleware.js";
+import requireAdmin from "../middleware/requireAdmin.js";
 
 const router = express.Router();
 router.use(requireAuth);
 
 router.post("/", requireAdmin, addBook);
 router.get("/", getBooks);
-router.get("/:id", getBookByID);
+router.get("/:id", requireAdmin, getBookByID);
 router.put("/:id", requireAdmin, updateBookById);
 router.delete("/:id", requireAdmin, deleteBook);
 

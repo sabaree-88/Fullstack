@@ -16,7 +16,14 @@ const Login = () => {
     setError(null);
 
     try {
-      await login(email, password);
+      const { user } = await login(email, password);
+      setLoading(false);
+
+      if (user.role === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
     } catch (err) {
       setError(err);
       setLoading(false);

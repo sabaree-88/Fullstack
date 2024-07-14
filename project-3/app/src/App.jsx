@@ -3,13 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./component/signup_login/Login";
 import SignUp from "./component/signup_login/SignUp";
-import AdminDashboard from "./component/AdminDashboard";
-import UserDashboard from "./component/UserDashboard";
 import Home from "./component/pages/Home";
 import ViewBook from "./component/pages/ViewBook";
 import AddBook from "./component/pages/AddBook";
 import EditBook from "./component/pages/EditBook";
 import DeleteBook from "./component/pages/DeleteBook";
+import UserDashboard from "./component/UserDashboard";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();

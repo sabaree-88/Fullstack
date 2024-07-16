@@ -77,7 +77,7 @@ const AddBook = () => {
         ) : (
           <div className="md:w-full sm:w-full lg:w-6/12 bg-white p-5 rounded shadow-lg">
             <div className="flex justify-end">
-              <Link to="/admin-dashboard">
+              <Link to="/all-books">
                 <FaWindowClose
                   className="text-red-600 text-2xl"
                   title="close"

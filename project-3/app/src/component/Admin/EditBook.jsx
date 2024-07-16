@@ -86,7 +86,7 @@ const EditBook = () => {
         })
         .then((res) => {
           setLoading(false);
-          navigate("/home");
+          navigate("/all-books");
         })
         .catch((err) => {
           console.log(err);
@@ -104,7 +104,7 @@ const EditBook = () => {
         ) : (
           <div className="w-6/12 bg-white p-5 rounded shadow-lg">
             <div className="flex justify-end">
-              <Link to="/admin-dashboard">
+              <Link to="/all-books">
                 <FaWindowClose
                   className="text-red-600 text-2xl"
                   title="close"

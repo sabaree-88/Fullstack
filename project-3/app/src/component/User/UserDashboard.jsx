@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { RiLogoutBoxLine } from "react-icons/ri";
-import Spinner from "./Spinner";
+import Spinner from "../AssetCopm/Spinner";
 
 const UserDashboard = () => {
   const [data, setData] = useState([]);

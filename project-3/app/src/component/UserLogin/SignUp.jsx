@@ -1,37 +1,32 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext.jsx";
-import Spinner from "../Spinner";
+import Spinner from "../AssetCopm/Spinner";
+import { useAuth } from "../../context/AuthContext";
 
-const Login = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { login } = useAuth();
+
+  const { signup } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
-      const { user } = await login(email, password);
+      await signup(email, password);
       setLoading(false);
-
-      if (user.role === "admin") {
-        navigate("/admin-dashboard");
-      } else {
-        navigate("/user-dashboard");
-      }
-    } catch (err) {
-      setError(err);
+    } catch (error) {
+      console.error("Error signing up:", error);
+      setError(error.response?.data?.error || error.message || "Signup failed");
       setLoading(false);
     }
   };
 
   return (
-    <section className="bg-slate-800 dark:bg-gray-900">
+    <section className="bg-slate-800 dark:bg-gray-900 min-h-[100vh] flex items-center">
       {loading ? (
         <Spinner />
       ) : (
@@ -40,11 +35,11 @@ const Login = () => {
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               {error && (
                 <div className="text-red-600 px-3 py-1.5 bg-red-200 rounded-sm w-full">
-                  {error.response?.data?.error || "An error occurred."}
+                  {error}
                 </div>
               )}
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Log In
+                Sign Up
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                 <div>
@@ -60,7 +55,6 @@ const Login = () => {
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
-                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
@@ -76,7 +70,6 @@ const Login = () => {
                     name="password"
                     id="password"
                     placeholder="••••••••"
-                    value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
@@ -85,15 +78,15 @@ const Login = () => {
                   type="submit"
                   className="w-full text-white bg-blue-500 hover:bg-blue-700 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  Login
+                  Sign Up
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don't have an account?{" "}
+                  Already have an account?{" "}
                   <Link
-                    to={"/signup"}
+                    to={"/"}
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
-                    Signup here
+                    Login here
                   </Link>
                 </p>
               </form>
@@ -105,4 +98,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

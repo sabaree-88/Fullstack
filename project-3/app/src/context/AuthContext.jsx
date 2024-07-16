@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       ] = `Bearer ${res.data.token}`;
 
       if (res.data.user.role === "admin") {
-        navigate("/home");
+        navigate("/admin-dashboard");
       } else {
         navigate("/user-dashboard");
       }

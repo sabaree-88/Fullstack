@@ -12,6 +12,7 @@ import requireAdmin from "../middleware/requireAdmin.js";
 const router = express.Router();
 router.use(requireAuth);
 
+// routes for books
 router.post("/", requireAdmin, addBook);
 router.get("/", getBooks);
 router.get("/:id", requireAdmin, getBookByID);

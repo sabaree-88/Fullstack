@@ -11,6 +11,7 @@ import UserDashboard from "./component/User/UserDashboard";
 import AdminDashboard from "./component/Admin/AdminDashboard";
 import Users from "./component/Admin/Users";
 import AllBooks from "./component/Admin/AllBooks";
+import UpdateUser from "./component/Admin/UpdateUser";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -42,6 +43,9 @@ const AuthRouteProvider = () => {
       )}
       {user && user.role === "admin" && (
         <Route path="/user" element={<Users />} />
+      )}
+      {user && user.role === "admin" && (
+        <Route path="/update-user/:id" element={<UpdateUser />} />
       )}
 
       {user && user.role === "user" && (

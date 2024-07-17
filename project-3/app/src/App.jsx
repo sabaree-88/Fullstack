@@ -19,7 +19,7 @@ const AuthRouteProvider = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      
+
       {/* Crud operation for admin */}
       {user && user.role === "admin" && (
         <Route path="/add" element={<AddBook />} />

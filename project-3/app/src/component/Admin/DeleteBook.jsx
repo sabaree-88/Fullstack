@@ -23,7 +23,7 @@ const DeleteBook = () => {
       })
       .then((res) => {
         setLoading(false);
-        navigate("/home");
+        navigate("/all-books");
       })
       .catch((err) => {
         setLoading(false);

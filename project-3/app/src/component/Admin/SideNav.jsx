@@ -10,9 +10,8 @@ const SideNav = () => {
 
   return (
     <>
-      {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 w-64 h-full bg-gray-800 p-4 z-50 sidebar-menu transition-transform ${
+        className={`fixed left-0 top-0 w-64 h-full bg-gray-900 p-4 z-50 sidebar-menu transition-transform ${
           isOpen ? "transform-none" : "-translate-x-full"
         } md:transform-none`}
       >

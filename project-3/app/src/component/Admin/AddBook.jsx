@@ -60,7 +60,7 @@ const AddBook = () => {
         });
 
         setLoading(false);
-        navigate("/home");
+        navigate("/all-books");
       } catch (err) {
         setLoading(false);
         setError({ err: "Failed to add book. Please try again." });

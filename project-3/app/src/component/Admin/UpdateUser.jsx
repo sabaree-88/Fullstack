@@ -1,41 +1,46 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../AssetCopm/Layout";
-import { useAuth } from "../../context/AuthContext";
 import { Link, useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import Spinner from "../AssetCopm/Spinner";
 import { FaWindowClose } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const UpdateUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
-  const { users, getUserId, updateUser } = useUser();
-  const [currentUser, setCurrentUser] = useState({});
+  const { getUserId, updateUser } = useUser();
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const userData = await getUserId(id);
         setCurrentUser(userData);
+        setName(userData.name);
+        setEmail(userData.email);
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        console.log(error);
+        setError(error.message || "Failed to fetch user data");
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, getUserId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setLoading(true);
     try {
       await updateUser(id, name, email, password);
+      navigate("/user");
       setLoading(false);
     } catch (error) {
       console.error("Error Updating:", error);
@@ -86,13 +91,16 @@ const UpdateUser = () => {
                         id="name"
                         className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
                         placeholder="Enter name"
-                        value={(currentUser && currentUser.name) || ""}
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-gray-800 text-sm mb-2 block">
+                    <label
+                      htmlFor="email"
+                      className="text-gray-800 text-sm mb-2 block"
+                    >
                       Email Id
                     </label>
                     <div className="relative flex items-center">
@@ -102,7 +110,7 @@ const UpdateUser = () => {
                         id="email"
                         className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
                         placeholder="Enter email"
-                        value={(currentUser && currentUser.email) || ""}
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
@@ -121,11 +129,15 @@ const UpdateUser = () => {
                         id="password"
                         className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
                         placeholder="Enter password"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
                   </div>
                 </div>
+                {error && (
+                  <div className="text-red-500 text-sm mt-4">{error}</div>
+                )}
                 <div className="!mt-12">
                   <button
                     type="submit"

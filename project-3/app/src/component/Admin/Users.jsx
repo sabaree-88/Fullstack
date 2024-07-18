@@ -6,16 +6,16 @@ import { useUser } from "../../context/UserContext";
 
 const Users = () => {
   const { users, getUsers } = useUser();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         await getUsers();
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();

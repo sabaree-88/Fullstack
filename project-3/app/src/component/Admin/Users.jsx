@@ -1,34 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/Layout";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import Spinner from "../AssetCopm/Spinner";
+import { useUser } from "../../context/UserContext";
 
 const Users = () => {
-  const [data, setData] = useState([]);
-  const { user } = useAuth();
+  const { users, getUsers } = useUser();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) {
-        return;
-      }
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3000/user/user-list", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(res.data);
+        await getUsers();
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
     };
     fetchData();
-  }, [user]);
+  }, [getUsers]);
 
   return (
     <Layout>
@@ -55,7 +46,7 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item) => (
+                {users.map((item) => (
                   <tr
                     key={item._id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"

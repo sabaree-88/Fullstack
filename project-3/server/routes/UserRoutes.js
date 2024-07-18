@@ -2,6 +2,7 @@ import express from "express";
 import {
   Login,
   SignUp,
+  UpdateUsers,
   getUsers,
   getUsersById,
 } from "../controllers/UserController.js";
@@ -18,5 +19,6 @@ router.post("/signup", SignUp);
 router.use(requireAuth);
 router.get("/user-list", requireAdmin, getUsers);
 router.get("/user-list/:id", requireAdmin, getUsersById);
+router.put("/user-update/:id", requireAdmin, UpdateUsers);
 
 export default router;

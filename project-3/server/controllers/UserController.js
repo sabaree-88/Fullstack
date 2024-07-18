@@ -56,3 +56,21 @@ export const getUsersById = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
+
+export const UpdateUsers = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, password } = req.body;
+  try {
+    const UpdateUser = { name, email, password };
+    const user = await User.findByIdAndUpdate(id, UpdateUser, {
+      new: true,
+    });
+
+    if (!UpdateUser) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+    return res.status(200).send(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};

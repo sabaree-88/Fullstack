@@ -37,23 +37,83 @@ const AuthRouteProvider = () => {
 
       {user && user.role === "admin" && (
         <>
-          <Route path="/add" element={<ProtectedRoute role="admin"><AddBook /></ProtectedRoute>} />
-          <Route path="/edit/:id" element={<ProtectedRoute role="admin"><EditBook /></ProtectedRoute>} />
-          <Route path="/view/:id" element={<ProtectedRoute role="admin"><ViewBook /></ProtectedRoute>} />
-          <Route path="/delete/:id" element={<ProtectedRoute role="admin"><DeleteBook /></ProtectedRoute>} />
-          <Route path="/admin-dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/all-books" element={<ProtectedRoute role="admin"><AllBooks /></ProtectedRoute>} />
-          <Route path="/user" element={<ProtectedRoute role="admin"><Users /></ProtectedRoute>} />
-          <Route path="/update-user/:id" element={<ProtectedRoute role="admin"><UpdateUser /></ProtectedRoute>} />
+          <Route
+            path="/add"
+            element={
+              <ProtectedRoute role="admin">
+                <AddBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <EditBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/view/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <ViewBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delete/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <DeleteBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/all-books"
+            element={
+              <ProtectedRoute role="admin">
+                <AllBooks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute role="admin">
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-user/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <UpdateUser />
+              </ProtectedRoute>
+            }
+          />
         </>
       )}
 
       {user && user.role === "user" && (
-        <Route path="/user-dashboard" element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />
+        <Route
+          path="/user-dashboard"
+          element={
+            <ProtectedRoute role="user">
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
       )}
-
-      {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

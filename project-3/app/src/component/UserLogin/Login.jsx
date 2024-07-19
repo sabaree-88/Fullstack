@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../AssetCopm/Spinner.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +11,11 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { login } = useAuth();
+  const [pswdShow, setPswdShow] = useState(false);
+
+  const togglePasswordVisible = () => {
+    setPswdShow(!pswdShow);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,13 +118,14 @@ const Login = () => {
                   <div className="relative flex items-center">
                     <input
                       name="password"
-                      type="password"
+                      type={pswdShow ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
                     />
                     <svg
+                      onClick={togglePasswordVisible}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="#bbb"
                       stroke="#bbb"

@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/user-dashboard");
       }
     } catch (error) {
+      console.error("Login error:", error.response?.data);
       throw new Error(error.response?.data?.error || "Login failed");
     }
   };

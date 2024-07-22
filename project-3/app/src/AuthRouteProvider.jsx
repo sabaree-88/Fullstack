@@ -12,6 +12,8 @@ import AdminDashboard from "./component/Admin/AdminDashboard";
 import Users from "./component/Admin/Users";
 import AllBooks from "./component/Admin/AllBooks";
 import UpdateUser from "./component/Admin/UpdateUser";
+import ForgotPassword from "./component/UserLogin/ForgotPassword";
+import ResetPassword from "./component/UserLogin/ResetPassword";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user } = useAuth();
@@ -34,7 +36,8 @@ const AuthRouteProvider = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       {user && user.role === "admin" && (
         <>
           <Route

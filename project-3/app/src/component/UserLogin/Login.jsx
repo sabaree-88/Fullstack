@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../AssetCopm/Spinner.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const { login } = useAuth();
   const [pswdShow, setPswdShow] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisible = () => {
     setPswdShow(!pswdShow);
@@ -20,8 +22,14 @@ const Login = () => {
     setLoading(true);
     setError(null);
 
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { user } = await login(email, password);
+      const { user } = await login(email.trim(), password.trim());
       setLoading(false);
 
       if (user.role === "admin") {
@@ -30,7 +38,7 @@ const Login = () => {
         navigate("/user-dashboard");
       }
     } catch (err) {
-      setError(err);
+      setError(err.message || "Login failed. Please try again.");
       setLoading(false);
     }
   };
@@ -153,12 +161,12 @@ const Login = () => {
                     </label>
                   </div>
                   <div>
-                    <a
-                      href="jajvascript:void(0);"
+                    <Link
+                      to="/forgot-password"
                       className="text-blue-600 font-semibold text-sm hover:underline"
                     >
                       Forgot Password?
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div className="mt-12">

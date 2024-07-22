@@ -1,6 +1,12 @@
 import { User } from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "2d" });
@@ -10,7 +16,6 @@ export const Login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.logIn(email, password);
-
     const token = createToken(user._id);
 
     res.status(200).json({
@@ -18,7 +23,8 @@ export const Login = async (req, res) => {
       token,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Login Error:", error.message);
+    res.status(400).json({ error: "Invalid credentials" });
   }
 };
 
@@ -83,4 +89,82 @@ export const UpdateUsers = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
+};
+
+
+const createResetToken = (email) => {
+  return jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
+};
+
+export const ForgetPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "User with this email does not exist." });
+    }
+
+    const token = createResetToken(user.email);
+
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset",
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process:\n\n
+        http://localhost:3000/reset-password/${token}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Recovery email sent." });
+  } catch (error) {
+    console.error("Error sending recovery email:", error);
+    res.status(500).json({ message: "Error sending recovery email." });
+  }
+};
+
+export const ResetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const user = await User.findOne({ email: decoded.email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
+    }
+
+    if (password && password.trim() !== "") {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    } else {
+      return res.status(400).json({ message: "Password is required." });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Password has been updated." });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({ message: "Password reset token has expired." });
+    }
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const ResetPasswordPage = (req, res) => {
+  const { token } = req.params;
+  res.sendFile(path.join(__dirname, "..", "..", "app", "dist", "index.html"));
 };

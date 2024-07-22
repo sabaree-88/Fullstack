@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Login from "./component/UserLogin/Login";
 import SignUp from "./component/UserLogin/SignUp";
@@ -31,6 +31,17 @@ const ProtectedRoute = ({ children, role }) => {
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        navigate("/admin-dashboard");
+      } else if (user.role === "user") {
+        navigate("/user-dashboard");
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <Routes>
@@ -40,6 +51,14 @@ const AuthRouteProvider = () => {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       {user && user.role === "admin" && (
         <>
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/add"
             element={
@@ -69,14 +88,6 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="admin">
                 <DeleteBook />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin-dashboard"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
               </ProtectedRoute>
             }
           />

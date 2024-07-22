@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:3000/user/forgot-password", { email });
-      alert("Recovery email sent.");
+      alert("Email is sent successfully.");
+      navigate("/");
     } catch (err) {
       console.error("Axios error:", err);
       alert("Error sending recovery email.");

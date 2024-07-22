@@ -10,19 +10,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const storedToken =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
     }
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-  }, [user]);
-
-  const login = async (email, password) => {
+  const login = async (email, password, rememberMe) => {
     try {
       const res = await axios.post("http://localhost:3000/user/login", {
         email,
@@ -30,7 +26,11 @@ export const AuthProvider = ({ children }) => {
       });
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      localStorage.setItem("token", res.data.token);
+      if (rememberMe) {
+        localStorage.setItem("token", res.data.token);
+      } else {
+        sessionStorage.setItem("token", res.data.token);
+      }
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${res.data.token}`;
@@ -69,6 +69,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     navigate("/");
   };

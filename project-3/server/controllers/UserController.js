@@ -8,15 +8,17 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "2d" });
+const createToken = (_id, rememberMe) => {
+  return jwt.sign({ _id }, process.env.SECRET, {
+    expiresIn: rememberMe ? "30d" : "2d",
+  });
 };
 
 export const Login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
   try {
     const user = await User.logIn(email, password);
-    const token = createToken(user._id);
+    const token = createToken(user._id, rememberMe);
 
     res.status(200).json({
       user: { _id: user._id, email: user.email, role: user.role },
@@ -91,7 +93,6 @@ export const UpdateUsers = async (req, res) => {
   }
 };
 
-
 const createResetToken = (email) => {
   return jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
 };
@@ -158,7 +159,9 @@ export const ResetPassword = async (req, res) => {
   } catch (error) {
     console.error("Error resetting password:", error);
     if (error.name === "TokenExpiredError") {
-      return res.status(400).json({ message: "Password reset token has expired." });
+      return res
+        .status(400)
+        .json({ message: "Password reset token has expired." });
     }
     res.status(500).json({ message: "Server error" });
   }

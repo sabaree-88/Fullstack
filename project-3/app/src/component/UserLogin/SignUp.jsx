@@ -9,8 +9,13 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [passShow, setPassShow] = useState(false);
 
   const { signup } = useAuth();
+
+  const passHideShow = () => {
+    setPassShow(!passShow);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -153,13 +158,14 @@ const SignUp = () => {
                   <div className="relative flex items-center">
                     <input
                       name="password"
-                      type="password"
+                      type={passShow ? "text" : "password"}
                       id="password"
                       className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
                       placeholder="Enter password"
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <svg
+                      onClick={passHideShow}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="#bbb"
                       stroke="#bbb"

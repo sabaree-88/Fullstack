@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../AssetCopm/Spinner.jsx";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { login } = useAuth();
@@ -29,7 +29,14 @@ const Login = () => {
     }
 
     try {
-      const { user } = await login(email.trim(), password.trim());
+      const { user, token } = await login(email.trim(), password.trim());
+
+      if (rememberMe) {
+        localStorage.setItem("authToken", token);
+      } else {
+        sessionStorage.setItem("authToken", token);
+      }
+
       setLoading(false);
 
       if (user.role === "admin") {
@@ -151,6 +158,8 @@ const Login = () => {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
                       className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label
@@ -169,6 +178,7 @@ const Login = () => {
                     </Link>
                   </div>
                 </div>
+                {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
                 <div className="mt-12">
                   <button
                     type="submit"

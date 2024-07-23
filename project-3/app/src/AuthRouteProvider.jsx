@@ -31,17 +31,6 @@ const ProtectedRoute = ({ children, role }) => {
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      if (user.role === "admin") {
-        navigate("/admin-dashboard");
-      } else if (user.role === "user") {
-        navigate("/user-dashboard");
-      }
-    }
-  }, [user, navigate]);
 
   return (
     <Routes>

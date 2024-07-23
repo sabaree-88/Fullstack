@@ -16,11 +16,10 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `http://localhost:3000/reset-password/${token}`,
-        { password }
-      );
-      setMessage(response.data.message);
+      await axios.post(`http://localhost:3000/reset-password/${token}`, {
+        password,
+      });
+      setMessage("Success");
       navigate("/");
     } catch (error) {
       setMessage("Error resetting password.");
@@ -35,21 +34,21 @@ const ResetPassword = () => {
             Reset Password
           </h2>
           {message && <p>{message}</p>}
-          <div>
+          <div className="relative flex items-center">
             <input
               type={passShow ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="New Password"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              className="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
             />
             <svg
               onClick={handlePassShow}
               xmlns="http://www.w3.org/2000/svg"
               fill="#bbb"
               stroke="#bbb"
-              className="w-4 h-4 absolute right-4 cursor-pointer"
+              className="w-[18px] h-[18px] absolute right-2 cursor-pointer"
               viewBox="0 0 128 128"
             >
               <path

@@ -189,9 +189,9 @@ export const googleLogin = async (req, res) => {
 
     const user = await User.googleLogin(email);
 
-    const token = User.generateAuthToken();
+    const token = user.generateAuthToken();
 
-    res.status(200).json({
+    res.status(200).send({
       user: { _id: user._id, email: user.email, role: user.role },
       token,
     });

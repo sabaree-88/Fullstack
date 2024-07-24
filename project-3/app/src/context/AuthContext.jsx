@@ -77,10 +77,22 @@ export const AuthProvider = ({ children }) => {
 
   const googleLogin = async (idToken) => {
     const response = await axios.post(
-      "/user/google-login",
+      "http://localhost:3000/user/google-login",
       { idToken }
     );
-    return response;
+
+    setUser(response.data.user);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+    localStorage.setItem("token", response.data.token);
+
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${response.data.token}`;
+    if (response.data.user.role === "admin") {
+      navigate("/admin-dashboard");
+    } else {
+      navigate("/user-dashboard");
+    }
   };
   return (
     <AuthContext.Provider value={{ user, login, logout, signup, googleLogin }}>

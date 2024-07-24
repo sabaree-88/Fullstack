@@ -10,7 +10,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const [pswdShow, setPswdShow] = useState(false);
   const navigate = useNavigate();
   const togglePasswordVisible = () => {

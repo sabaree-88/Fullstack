@@ -75,8 +75,15 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
+  const googleLogin = async (idToken) => {
+    const response = await axios.post(
+      "/user/google-login",
+      { idToken }
+    );
+    return response;
+  };
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, googleLogin }}>
       {children}
     </AuthContext.Provider>
   );

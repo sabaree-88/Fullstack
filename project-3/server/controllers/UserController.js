@@ -4,9 +4,12 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import path from "path";
 import { fileURLToPath } from "url";
+import { OAuth2Client } from "google-auth-library";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const createToken = (_id, rememberMe) => {
   return jwt.sign({ _id }, process.env.SECRET, {
@@ -170,4 +173,30 @@ export const ResetPassword = async (req, res) => {
 export const ResetPasswordPage = (req, res) => {
   const { token } = req.params;
   res.sendFile(path.join(__dirname, "..", "..", "app", "dist", "index.html"));
+};
+
+export const googleLogin = async (req, res) => {
+  const { idToken } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email } = payload;
+
+    const user = await User.googleLogin(email);
+
+    const token = User.generateAuthToken();
+
+    res.status(200).json({
+      user: { _id: user._id, email: user.email, role: user.role },
+      token,
+    });
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    res.status(401).json({ error: "Unauthorized" });
+  }
 };

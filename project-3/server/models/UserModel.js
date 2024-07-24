@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import validator from "validator";
+import jwt from "jsonwebtoken";
 const UserSchema = mongoose.Schema({
   name: {
     type: String,
@@ -61,6 +62,24 @@ UserSchema.statics.logIn = async function (email, password) {
   }
 
   return user;
+};
+
+UserSchema.statics.googleLogin = async function (email) {
+  let user = await this.findOne({ email });
+  
+  if (!user) {
+    const name = email.split('@')[0];
+    user = await this.create({ name, email, password: "GoogleUserPassword", role: "user" });
+  }
+  
+  return user;
+};
+
+UserSchema.methods.generateAuthToken = function() {
+  const token = jwt.sign({ _id: this._id, role: this.role }, process.env.SECRET, {
+    expiresIn: "2h",
+  });
+  return token;
 };
 
 export const User = mongoose.model("User", UserSchema);

@@ -15,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/public", express.static(path.join(__dirname, "public")));
 const buildPath = path.join(__dirname, "..", "app", "dist");
 app.use(express.static(buildPath));
 
@@ -37,7 +38,7 @@ mongoose
   .connect(ConnURI)
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Server is running in port ${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
     });
     console.log("Database Connected");
   })

@@ -102,7 +102,7 @@ const AllBooks = () => {
                         >
                           <img
                             className="w-16"
-                            src={`http://localhost:3000/${item.imagePath}`}
+                            src={`http://localhost:3000${item.imagePath}`}
                             alt={item.title}
                           />
                         </th>

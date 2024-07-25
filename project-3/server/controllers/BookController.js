@@ -38,11 +38,45 @@ export const addBook = async (req, res) => {
 
       const newBook = { title, author, year, user_id };
       if (req.file) {
-        newBook.imagePath = `public/image/${req.file.filename}`;
+        newBook.imagePath = `/public/image/${req.file.filename}`;
       }
 
       const book = await Books.create(newBook);
       return res.status(200).send(book);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: error.message });
+    }
+  });
+};
+
+export const updateBookById = async (req, res) => {
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).send({ message: err.message });
+    }
+    try {
+      const { title, author, year } = req.body;
+      if (!title || !author || !year) {
+        return res.status(400).send({
+          message: "Send all required data: title, author, year",
+        });
+      }
+
+      const { id } = req.params;
+      const updateData = { title, author, year };
+
+      if (req.file) {
+        updateData.imagePath = `/public/image/${req.file.filename}`;
+      }
+
+      const updatedBook = await Books.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+      if (!updatedBook) {
+        return res.status(404).json({ message: "Book not found!" });
+      }
+      return res.status(200).send(updatedBook);
     } catch (error) {
       console.error(error);
       res.status(500).send({ message: error.message });
@@ -72,40 +106,6 @@ export const getBookByID = async (req, res) => {
     console.error(error);
     res.status(500).send({ message: error.message });
   }
-};
-
-export const updateBookById = async (req, res) => {
-  upload.single("image")(req, res, async (err) => {
-    if (err) {
-      return res.status(400).send({ message: err.message });
-    }
-    try {
-      const { title, author, year } = req.body;
-      if (!title || !author || !year) {
-        return res.status(400).send({
-          message: "Send all required data: title, author, year",
-        });
-      }
-
-      const { id } = req.params;
-      const updateData = { title, author, year };
-
-      if (req.file) {
-        updateData.imagePath = `public/image/${req.file.filename}`;
-      }
-
-      const updatedBook = await Books.findByIdAndUpdate(id, updateData, {
-        new: true,
-      });
-      if (!updatedBook) {
-        return res.status(404).json({ message: "Book not found!" });
-      }
-      return res.status(200).send(updatedBook);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({ message: error.message });
-    }
-  });
 };
 
 export const deleteBook = async (req, res) => {

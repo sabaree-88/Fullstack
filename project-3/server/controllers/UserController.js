@@ -144,20 +144,26 @@ export const ResetPassword = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
-    const user = await User.findOne({ email: decoded.email });
+    console.log("Token decoded:", decoded);
 
+    const user = await User.findOne({ email: decoded.email });
     if (!user) {
+      console.log("User not found for email:", decoded.email);
       return res.status(400).json({ message: "User not found." });
     }
 
     if (password && password.trim() !== "") {
+      console.log("Hashing new password...");
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     } else {
+      console.log("No password provided or password is empty");
       return res.status(400).json({ message: "Password is required." });
     }
 
+    console.log("Saving user...");
     await user.save();
+    console.log("Password updated for user:", user.email);
     res.status(200).json({ message: "Password has been updated." });
   } catch (error) {
     console.error("Error resetting password:", error);

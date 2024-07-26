@@ -15,7 +15,7 @@ router.use(requireAuth);
 // routes for books
 router.post("/", requireAdmin, addBook);
 router.get("/", getBooks);
-router.get("/:id", requireAdmin, getBookByID);
+router.get("/:id", getBookByID);
 router.put("/:id", requireAdmin, updateBookById);
 router.delete("/:id", requireAdmin, deleteBook);
 

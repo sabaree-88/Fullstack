@@ -14,6 +14,7 @@ import AllBooks from "./component/Admin/AllBooks";
 import UpdateUser from "./component/Admin/UpdateUser";
 import ForgotPassword from "./component/UserLogin/ForgotPassword";
 import ResetPassword from "./component/UserLogin/ResetPassword";
+import ProductOverview from "./component/User/ProductOverview";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user } = useAuth();
@@ -108,14 +109,25 @@ const AuthRouteProvider = () => {
       )}
 
       {user && user.role === "user" && (
-        <Route
-          path="/user-dashboard"
-          element={
-            <ProtectedRoute role="user">
-              <UserDashboard />
-            </ProtectedRoute>
-          }
-        />
+        <>
+          {" "}
+          <Route
+            path="/user-dashboard"
+            element={
+              <ProtectedRoute role="user">
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/book-details/:id"
+            element={
+              <ProtectedRoute role="user">
+                <ProductOverview />
+              </ProtectedRoute>
+            }
+          />
+        </>
       )}
     </Routes>
   );

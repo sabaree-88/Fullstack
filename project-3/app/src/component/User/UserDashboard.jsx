@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
-import { RiLogoutBoxLine } from "react-icons/ri";
-import Spinner from "../AssetCopm/Spinner";
+import React from "react";
 import UserLayout from "./UserLayout";
-import Products from "./Products";
+import Collections from "./Collections";
+import Banner from "./Banner";
+import ProductSlider from "./ProductSlider";
 
 const UserDashboard = () => {
   return (
     <>
       <UserLayout>
-        <Products />
+        <Banner />
+        {/* <ProductSlider /> */}
+        <Collections />
       </UserLayout>
     </>
   );

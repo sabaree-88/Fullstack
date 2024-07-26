@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 const UserLayout = ({ children }) => {
   return (
     <>
@@ -9,6 +10,7 @@ const UserLayout = ({ children }) => {
           {children}
         </div>
       </main>
+      <Footer />
     </>
   );
 };

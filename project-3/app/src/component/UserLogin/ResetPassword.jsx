@@ -16,10 +16,8 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:3000/user/reset-password/${token}`, {
-        password,
-      });
-      setMessage("Success");
+      const response = await axios.post(`http://localhost:3000/user/reset-password/${token}`, { password });
+      setMessage("Password has been updated successfully.");
       navigate("/");
     } catch (error) {
       setMessage("Error resetting password.");

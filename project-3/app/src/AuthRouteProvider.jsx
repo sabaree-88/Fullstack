@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Login from "./component/UserLogin/Login";
 import SignUp from "./component/UserLogin/SignUp";
@@ -15,6 +15,7 @@ import UpdateUser from "./component/Admin/UpdateUser";
 import ForgotPassword from "./component/UserLogin/ForgotPassword";
 import ResetPassword from "./component/UserLogin/ResetPassword";
 import ProductOverview from "./component/User/ProductOverview";
+import Profile from "./component/User/Profile";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user } = useAuth();
@@ -110,12 +111,27 @@ const AuthRouteProvider = () => {
 
       {user && user.role === "user" && (
         <>
-          {" "}
           <Route
             path="/user-dashboard"
             element={
               <ProtectedRoute role="user">
                 <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-user/:id"
+            element={
+              <ProtectedRoute role="user">
+                <UpdateUser />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

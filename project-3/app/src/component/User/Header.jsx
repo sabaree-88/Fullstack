@@ -4,7 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const [toggle, setToggle] = useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
   const handleToggle = () => {
     setToggle(!toggle);
   };
@@ -31,17 +32,13 @@ const Header = () => {
               </Link>
               <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
                 <li>
-                  <Link
-                    to={"/user-dashboard"}
-                    className="hover:text-gray-200"
-                    href="#"
-                  >
+                  <Link to="/user-dashboard" className="hover:text-gray-200">
                     Home
                   </Link>
                 </li>
                 <li>
                   <a className="hover:text-gray-200" href="#">
-                    Catagory
+                    Category
                   </a>
                 </li>
                 <li>
@@ -92,7 +89,10 @@ const Header = () => {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
                   </span>
                 </a>
-                <a className="flex items-center hover:text-gray-200" href="#">
+                <Link
+                  to="/profile"
+                  className="flex items-center hover:text-gray-200"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6 hover:text-gray-200"
@@ -107,7 +107,7 @@ const Header = () => {
                       d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                </a>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center hover:text-gray-200"
@@ -119,9 +119,8 @@ const Header = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    {" "}
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />{" "}
-                    <polyline points="16 17 21 12 16 7" />{" "}
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
                 </button>
@@ -157,9 +156,8 @@ const Header = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                {" "}
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />{" "}
-                <polyline points="16 17 21 12 16 7" />{" "}
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />
               </svg>
             </a>

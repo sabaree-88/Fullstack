@@ -22,11 +22,10 @@ router.post("/google-login", googleLogin);
 router.post("/forgot-password", ForgetPassword);
 router.post("/reset-password/:token", ResetPassword);
 router.get("/reset-password/:token", ResetPasswordPage);
-
+router.get("/user-list/:id", getUsersById);
+router.put("/user-update/:id", UpdateUsers);
 // routes for user list
 router.use(requireAuth);
 router.get("/user-list", requireAdmin, getUsers);
-router.get("/user-list/:id", requireAdmin, getUsersById);
-router.put("/user-update/:id", requireAdmin, UpdateUsers);
 
 export default router;

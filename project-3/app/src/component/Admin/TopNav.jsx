@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
 
 const TopNav = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSearchDropdownOpen, setSearchDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -73,19 +74,21 @@ const TopNav = () => {
                 </div>
               </div>
               <div className="p-2 md:block text-left">
-                <h2 className="text-sm font-semibold text-white">John Doe</h2>
-                <p className="text-xs text-gray-300">Administrator</p>
+                <h2 className="text-sm font-semibold text-white">
+                  {user.name}
+                </h2>
+                <p className="text-xs text-gray-300">{user.role}</p>
               </div>
             </button>
             {isProfileDropdownOpen && (
-              <ul className="dropdown-menu shadow-md shadow-black/5 absolute z-30 py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+              <ul className="dropdown-menu shadow-md shadow-black/5 absolute right-0 z-30 py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/profile"}
                     className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-[#f84525] hover:bg-gray-50"
                   >
                     Profile
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a

@@ -11,11 +11,11 @@ import UserDashboard from "./component/User/UserDashboard";
 import AdminDashboard from "./component/Admin/AdminDashboard";
 import Users from "./component/Admin/Users";
 import AllBooks from "./component/Admin/AllBooks";
-import UpdateUser from "./component/Admin/UpdateUser";
+import UpdateUser from "./component/AssetCopm/UpdateUser";
 import ForgotPassword from "./component/UserLogin/ForgotPassword";
 import ResetPassword from "./component/UserLogin/ResetPassword";
 import ProductOverview from "./component/User/ProductOverview";
-import Profile from "./component/User/Profile";
+import Profile from "./component/AssetCopm/Profile";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user } = useAuth();
@@ -106,6 +106,15 @@ const AuthRouteProvider = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute role="admin">
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </>
       )}
 
@@ -130,7 +139,7 @@ const AuthRouteProvider = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="user">
                 <Profile />
               </ProtectedRoute>
             }

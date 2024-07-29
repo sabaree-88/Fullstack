@@ -11,6 +11,8 @@ const UpdateUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
@@ -18,6 +20,7 @@ const UpdateUser = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,6 +29,7 @@ const UpdateUser = () => {
         setCurrentUser(userData);
         setName(userData.name);
         setEmail(userData.email);
+        setPhoneNumber(userData.phoneNumber || "");
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -39,9 +43,21 @@ const UpdateUser = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("phoneNumber", phoneNumber);
+    if (profileImage) formData.append("profileImage", profileImage);
+
     try {
-      await updateUser(id, name, email, password);
-      navigate("/user");
+      await updateUser(id, formData);
+      if(user.role === "admin"){
+        navigate("/admin-dashboard");
+      }else{
+        navigate("/user-dashboard");
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error Updating:", error);
@@ -51,6 +67,7 @@ const UpdateUser = () => {
       setLoading(false);
     }
   };
+
   const updateUserJSX = (
     <div className="p-6 min-h-[100vh]">
       <div className="bg-white w-6/12 mx-auto rounded-md">
@@ -102,6 +119,42 @@ const UpdateUser = () => {
             </div>
             <div>
               <label
+                htmlFor="phoneNumber"
+                className="text-gray-800 text-sm mb-2 block"
+              >
+                Phone Number
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  name="phoneNumber"
+                  type="text"
+                  id="phoneNumber"
+                  className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
+                  placeholder="Enter phone number"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="profileImage"
+                className="text-gray-800 text-sm mb-2 block"
+              >
+                Profile Image
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  name="profileImage"
+                  type="file"
+                  id="profileImage"
+                  className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-2.5 rounded-md outline-blue-500"
+                  onChange={(e) => setProfileImage(e.target.files[0])}
+                />
+              </div>
+            </div>
+            <div>
+              <label
                 htmlFor="password"
                 className="text-gray-800 text-sm mb-2 block"
               >
@@ -133,6 +186,7 @@ const UpdateUser = () => {
       </div>
     </div>
   );
+
   return (
     <>
       {" "}

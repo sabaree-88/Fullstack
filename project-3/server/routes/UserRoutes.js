@@ -4,14 +4,15 @@ import {
   Login,
   ResetPassword,
   SignUp,
-  UpdateUsers,
   getUsers,
   getUsersById,
   ResetPasswordPage,
   googleLogin,
+  updateUser,
 } from "../controllers/UserController.js";
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
+import upload from "../middleware/fileUpload.js";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post("/forgot-password", ForgetPassword);
 router.post("/reset-password/:token", ResetPassword);
 router.get("/reset-password/:token", ResetPasswordPage);
 router.get("/user-list/:id", getUsersById);
-router.put("/user-update/:id", UpdateUsers);
+router.put("/user-update/:id", upload.single("profileImage"), updateUser);
 // routes for user list
 router.use(requireAuth);
 router.get("/user-list", requireAdmin, getUsers);

@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { OAuth2Client } from "google-auth-library";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -77,28 +78,33 @@ export const getUsersById = async (req, res) => {
   }
 };
 
-export const UpdateUsers = async (req, res) => {
+export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email, password } = req.body;
+  const { name, email, password, phoneNumber } = req.body;
+  const profileImage = req.file ? req.file.path : null;
+
   try {
     const user = await User.findById(id);
-
     if (!user) {
-      return res.status(404).json({ message: "User not found!" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    if (name) user.name = name;
-    if (email) user.email = email;
+    user.name = name || user.name;
+    user.email = email || user.email;
     if (password) {
-      if (password.trim() !== "") {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    if (profileImage) {
+      if (user.profileImage) {
+        fs.unlinkSync(path.resolve(user.profileImage));
       }
+      user.profileImage = profileImage;
     }
 
     await user.save();
-
-    return res.status(200).send(user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

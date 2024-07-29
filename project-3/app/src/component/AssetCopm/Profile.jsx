@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import UserLayout from "./UserLayout";
 import { Link } from "react-router-dom";
 import Layout from "./Layout";
+import { useUser } from "../../context/UserContext";
+
 const Profile = () => {
   const { user } = useAuth();
+  const { getUserId } = useUser();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (user) {
+          const userData = await getUserId(user._id);
+          setCurrentUser(userData);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUser();
+  }, [user, getUserId]);
+
   const profileJSX = (
     <div className="min-h-[70vh] flex items-center justify-center">
       <div className="relative container mx-auto p-4 w-72 h-72 flex flex-col justify-center bg-gray-800 rounded-lg">
         <Link
-          to={`/update-user/${user._id}`}
+          to={`/update-user/${currentUser?._id}`}
           className="absolute top-6 right-6 w-8 h-8 flex justify-center items-center"
         >
           <svg
@@ -30,20 +50,31 @@ const Profile = () => {
         </h1>
         <div className="w-20 h-20 rounded-full bg-white flex justify-center self-center">
           <img
-            src="/favico.png"
-            alt="img"
+            src={
+              currentUser?.profileImage
+                ? `http://localhost:3000/${currentUser.profileImage}`
+                : "/favico.png"
+            }
+            alt="Profile"
             className="w-full h-full object-cover"
           />
         </div>
         <p className="mt-2 text-white text-md text-center font-semibold">
-          {user.name}
+          {currentUser?.name}
         </p>
-        <p className="mt-1 text-gray-400 text-sm text-center">{user.role}</p>
-        <p className="mt-2 text-white text-sm text-center">{user.email}</p>
-        <p className="mt-2 text-white text-sm text-center">+91 8870368587</p>
+        <p className="mt-1 text-gray-400 text-sm text-center">
+          {currentUser?.role}
+        </p>
+        <p className="mt-2 text-white text-sm text-center">
+          {currentUser?.email}
+        </p>
+        <p className="mt-2 text-white text-sm text-center">
+          {currentUser?.phoneNumber}
+        </p>
       </div>
     </div>
   );
+
   return (
     <>
       {user && user.role === "admin" ? (

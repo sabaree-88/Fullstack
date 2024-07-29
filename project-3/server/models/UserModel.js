@@ -16,6 +16,14 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  phoneNumber: {
+    type: String,
+    default: "",
+  },
+  profileImage: {
+    type: String,
+    default: "",
+  },
   role: {
     type: String,
     enum: ["admin", "user"],
@@ -23,7 +31,12 @@ const UserSchema = mongoose.Schema({
   },
 });
 
-UserSchema.statics.signUp = async function (name, email, password, role = "user") {
+UserSchema.statics.signUp = async function (
+  name,
+  email,
+  password,
+  role = "user"
+) {
   if (!name || !email || !password) {
     throw new Error("All fields must be filled.");
   }
@@ -66,19 +79,28 @@ UserSchema.statics.logIn = async function (email, password) {
 
 UserSchema.statics.googleLogin = async function (email) {
   let user = await this.findOne({ email });
-  
+
   if (!user) {
-    const name = email.split('@')[0];
-    user = await this.create({ name, email, password: "GoogleUserPassword", role: "user" });
+    const name = email.split("@")[0];
+    user = await this.create({
+      name,
+      email,
+      password: "GoogleUserPassword",
+      role: "user",
+    });
   }
-  
+
   return user;
 };
 
-UserSchema.methods.generateAuthToken = function() {
-  const token = jwt.sign({ _id: this._id, role: this.role }, process.env.SECRET, {
-    expiresIn: "2h",
-  });
+UserSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign(
+    { _id: this._id, role: this.role },
+    process.env.SECRET,
+    {
+      expiresIn: "2h",
+    }
+  );
   return token;
 };
 

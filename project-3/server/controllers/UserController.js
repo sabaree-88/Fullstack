@@ -24,7 +24,12 @@ export const Login = async (req, res) => {
     const token = createToken(user._id, rememberMe);
 
     res.status(200).json({
-      user: { _id: user._id, email: user.email, role: user.role },
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
       token,
     });
   } catch (error) {
@@ -39,7 +44,10 @@ export const SignUp = async (req, res) => {
     const user = await User.signUp(name, email, password);
 
     const token = createToken(user._id);
-    res.status(201).json({ user: { _id: user._id, name: user.name, email: user.email }, token });
+    res.status(201).json({
+      user: { _id: user._id, name: user.name, email: user.email },
+      token,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -198,7 +206,12 @@ export const googleLogin = async (req, res) => {
     const token = user.generateAuthToken();
 
     res.status(200).send({
-      user: { _id: user._id, email: user.email, role: user.role },
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
       token,
     });
   } catch (error) {

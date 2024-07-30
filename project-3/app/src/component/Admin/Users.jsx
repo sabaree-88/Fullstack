@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../AssetCopm/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 import { Link } from "react-router-dom";
 import Spinner from "../AssetCopm/Spinner";
 import { useUser } from "../../context/UserContext";

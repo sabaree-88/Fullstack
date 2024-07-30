@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../User/Header";
-import Footer from "../User/Footer";
+import Header from "../UserLayout/Header";
+import Footer from "../UserLayout/Footer";
 const UserLayout = ({ children }) => {
   return (
     <>

@@ -5,7 +5,7 @@ import axios from "axios";
 import { FaWindowClose } from "react-icons/fa";
 import Spinner from "../AssetCopm/Spinner";
 import { useAuth } from "../../context/AuthContext";
-import Layout from "../AssetCopm/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 
 const EditBook = () => {
   const [values, setValues] = useState({

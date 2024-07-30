@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import UserLayout from "./UserLayout";
+import UserLayout from "./UserLayout/UserLayout";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
+import Layout from "./AdminLayout/Layout";
 import { useUser } from "../../context/UserContext";
 
 const Profile = () => {
@@ -48,7 +48,7 @@ const Profile = () => {
         <h1 className="text-2xl font-bold text-center text-white mb-3">
           Profile
         </h1>
-        <div className="w-20 h-20 rounded-full bg-white flex justify-center self-center">
+        <div className="w-20 h-20 rounded-full bg-white flex justify-center self-center overflow-hidden">
           <img
             src={
               currentUser?.profileImage

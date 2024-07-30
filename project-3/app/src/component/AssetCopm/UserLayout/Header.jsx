@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const [toggle, setToggle] = useState(false);
@@ -89,7 +89,7 @@ const Header = () => {
                   to="/profile"
                   className="flex items-center hover:text-gray-200"
                 >
-                  <span className="h-8 w-8 rounded-full bg-gray-400 focus:outline-2 focus:outline-white">
+                  <span className="h-8 w-8 rounded-full bg-gray-400 focus:outline-2 focus:outline-white overflow-hidden">
                     <img
                       src={user ? profile : "/favico.png"}
                       alt="user-img"

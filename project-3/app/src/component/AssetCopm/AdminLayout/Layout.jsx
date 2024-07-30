@@ -1,6 +1,6 @@
 import React from "react";
-import SideNav from "../Admin/SideNav";
-import TopNav from "../Admin/TopNav";
+import SideNav from "../AdminLayout/SideNav";
+import TopNav from "../AdminLayout/TopNav";
 
 const Layout = ({ children }) => {
   return (

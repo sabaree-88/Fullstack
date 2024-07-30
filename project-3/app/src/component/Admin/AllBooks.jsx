@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../AssetCopm/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 import { FaRegEdit, FaRegEye, FaRegPlusSquare } from "react-icons/fa";
 import Spinner from "../AssetCopm/Spinner";
 import { IoTrashBinSharp } from "react-icons/io5";

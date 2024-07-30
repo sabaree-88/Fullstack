@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../AssetCopm/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 
 const AdminDashboard = () => {
   return (

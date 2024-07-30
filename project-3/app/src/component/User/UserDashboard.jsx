@@ -1,5 +1,5 @@
 import React from "react";
-import UserLayout from "./UserLayout";
+import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import Collections from "./Collections";
 import Banner from "./Banner";
 import ProductSlider from "./ProductSlider";

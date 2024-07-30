@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "../AssetCopm/Spinner";
 import { useParams } from "react-router-dom";
-import UserLayout from "../AssetCopm/UserLayout";
+import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import { useAuth } from "../../context/AuthContext";
 const ProductOverview = () => {
   const [data, setData] = useState([]);

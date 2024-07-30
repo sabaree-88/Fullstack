@@ -5,7 +5,7 @@ import Validate from "../../validation/validate";
 import axios from "axios";
 import Spinner from "../AssetCopm/Spinner";
 import { useAuth } from "../../context/AuthContext";
-import Layout from "../AssetCopm/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 
 const AddBook = () => {
   const [values, setValues] = useState({

@@ -5,14 +5,10 @@ import { useAuth } from "../../context/AuthContext";
 const Header = () => {
   const [toggle, setToggle] = useState(false);
   const { user, logout } = useAuth();
-
-  const handleToggle = () => {
-    setToggle(!toggle);
-  };
-
   const handleLogout = () => {
     logout();
   };
+  const profile = `http://localhost:3000/${user.profileImage}`;
   return (
     <>
       <div className="flex flex-wrap place-items-center overflow-hidden">
@@ -95,7 +91,7 @@ const Header = () => {
                 >
                   <span className="h-8 w-8 rounded-full bg-gray-400 focus:outline-2 focus:outline-white">
                     <img
-                      src="/favico.png"
+                      src={user ? profile : "/favico.png"}
                       alt="user-img"
                       className="w-full h-full object-cover"
                     />

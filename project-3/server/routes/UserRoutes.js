@@ -13,20 +13,31 @@ import {
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
 import upload from "../middleware/fileUpload.js";
+import validateUser from "../middleware/validateUser.js";
 
 const router = express.Router();
 
-router.post("/login", Login);
-
-router.post("/signup", SignUp);
+// Public routes
+router.post("/login", validateUser("login"), Login);
+router.post("/signup", validateUser("signup"), SignUp);
 router.post("/google-login", googleLogin);
-router.post("/forgot-password", ForgetPassword);
-router.post("/reset-password/:token", ResetPassword);
+router.post("/forgot-password", validateUser("forgotPassword"), ForgetPassword);
+router.post(
+  "/reset-password/:token",
+  validateUser("resetPassword"),
+  ResetPassword
+);
 router.get("/reset-password/:token", ResetPasswordPage);
-router.get("/user-list/:id", getUsersById);
-router.put("/user-update/:id", upload.single("profileImage"), updateUser);
-// routes for user list
+
+// Protected routes
 router.use(requireAuth);
+router.get("/user-list/:id", getUsersById);
+router.put(
+  "/user-update/:id",
+  upload.single("profileImage"),
+  validateUser("updateUser"),
+  updateUser
+);
 router.get("/user-list", requireAdmin, getUsers);
 
 export default router;

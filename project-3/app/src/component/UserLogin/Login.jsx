@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../AssetCopm/Spinner.jsx";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { notifySuccess, notifyError } from "../AssetCopm/toastNotification.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +30,8 @@ const Login = () => {
     }
 
     try {
-      const { user, token } = await login(email.trim(), password.trim());
+      const res = await login(email.trim(), password.trim());
+      const { user, token } = res;
 
       if (rememberMe) {
         localStorage.setItem("authToken", token);
@@ -38,6 +40,7 @@ const Login = () => {
       }
 
       setLoading(false);
+      notifySuccess("Login successful!");
 
       if (user.role === "admin") {
         navigate("/admin-dashboard");
@@ -45,7 +48,7 @@ const Login = () => {
         navigate("/user-dashboard");
       }
     } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
+      notifyError(err.message || "Login failed. Please try again.");
       setLoading(false);
     }
   };
@@ -62,18 +65,19 @@ const Login = () => {
         sessionStorage.setItem("authToken", token);
       }
 
+      notifySuccess("Google login successful!");
       if (user.role === "admin") {
         navigate("/admin-dashboard");
       } else {
         navigate("/user-dashboard");
       }
     } catch (err) {
-      setError(err.message || "Google login failed. Please try again.");
+      notifyError(err.message || "Google login failed. Please try again.");
     }
   };
 
   const handleGoogleFailure = (response) => {
-    setError("Google login failed. Please try again.");
+    notifyError("Google login failed. Please try again.");
   };
 
   return (

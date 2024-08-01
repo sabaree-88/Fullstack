@@ -3,10 +3,13 @@ import { FaWindowClose } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import Validate from "../../validation/validate";
 import axios from "axios";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-
+import {
+  notifySuccess,
+  notifyError,
+} from "../AssetCopm/utils/toastNotification";
 const AddBook = () => {
   const [values, setValues] = useState({
     title: "",
@@ -60,11 +63,12 @@ const AddBook = () => {
         });
 
         setLoading(false);
+        notifySuccess("New book added successfully");
         navigate("/all-books");
       } catch (err) {
         setLoading(false);
+        notifyError("Failed to add book. Please try again.");
         setError({ err: "Failed to add book. Please try again." });
-        console.error("Error posting data:", err);
       }
     }
   };

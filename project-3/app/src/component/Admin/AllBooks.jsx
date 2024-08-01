@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../AssetCopm/AdminLayout/Layout";
 import { FaRegEdit, FaRegEye, FaRegPlusSquare } from "react-icons/fa";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { IoTrashBinSharp } from "react-icons/io5";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
@@ -12,11 +12,7 @@ const AllBooks = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { logout, user } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-  };
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {

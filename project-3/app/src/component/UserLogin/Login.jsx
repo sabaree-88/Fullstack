@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import Spinner from "../AssetCopm/Spinner.jsx";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { notifySuccess, notifyError } from "../AssetCopm/toastNotification.js";
+import { notifySuccess, notifyError } from "../AssetCopm/utils/toastNotification.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");

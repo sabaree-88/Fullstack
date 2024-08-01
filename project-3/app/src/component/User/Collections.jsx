@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import axios from "axios";
 import { Link } from "react-router-dom";
 

@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import { useUser } from "../../../context/UserContext.jsx";
 
 const TopNav = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSearchDropdownOpen, setSearchDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
-
+  const { getUserId } = useUser();
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
@@ -20,6 +21,16 @@ const TopNav = () => {
     setProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
+  const [profile, setProfile] = useState([]);
+  const id = user._id;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const res = await getUserId(id);
+      setProfile(res);
+    };
+    fetchProfile();
+  }, [user]);
+  const profileImage = `http://localhost:3000/${profile.profileImage}`;
   return (
     <>
       <div className="py-2 px-6 bg-gray-900 flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30">
@@ -66,7 +77,11 @@ const TopNav = () => {
                 <div className="p-1 bg-white rounded-full focus:outline-none focus:ring">
                   <img
                     className="w-8 h-8 rounded-full"
-                    src="https://laravelui.spruko.com/tailwind/ynex/build/assets/images/faces/9.jpg"
+                    src={
+                      user
+                        ? profileImage
+                        : "https://laravelui.spruko.com/tailwind/ynex/build/assets/images/faces/9.jpg"
+                    }
                     alt="User Avatar"
                   />
                   <div className="top-0 left-7 absolute w-3 h-3 bg-lime-400 border-2 border-white rounded-full animate-ping" />

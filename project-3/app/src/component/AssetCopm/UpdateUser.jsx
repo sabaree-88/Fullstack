@@ -3,10 +3,13 @@ import Layout from "../AssetCopm/AdminLayout/Layout";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import { Link, useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-
+import {
+  notifySuccess,
+  notifyError,
+} from "../AssetCopm/utils/toastNotification";
 const UpdateUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,14 +56,17 @@ const UpdateUser = () => {
 
     try {
       await updateUser(id, formData);
-      if(user.role === "admin"){
-        navigate("/admin-dashboard");
-      }else{
+      notifySuccess("Updated Successfully");
+      if (user.role === "admin") {
+        navigate("/user");
+      } else {
         navigate("/user-dashboard");
       }
       setLoading(false);
     } catch (error) {
-      console.error("Error Updating:", error);
+      notifyError(
+        error.response?.data?.error || error.message || "Update user failed"
+      );
       setError(
         error.response?.data?.error || error.message || "Update user failed"
       );

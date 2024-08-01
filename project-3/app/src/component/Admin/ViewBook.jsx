@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/AdminLayout/Layout";
 
@@ -51,7 +51,7 @@ const ViewBook = () => {
             <h3 className="text-lg">{data.year}</h3>
             {data.imagePath && (
               <img
-                src={`http://localhost:3000/${data.imagePath}`}
+                src={`http://localhost:3000${data.imagePath}`}
                 alt={data.title}
                 className="max-w-40"
               />

@@ -2,10 +2,13 @@ import axios from "axios";
 import { useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-
+import {
+  notifySuccess,
+  notifyError,
+} from "../AssetCopm/utils/toastNotification";
 const DeleteBook = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,13 +25,13 @@ const DeleteBook = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
+        notifySuccess("Book deleted successfully!");
         setLoading(false);
         navigate("/all-books");
       })
       .catch((err) => {
         setLoading(false);
-        console.error("Error deleting the book:", err);
-        alert("Failed to delete the book. Please try again.");
+        notifyError("Failed to delete the book. Please try again.");
       });
   };
 

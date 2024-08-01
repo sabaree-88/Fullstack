@@ -3,10 +3,13 @@ import Validate from "../../validation/validate";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { FaWindowClose } from "react-icons/fa";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-
+import {
+  notifySuccess,
+  notifyError,
+} from "../AssetCopm/utils/toastNotification";
 const EditBook = () => {
   const [values, setValues] = useState({
     title: "",
@@ -86,10 +89,11 @@ const EditBook = () => {
         })
         .then((res) => {
           setLoading(false);
+          notifySuccess("Book updated successfully!");
           navigate("/all-books");
         })
         .catch((err) => {
-          console.log(err);
+          notifyError("Error updating the book!");
           setError(err);
           setLoading(false);
         });

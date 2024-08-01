@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useUser } from "../../../context/UserContext";
 
 const Header = () => {
-  const [toggle, setToggle] = useState(false);
   const { user, logout } = useAuth();
   const handleLogout = () => {
     logout();
   };
-  const profile = `http://localhost:3000/${user.profileImage}`;
+  const { getUserId } = useUser();
+  const [profile, setProfile] = useState([]);
+  const id = user._id;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const res = await getUserId(id);
+      setProfile(res);
+    };
+    fetchProfile();
+  }, [user]);
+  const profileImage = `http://localhost:3000/${profile.profileImage}`;
   return (
     <>
       <div className="flex flex-wrap place-items-center overflow-hidden">
@@ -91,7 +101,7 @@ const Header = () => {
                 >
                   <span className="h-8 w-8 rounded-full bg-gray-400 focus:outline-2 focus:outline-white overflow-hidden">
                     <img
-                      src={user ? profile : "/favico.png"}
+                      src={user ? profileImage : "/favico.png"}
                       alt="user-img"
                       className="w-full h-full object-cover"
                     />

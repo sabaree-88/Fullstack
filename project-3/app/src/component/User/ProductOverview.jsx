@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Spinner from "../AssetCopm/Spinner";
+import Spinner from "../AssetCopm/utils/Spinner";
 import { useParams } from "react-router-dom";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import { useAuth } from "../../context/AuthContext";

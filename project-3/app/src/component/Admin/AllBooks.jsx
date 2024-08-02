@@ -11,7 +11,7 @@ const AllBooks = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -37,6 +37,21 @@ const AllBooks = () => {
 
     fetchData();
   }, []);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/book/search?query=${searchQuery}`
+      );
+      setData(res.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+    }
+  };
   return (
     <Layout>
       <div className="bg-slate-300 min-h-[100vh] p-10">
@@ -44,7 +59,7 @@ const AllBooks = () => {
           <Spinner />
         ) : (
           <div>
-            <div className="mb-5">
+            <div className="mb-5 flex gap-4">
               <Link
                 to="/add"
                 className="flex gap-3 align-middle items-center self-center px-3 py-2 bg-slate-600 w-36 rounded-sm text-white"
@@ -54,6 +69,18 @@ const AllBooks = () => {
                   Add book
                 </span>
               </Link>
+              <form onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  placeholder="Search by title or author"
+                  className="px-3 py-2 border rounded-sm"
+                  value= {searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit" className="bg-gray-700 py-2 px-10 rounded-md font-semibold text-white ml-3">
+                  Search
+                </button>
+              </form>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

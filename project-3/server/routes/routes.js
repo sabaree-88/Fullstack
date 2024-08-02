@@ -5,11 +5,13 @@ import {
   getBookByID,
   updateBookById,
   deleteBook,
+  searchBooks,
 } from "../controllers/BookController.js";
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
 
 const router = express.Router();
+router.get("/search", searchBooks);
 router.use(requireAuth);
 
 // routes for books

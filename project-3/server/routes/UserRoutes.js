@@ -9,6 +9,7 @@ import {
   ResetPasswordPage,
   googleLogin,
   updateUser,
+  searchUsers,
 } from "../controllers/UserController.js";
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
@@ -39,5 +40,6 @@ router.put(
   updateUser
 );
 router.get("/user-list", requireAdmin, getUsers);
+router.get("/search-user", requireAdmin, searchUsers);
 
 export default router;

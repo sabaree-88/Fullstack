@@ -9,14 +9,14 @@ export const UserProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user")) || null
   );
 
-  const getUsers = useCallback(async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/user/user-list");
-      setUsers(res.data);
-    } catch (error) {
-      throw new Error(error.response?.data?.error || "Users not found");
-    }
-  }, []);
+  // const getUsers = useCallback(async () => {
+  //   try {
+  //     const res = await axios.get("http://localhost:3000/user/user-list");
+  //     setUsers(res.data);
+  //   } catch (error) {
+  //     throw new Error(error.response?.data?.error || "Users not found");
+  //   }
+  // }, []);
 
   const getUserId = useCallback(async (id) => {
     try {
@@ -27,6 +27,16 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
+  const handleSearch = useCallback(async (searchQuery) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/user/search-user?query=${searchQuery}`
+      );
+      setUsers(res.data);
+    } catch (error) {
+      throw new Error(error.response?.data?.error || "User not found");
+    }
+  });
   const updateUser = useCallback(
     async (id, formData) => {
       try {
@@ -57,7 +67,14 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ users, getUsers, getUserId, updateUser, user, setUser }}
+      value={{
+        users,
+        getUserId,
+        updateUser,
+        user,
+        setUser,
+        handleSearch,
+      }}
     >
       {children}
     </UserContext.Provider>

@@ -85,12 +85,15 @@ export const updateBookById = async (req, res) => {
 };
 
 export const getBooks = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
   try {
-    const allBooks = await Books.find({});
-    return res.status(200).send(allBooks);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: error.message });
+    const books = await Books.find().skip(skip).limit(limit);
+    const total = await Books.countDocuments();
+    res.json({ books, total, page, pages: Math.ceil(total / limit) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 

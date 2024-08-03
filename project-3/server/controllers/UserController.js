@@ -55,11 +55,20 @@ export const SignUp = async (req, res) => {
 };
 
 export const getUsers = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
   try {
-    const allUsers = await User.find({});
-    return res.status(200).send(allUsers);
+    const allUsers = await User.find({}).skip(skip).limit(limit);
+    const totalUsers = await User.countDocuments();
+    res.json({
+      allUsers,
+      totalUsers,
+      page,
+      pages: Math.ceil(totalUsers / limit),
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Get Users Error:", error);
     res.status(500).send({ message: error.message });
   }
 };
@@ -73,7 +82,7 @@ export const getUsersById = async (req, res) => {
     }
     return res.status(200).send(user);
   } catch (error) {
-    console.log(error);
+    console.error("Get User By ID Error:", error);
     res.status(500).send({ message: error.message });
   }
 };
@@ -106,6 +115,7 @@ export const updateUser = async (req, res) => {
     await user.save();
     res.status(200).json(user);
   } catch (error) {
+    console.error("Update User Error:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -158,26 +168,20 @@ export const ResetPassword = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
-    console.log("Token decoded:", decoded);
 
     const user = await User.findOne({ email: decoded.email });
     if (!user) {
-      console.log("User not found for email:", decoded.email);
       return res.status(400).json({ message: "User not found." });
     }
 
     if (password && password.trim() !== "") {
-      console.log("Hashing new password...");
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     } else {
-      console.log("No password provided or password is empty");
       return res.status(400).json({ message: "Password is required." });
     }
 
-    console.log("Saving user...");
     await user.save();
-    console.log("Password updated for user:", user.email);
     res.status(200).json({ message: "Password has been updated." });
   } catch (error) {
     console.error("Error resetting password:", error);
@@ -223,5 +227,22 @@ export const googleLogin = async (req, res) => {
   } catch (error) {
     console.error("Google Login Error:", error);
     res.status(401).json({ error: "Unauthorized" });
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  const { query } = req.query;
+  try {
+    const users = await User.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+        { role: { $regex: query, $options: "i" } },
+      ],
+    });
+    res.json(users);
+  } catch (error) {
+    console.error("Search Users Error:", error);
+    res.status(500).json({ message: "Error searching for users", error });
   }
 };

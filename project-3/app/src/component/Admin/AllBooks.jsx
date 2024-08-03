@@ -6,6 +6,7 @@ import { IoTrashBinSharp } from "react-icons/io5";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import usePagination from "../../hooks/usePagination";
 
 const AllBooks = () => {
   const [data, setData] = useState([]);
@@ -13,30 +14,43 @@ const AllBooks = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
+  const {
+    currentPage,
+    totalPages,
+    totalEntries,
+    itemsPerPage,
+    startEntry,
+    endEntry,
+    handlePageChange,
+    setTotalPages,
+    setTotalEntries,
+  } = usePagination();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user) {
-        return;
-      }
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3000/book", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(res.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
+    if (user) {
+      fetchData(currentPage);
+    }
+  }, [user, currentPage]);
 
-    fetchData();
-  }, []);
+  const fetchData = async (page = 1) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `http://localhost:3000/book?page=${page}&limit=${itemsPerPage}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setData(res.data.books);
+      setTotalPages(res.data.pages);
+      setTotalEntries(res.data.total);
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -52,6 +66,7 @@ const AllBooks = () => {
       setLoading(false);
     }
   };
+
   return (
     <Layout>
       <div className="bg-slate-300 min-h-[100vh] p-10">
@@ -142,43 +157,41 @@ const AllBooks = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item, i) => {
-                    return (
-                      <tr
-                        key={item._id}
-                        className="border-b border-gray-200 dark:border-gray-700"
+                  {data.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="border-b border-gray-200 dark:border-gray-700"
+                    >
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800 flex justify-center items-center"
                       >
-                        <th
-                          scope="row"
-                          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800 flex justify-center items-center"
-                        >
-                          <img
-                            className="w-16"
-                            src={`http://localhost:3000${item.imagePath}`}
-                            alt={item.title}
-                          />
-                        </th>
-                        <td className="px-6 py-4">{item.title}</td>
-                        <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
-                          {item.year}
-                        </td>
-                        <td className="px-6 py-4">{item.author}</td>
-                        <td className="px-6 py-4 bg-gray-50">
-                          <span className="flex gap-6 items-center justify-center">
-                            <Link to={`/view/${item._id}`}>
-                              <FaRegEye className="text-2xl text-green-600" />
-                            </Link>
-                            <Link to={`/edit/${item._id}`}>
-                              <FaRegEdit className="text-2xl text-blue-600" />
-                            </Link>
-                            <Link to={`/delete/${item._id}`}>
-                              <IoTrashBinSharp className="text-2xl text-red-600" />
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                        <img
+                          className="w-16"
+                          src={`http://localhost:3000${item.imagePath}`}
+                          alt={item.title}
+                        />
+                      </th>
+                      <td className="px-6 py-4">{item.title}</td>
+                      <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                        {item.year}
+                      </td>
+                      <td className="px-6 py-4">{item.author}</td>
+                      <td className="px-6 py-4 bg-gray-50">
+                        <span className="flex gap-6 items-center justify-center">
+                          <Link to={`/view/${item._id}`}>
+                            <FaRegEye className="text-2xl text-green-600" />
+                          </Link>
+                          <Link to={`/edit/${item._id}`}>
+                            <FaRegEdit className="text-2xl text-blue-600" />
+                          </Link>
+                          <Link to={`/delete/${item._id}`}>
+                            <IoTrashBinSharp className="text-2xl text-red-600" />
+                          </Link>
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -186,20 +199,24 @@ const AllBooks = () => {
               <span className="text-sm text-gray-700 dark:text-gray-400">
                 Showing{" "}
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  1
+                  {startEntry}
                 </span>{" "}
                 to{" "}
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  10
+                  {endEntry}
                 </span>{" "}
                 of{" "}
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  100
+                  {totalEntries}
                 </span>{" "}
                 Entries
               </span>
               <div className="inline-flex mt-2 xs:mt-0">
-                <button className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
                   <svg
                     className="w-3.5 h-3.5 me-2 rtl:rotate-180"
                     aria-hidden="true"
@@ -217,7 +234,11 @@ const AllBooks = () => {
                   </svg>
                   Prev
                 </button>
-                <button className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
                   Next
                   <svg
                     className="w-3.5 h-3.5 ms-2 rtl:rotate-180"

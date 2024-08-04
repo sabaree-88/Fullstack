@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
       const res = await axios.get(
         `http://localhost:3000/user/search-user?query=${searchQuery}`
       );
-      setUsers(res.data);
+      setUsers(res.data.allUsers);
     } catch (error) {
       throw new Error(error.response?.data?.error || "User not found");
     }

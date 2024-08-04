@@ -29,7 +29,7 @@ router.post(
   ResetPassword
 );
 router.get("/reset-password/:token", ResetPasswordPage);
-
+router.get("/search-user", searchUsers);
 // Protected routes
 router.use(requireAuth);
 router.get("/user-list/:id", getUsersById);
@@ -40,6 +40,4 @@ router.put(
   updateUser
 );
 router.get("/user-list", requireAdmin, getUsers);
-router.get("/search-user", requireAdmin, searchUsers);
-
 export default router;

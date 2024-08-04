@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import Layout from "../AssetCopm/AdminLayout/Layout";
 import { Link } from "react-router-dom";
 import Spinner from "../AssetCopm/utils/Spinner";
-import { useUser } from "../../context/UserContext";
+// import { useUser } from "../../context/UserContext";
 import { useAuth } from "../../context/AuthContext";
 import usePagination from "../../hooks/usePagination";
 import axios from "axios";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const { handleSearch } = useUser();
+  // const { handleSearch } = useUser();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
@@ -56,15 +56,18 @@ const Users = () => {
     getUsers(currentPage);
   }, [user, currentPage]);
 
-  const search = async (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await handleSearch(searchQuery);
-    } catch (error) {
-      console.error("Error during search:", error.message);
-    } finally {
+      const res = await axios.get(
+        `http://localhost:3000/user/search-user?query=${searchQuery}`
+      );
+      setUsers(res.data);
+      console.log(res.data);
       setLoading(false);
+    } catch (error) {
+      throw new Error(error.response?.data?.error || "User not found");
     }
   };
 
@@ -74,7 +77,7 @@ const Users = () => {
         <Spinner />
       ) : (
         <div className="p-6">
-          <form className="w-80 h-12" onSubmit={search}>
+          <form className="w-80 h-12" onSubmit={handleSearch}>
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg

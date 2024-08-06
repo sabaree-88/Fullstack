@@ -55,16 +55,12 @@ const AllBooks = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/book/search?query=${searchQuery}`
-      );
-      setData(res.data);
-      setLoading(false);
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-    }
+
+    const res = await axios.get(
+      `http://localhost:3000/book/search?query=${searchQuery}`
+    );
+    setData(res.data);
+    setLoading(false);
   };
 
   return (

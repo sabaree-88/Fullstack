@@ -10,7 +10,7 @@ const Collections = () => {
   const [error, setError] = useState(null);
 
   const { user } = useAuth();
-
+  const limit = 4;
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
@@ -19,12 +19,15 @@ const Collections = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3000/book", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(res.data);
+        const res = await axios.get(
+          `http://localhost:3000/book?limit=${limit}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setData(res.data.books);
         setLoading(false);
       } catch (err) {
         setError(err);

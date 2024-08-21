@@ -150,9 +150,12 @@ const AllBooks = () => {
                     >
                       Author
                     </th>
+                    <th scope="col" className="px-6 py-3 bg-gray-50 ">
+                      Description
+                    </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-center bg-gray-50"
+                      className="px-6 py-3 text-center bg-slate-900"
                     >
                       Action
                     </th>
@@ -211,7 +214,10 @@ const AllBooks = () => {
                       <td className="px-6 py-3 bg-slate-900 text-white">
                         {item.author}
                       </td>
-                      <td className="px-6 py-4 bg-gray-50">
+                      <td className="px-6 py-3 bg-gray-50 ">
+                        {item.description}
+                      </td>
+                      <td className="px-6 py-4 bg-slate-900">
                         <span className="flex gap-6 items-center justify-center">
                           <Link to={`/view/${item._id}`}>
                             <FaRegEye className="text-2xl text-green-600" />

@@ -14,6 +14,10 @@ const BookSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    description: {
+      type: String,
+      required: true,
+    },
     imagePath: {
       type: String,
     },

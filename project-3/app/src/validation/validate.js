@@ -16,12 +16,17 @@ function Validate(value) {
   if (value.description === "") {
     error.description = "Enter description!";
   } else {
-    error.author = "";
+    error.description = "";
   }
   if (value.year === "") {
     error.year = "Enter book publised year!";
   } else {
     error.year = "";
+  }
+  if (value.price === "") {
+    error.price = "Enter book price!";
+  } else {
+    error.price = "";
   }
 
   if (!value.image) {

@@ -142,20 +142,26 @@ const AllBooks = () => {
                       scope="col"
                       className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
                     >
-                      Published Year
+                      Price
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 bg-slate-900 text-white"
                     >
+                      Published Year
+                    </th>
+                    <th scope="col" className="px-6 py-3 bg-gray-50">
                       Author
                     </th>
-                    <th scope="col" className="px-6 py-3 bg-gray-50 ">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 bg-slate-900 text-white"
+                    >
                       Description
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-center bg-slate-900 text-white"
+                      className="px-6 py-3 text-center bg-gray-50"
                     >
                       Action
                     </th>
@@ -206,15 +212,16 @@ const AllBooks = () => {
                         {item.title}
                       </td>
                       <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                        {item.price}
+                      </td>
+                      <td className="px-6 py-4 bg-slate-900 dark:bg-gray-800 text-white">
                         {item.year}
                       </td>
-                      <td className="px-6 py-3 bg-slate-900 text-white">
-                        {item.author}
-                      </td>
-                      <td className="px-6 py-3 bg-gray-50 min-h-4 overflow-y-auto">
+                      <td className="px-6 py-3 bg-gray-50">{item.author}</td>
+                      <td className="px-6 py-3 bg-slate-900 min-h-4 overflow-y-auto text-white">
                         {item.description.substring(0, 80) + "..."}
                       </td>
-                      <td className="px-6 py-4 bg-slate-900">
+                      <td className="px-6 py-4 bg-gray-50">
                         <span className="flex gap-6 items-center justify-center">
                           <Link to={`/view/${item._id}`}>
                             <FaRegEye className="text-2xl text-green-600" />

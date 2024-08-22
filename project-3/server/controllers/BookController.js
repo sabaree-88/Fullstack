@@ -28,7 +28,7 @@ export const addBook = async (req, res) => {
       return res.status(400).send({ message: err.message });
     }
     try {
-      const { title, author, year, description } = req.body;
+      const { title, author, year, description, price } = req.body;
       const user_id = req.user._id;
       if (!title || !author || !year) {
         return res.status(400).send({
@@ -36,7 +36,7 @@ export const addBook = async (req, res) => {
         });
       }
 
-      const newBook = { title, author, year, description, user_id };
+      const newBook = { title, author, year, description, price, user_id };
       if (req.file) {
         newBook.imagePath = `/public/image/${req.file.filename}`;
       }
@@ -56,7 +56,7 @@ export const updateBookById = async (req, res) => {
       return res.status(400).send({ message: err.message });
     }
     try {
-      const { title, author, year, description } = req.body;
+      const { title, author, year, description, price } = req.body;
       if (!title || !author || !year) {
         return res.status(400).send({
           message: "Send all required data: title, author, year",
@@ -64,7 +64,7 @@ export const updateBookById = async (req, res) => {
       }
 
       const { id } = req.params;
-      const updateData = { title, author, year, description };
+      const updateData = { title, author, year, description, price };
 
       if (req.file) {
         updateData.imagePath = `/public/image/${req.file.filename}`;

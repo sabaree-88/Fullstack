@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Spinner from "../AssetCopm/utils/Spinner";
+import Spinner from "../../AssetCopm/utils/Spinner";
 import { useParams } from "react-router-dom";
-import UserLayout from "../AssetCopm/UserLayout/UserLayout";
-import { useAuth } from "../../context/AuthContext";
+import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
+import { useAuth } from "../../../context/AuthContext";
+import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
+import Ratings from "./Ratings";
 const ProductOverview = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,7 @@ const ProductOverview = () => {
   return (
     <UserLayout>
       {loading ? (
-        <Spinner />
+        <ProductLoading />
       ) : (
         <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
           {error && (
@@ -166,6 +168,7 @@ const ProductOverview = () => {
               </div>
             </div>
           </div>
+          <Ratings />
         </section>
       )}
     </UserLayout>

@@ -11,11 +11,11 @@ import UserDashboard from "./component/User/UserDashboard";
 import AdminDashboard from "./component/Admin/AdminDashboard";
 import Users from "./component/Admin/Users";
 import AllBooks from "./component/Admin/AllBooks";
-import UpdateUser from "./component/AssetCopm/UpdateUser";
+import UpdateUser from "./component/Profile/UpdateUser";
 import ForgotPassword from "./component/UserLogin/ForgotPassword";
 import ResetPassword from "./component/UserLogin/ResetPassword";
-import ProductOverview from "./component/User/ProductOverview";
-import Profile from "./component/AssetCopm/Profile";
+import ProductOverview from "./component/User/utils/ProductOverview";
+import Profile from "./component/Profile/Profile";
 import Error from "./component/AssetCopm/utils/Error";
 import ProtectedRoute from "./ProtectedRoute";
 

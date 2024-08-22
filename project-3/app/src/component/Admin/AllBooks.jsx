@@ -167,9 +167,7 @@ const AllBooks = () => {
                       key={item._id}
                       className="border-b border-gray-200 dark:border-gray-700"
                     >
-                      <td
-                        className="px-6 py-4 bg-gray-50 dark:bg-gray-800"
-                      >
+                      <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
                         <a
                           href={`http://localhost:3000${item.imagePath}`}
                           target="blank"
@@ -214,7 +212,7 @@ const AllBooks = () => {
                         {item.author}
                       </td>
                       <td className="px-6 py-3 bg-gray-50 min-h-4 overflow-y-auto">
-                        {item.description}
+                        {item.description.substring(0, 80) + "..."}
                       </td>
                       <td className="px-6 py-4 bg-slate-900">
                         <span className="flex gap-6 items-center justify-center">

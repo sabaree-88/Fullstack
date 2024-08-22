@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import UserLayout from "./UserLayout/UserLayout";
+import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import { Link } from "react-router-dom";
-import Layout from "./AdminLayout/Layout";
+import Layout from "../AssetCopm/AdminLayout/Layout";
 import { useUser } from "../../context/UserContext";
 
 const Profile = () => {

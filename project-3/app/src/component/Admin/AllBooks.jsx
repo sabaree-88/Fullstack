@@ -155,7 +155,7 @@ const AllBooks = () => {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-center bg-slate-900"
+                      className="px-6 py-3 text-center bg-slate-900 text-white"
                     >
                       Action
                     </th>
@@ -167,9 +167,8 @@ const AllBooks = () => {
                       key={item._id}
                       className="border-b border-gray-200 dark:border-gray-700"
                     >
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800 flex justify-center items-center"
+                      <td
+                        className="px-6 py-4 bg-gray-50 dark:bg-gray-800"
                       >
                         <a
                           href={`http://localhost:3000${item.imagePath}`}
@@ -204,7 +203,7 @@ const AllBooks = () => {
                             </g>
                           </svg>
                         </a>
-                      </th>
+                      </td>
                       <td className="px-6 py-3 bg-slate-900 text-white">
                         {item.title}
                       </td>
@@ -214,7 +213,7 @@ const AllBooks = () => {
                       <td className="px-6 py-3 bg-slate-900 text-white">
                         {item.author}
                       </td>
-                      <td className="px-6 py-3 bg-gray-50 ">
+                      <td className="px-6 py-3 bg-gray-50 min-h-4 overflow-y-auto">
                         {item.description}
                       </td>
                       <td className="px-6 py-4 bg-slate-900">

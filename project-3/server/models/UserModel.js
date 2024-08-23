@@ -29,6 +29,12 @@ const UserSchema = mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+  favourites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Books",
+    },
+  ],
 });
 
 UserSchema.statics.signUp = async function (

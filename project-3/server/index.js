@@ -6,6 +6,7 @@ import BookRouter from "./routes/routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import UserRoute from "./routes/UserRoutes.js";
+import favouritesRoutes from "./routes/FavouritesRoutes.js";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +28,7 @@ app.use(express.static(buildPath));
 
 app.use("/book", BookRouter);
 app.use("/user", UserRoute);
+app.use("/favourites", favouritesRoutes);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));

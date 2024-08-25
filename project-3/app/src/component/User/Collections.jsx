@@ -20,7 +20,6 @@ const Collections = () => {
       try {
         const token = localStorage.getItem("token");
 
-        // Fetch books
         const booksRes = await axios.get(
           `http://localhost:3000/book?limit=${limit}`,
           {
@@ -31,13 +30,15 @@ const Collections = () => {
         );
         setData(booksRes.data.books);
 
-        // Fetch user favourites
-        const favRes = await axios.get(`http://localhost:3000/get-favourites`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setFavourites(favRes.data.favourites);
+        const favRes = await axios.get(
+          `http://localhost:3000/favourites/get-favourites`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFavourites(favRes.data || []);
         setLoading(false);
       } catch (err) {
         setError(err.message || "Something went wrong");
@@ -49,37 +50,40 @@ const Collections = () => {
   }, [user]);
 
   const handleFavouriteClick = async (bookId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const isFav = isFavourite(bookId);
+    const token = localStorage.getItem("token");
+    const isFav = isFavourite(bookId);
 
+    try {
       if (isFav) {
-        // Remove from favourites
-        const res = await axios.post(
-          `http://localhost:3000/remove-favourites`,
+        await axios.post(
+          `http://localhost:3000/favourites/remove-favourites`,
           { bookId },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setFavourites(res.data.favourites);
+        setFavourites((prevFavourites) =>
+          prevFavourites.filter((fav) => fav._id !== bookId)
+        );
       } else {
-        // Add to favourites
-        const res = await axios.post(
-          `http://localhost:3000/add-favourites`,
+        await axios.post(
+          `http://localhost:3000/favourites/add-favourites`,
           { bookId },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setFavourites(res.data.favourites);
+        setFavourites((prevFavourites) => [...prevFavourites, { _id: bookId }]);
       }
     } catch (err) {
       console.error("Failed to update favourites", err);
+      setFavourites((prevFavourites) =>
+        isFav
+          ? [...prevFavourites, { _id: bookId }]
+          : prevFavourites.filter((fav) => fav._id !== bookId)
+      );
     }
   };
 
-  const isFavourite = (bookId) => favourites.some((fav) => fav._id === bookId);
+  const isFavourite = (bookId) => {
+    return favourites && favourites.some((fav) => fav._id === bookId);
+  };
 
   if (loading) {
     return (
@@ -125,14 +129,12 @@ const Collections = () => {
                     } favourites`}
                   >
                     <svg
-                      className={`w-6 h-6 -ms-2 me-2 ${
-                        isFavourite(item._id) ? "text-red-500" : ""
-                      }`}
+                      className="w-6 h-6"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}
                       height={24}
-                      fill="none"
+                      fill={isFavourite(item._id) ? "red" : "white"}
                       viewBox="0 0 24 24"
                     >
                       <path

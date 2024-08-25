@@ -4,7 +4,7 @@ import {
   removeFromFavourites, 
   getFavourites 
 } from "../controllers/FavouriteController.js";
-import { requireAuth } from "../middleware/authMiddleware.js"; 
+import requireAuth  from "../middleware/authMiddleware.js"; 
 
 const router = express.Router();
 

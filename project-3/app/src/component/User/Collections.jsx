@@ -9,6 +9,7 @@ const Collections = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [favourites, setFavourites] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const { user } = useAuth();
   const limit = 4;
 
@@ -39,6 +40,16 @@ const Collections = () => {
           }
         );
         setFavourites(favRes.data || []);
+
+        // const cartRes = await axios.get(
+        //   `http://localhost:3000/cart/get-cart`,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   }
+        // );
+        // setCartItems(cartRes.data || []);
         setLoading(false);
       } catch (err) {
         setError(err.message || "Something went wrong");
@@ -81,8 +92,27 @@ const Collections = () => {
     }
   };
 
+  const handleAddToCart = async (bookId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.post(
+        `http://localhost:3000/cart/add-to-cart`,
+        { bookId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCartItems((prevCartItems) => [...prevCartItems, { _id: bookId }]);
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+    }
+  };
+
   const isFavourite = (bookId) => {
     return favourites && favourites.some((fav) => fav._id === bookId);
+  };
+
+  const isInCart = (bookId) => {
+    return cartItems && cartItems.some((item) => item._id === bookId);
   };
 
   if (loading) {
@@ -173,7 +203,10 @@ const Collections = () => {
                   <button className="text-white font-semibold bg-slate-800 px-3 py-1 rounded-sm">
                     Buy Now
                   </button>
-                  <button>
+                  <button className="relative z-10"
+                    onClick={() => handleAddToCart(item._id)}
+                    disabled={isInCart(item._id)}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 576 512"

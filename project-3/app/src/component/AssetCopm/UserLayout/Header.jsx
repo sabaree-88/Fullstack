@@ -75,7 +75,10 @@ const Header = () => {
                     />
                   </svg>
                 </Link>
-                <a className="flex items-center hover:text-gray-200" href="#">
+                <Link
+                  className="flex items-center hover:text-gray-200"
+                  to="/cart"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -94,7 +97,7 @@ const Header = () => {
                     <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-pink-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
                   </span>
-                </a>
+                </Link>
                 <Link
                   to="/profile"
                   className="flex items-center hover:text-gray-200"

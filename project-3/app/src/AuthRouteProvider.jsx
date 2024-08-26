@@ -19,6 +19,8 @@ import Profile from "./component/Profile/Profile";
 import Error from "./component/AssetCopm/utils/Error";
 import ProtectedRoute from "./ProtectedRoute";
 import FavouritesPage from "./component/User/utils/FavouritesPage";
+import Cart from "./component/User/utils/Cart";
+import CartDemo from "./component/User/utils/CartDemo";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -147,6 +149,22 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <FavouritesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute role="user">
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart-demo"
+            element={
+              <ProtectedRoute role="user">
+                <CartDemo />
               </ProtectedRoute>
             }
           />

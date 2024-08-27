@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
+import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
+import { Link } from "react-router-dom";
 const Cart = () => {
   const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
@@ -26,7 +28,7 @@ const Cart = () => {
         setCartItems(response.data.items);
         setLoading(false);
       } catch (err) {
-        alert()
+        alert();
         setError(err.message || "Failed to load cart items");
         setLoading(false);
       }
@@ -79,7 +81,11 @@ const Cart = () => {
   };
 
   if (loading) {
-    return <p>Loading cart items...</p>;
+    return (
+      <>
+        <ProductLoading />
+      </>
+    );
   }
 
   if (error) {
@@ -88,73 +94,266 @@ const Cart = () => {
 
   return (
     <UserLayout>
-      <div className="container mx-auto mt-10">
-        <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+      <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            Shopping Cart
+          </h2>
 
-        {cartItems.length === 0 ? (
-          <p>Your cart is empty.</p>
-        ) : (
-          <>
-            <ul className="space-y-4">
-              {cartItems.map((item) => (
-                <li
-                  key={item.bookId._id}
-                  className="flex justify-between items-center"
-                >
-                  <div className="flex items-center">
-                    <img
-                      src={`http://localhost:3000${item.bookId.imagePath}`}
-                      alt={item.bookId.title}
-                      className="h-20 w-20 object-contain"
-                    />
-                    <div className="ml-4">
-                      <h2 className="text-lg font-bold">{item.bookId.title}</h2>
-                      <p>{item.bookId.author}</p>
-                      <p>${item.bookId.price}</p>
+          {cartItems.length === 0 ? (
+            <p>Your cart is empty.</p>
+          ) : (
+            <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+              <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+                <div className="space-y-6">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.bookId._id}
+                      className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
+                    >
+                      <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                        <a href="#" className="shrink-0 md:order-1">
+                          <img
+                            className="h-20 w-20 dark:hidden"
+                            src={`http://localhost:3000${item.bookId.imagePath}`}
+                            alt={item.bookId.title}
+                          />
+                          <img
+                            className="hidden h-20 w-20 dark:block"
+                            src={`http://localhost:3000${item.bookId.imagePath}`}
+                            alt={item.bookId.title}
+                          />
+                        </a>
+                        <label htmlFor="counter-input" className="sr-only">
+                          Choose quantity:
+                        </label>
+                        <div className="flex items-center justify-between md:order-3 md:justify-end">
+                          <div className="flex items-center">
+                            <button
+                              onClick={() =>
+                                handleQuantityChange(
+                                  item.bookId._id,
+                                  item.quantity - 1
+                                )
+                              }
+                              disabled={item.quantity <= 1}
+                              type="button"
+                              id="decrement-button"
+                              data-input-counter-decrement="counter-input"
+                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                            >
+                              <svg
+                                className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 18 2"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M1 1h16"
+                                />
+                              </svg>
+                            </button>
+                            <input
+                              type="text"
+                              id="counter-input"
+                              data-input-counter=""
+                              className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                              placeholder=""
+                              defaultValue={item.quantity}
+                              value={item.quantity}
+                              required=""
+                            />
+                            <button
+                              onClick={() =>
+                                handleQuantityChange(
+                                  item.bookId._id,
+                                  item.quantity + 1
+                                )
+                              }
+                              type="button"
+                              id="increment-button"
+                              data-input-counter-increment="counter-input"
+                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                            >
+                              <svg
+                                className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 18 18"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 1v16M1 9h16"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="text-end md:order-4 md:w-32">
+                            <p className="text-base font-bold text-gray-900 dark:text-white">
+                              ${item.bookId.price}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                          <a
+                            href="#"
+                            className="text-base font-medium text-gray-900 hover:underline dark:text-white"
+                          >
+                            {item.bookId.title}
+                          </a>
+                          <div className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white"
+                            >
+                              <svg
+                                className="me-1.5 h-5 w-5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width={24}
+                                height={24}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                                />
+                              </svg>
+                              Add to Favorites
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleRemoveFromCart(item.bookId._id)
+                              }
+                              type="button"
+                              className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
+                            >
+                              <svg
+                                className="me-1.5 h-5 w-5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width={24}
+                                height={24}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18 17.94 6M18 18 6.06 6"
+                                />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Order summary
+                </p>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Original price
+                      </dt>
+                      <dd className="text-base font-medium text-gray-900 dark:text-white">
+                        ${calculateTotal().toFixed(2)}
+                      </dd>
+                    </dl>
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Savings
+                      </dt>
+                      <dd className="text-base font-medium text-green-600">
+                        -$0.00
+                      </dd>
+                    </dl>
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Store Pickup
+                      </dt>
+                      <dd className="text-base font-medium text-gray-900 dark:text-white">
+                        $0.00
+                      </dd>
+                    </dl>
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Tax
+                      </dt>
+                      <dd className="text-base font-medium text-gray-900 dark:text-white">
+                        $0.00
+                      </dd>
+                    </dl>
                   </div>
-                  <div className="flex items-center">
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(item.bookId._id, item.quantity - 1)
-                      }
-                      disabled={item.quantity <= 1}
-                      className="px-2 py-1 bg-gray-300"
+                  <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+                    <dt className="text-base font-bold text-gray-900 dark:text-white">
+                      Total
+                    </dt>
+                    <dd className="text-base font-bold text-gray-900 dark:text-white">
+                      ${calculateTotal().toFixed(2)}
+                    </dd>
+                  </dl>
+                </div>
+                <a
+                  href="#"
+                  className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                >
+                  Proceed to Checkout
+                </a>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    {" "}
+                    or{" "}
+                  </span>
+                  <Link
+                    to="/user-dashboard"
+                    title=""
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
+                  >
+                    Continue Shopping
+                    <svg
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
                     >
-                      -
-                    </button>
-                    <p className="mx-2">{item.quantity}</p>
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(item.bookId._id, item.quantity + 1)
-                      }
-                      className="px-2 py-1 bg-gray-300"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => handleRemoveFromCart(item.bookId._id)}
-                      className="px-4 py-2 bg-red-500 text-white"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-10">
-              <h2 className="text-xl font-bold">
-                Total: ${calculateTotal().toFixed(2)}
-              </h2>
-              <button className="mt-4 px-4 py-2 bg-green-500 text-white font-bold">
-                Proceed to Checkout
-              </button>
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 12H5m14 0-4 4m4-4-4-4"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
             </div>
-          </>
-        )}
-      </div>
+          )}
+        </div>
+      </section>
     </UserLayout>
   );
 };

@@ -9,6 +9,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -28,7 +29,6 @@ const Cart = () => {
         setCartItems(response.data.items);
         setLoading(false);
       } catch (err) {
-        alert();
         setError(err.message || "Failed to load cart items");
         setLoading(false);
       }
@@ -48,6 +48,9 @@ const Cart = () => {
       );
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.bookId._id !== bookId)
+      );
+      setSelectedItems((prevItems) =>
+        prevItems.filter((itemId) => itemId !== bookId)
       );
     } catch (err) {
       console.error("Failed to remove item from cart", err);
@@ -73,19 +76,30 @@ const Cart = () => {
     }
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.bookId.price * item.quantity,
-      0
+  const handleSelectItem = (bookId) => {
+    setSelectedItems((prevSelectedItems) =>
+      prevSelectedItems.includes(bookId)
+        ? prevSelectedItems.filter((item) => item !== bookId)
+        : [...prevSelectedItems, bookId]
     );
   };
 
-  if (loading) {
-    return (
-      <>
-        <ProductLoading />
-      </>
+  const calculateTotal = () => {
+    return cartItems
+      .filter((item) => selectedItems.includes(item.bookId._id))
+      .reduce((total, item) => total + item.bookId.price * item.quantity, 0);
+  };
+
+  const handleProceedToCheckout = () => {
+    const itemsToCheckout = cartItems.filter((item) =>
+      selectedItems.includes(item.bookId._id)
     );
+
+    // Proceed with the checkout process using itemsToCheckout
+  };
+
+  if (loading) {
+    return <ProductLoading />;
   }
 
   if (error) {
@@ -112,6 +126,14 @@ const Cart = () => {
                       className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
                     >
                       <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                        <div>
+                          <input
+                            type="checkbox"
+                            className="rounded-lg w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
+                            checked={selectedItems.includes(item.bookId._id)}
+                            onChange={() => handleSelectItem(item.bookId._id)}
+                          />
+                        </div>
                         <a href="#" className="shrink-0 md:order-1">
                           <img
                             className="h-20 w-20 dark:hidden"
@@ -203,151 +225,66 @@ const Cart = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                          <a
-                            href="#"
-                            className="text-base font-medium text-gray-900 hover:underline dark:text-white"
-                          >
+                        <div className="md:order-2">
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
                             {item.bookId.title}
-                          </a>
-                          <div className="flex items-center gap-4">
-                            <button
-                              type="button"
-                              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white"
-                            >
-                              <svg
-                                className="me-1.5 h-5 w-5"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
-                                />
-                              </svg>
-                              Add to Favorites
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleRemoveFromCart(item.bookId._id)
-                              }
-                              type="button"
-                              className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
-                            >
-                              <svg
-                                className="me-1.5 h-5 w-5"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18 17.94 6M18 18 6.06 6"
-                                />
-                              </svg>
-                              Remove
-                            </button>
-                          </div>
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {item.bookId.author}
+                          </p>
                         </div>
+                      </div>
+                      <div className="flex items-center justify-end gap-4 pt-4 md:pt-6">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFromCart(item.bookId._id)}
+                          className="inline-flex gap-2 text-sm font-medium text-primary-600 hover:text-primary-500"
+                        >
+                          <svg
+                            className="h-4 w-4 text-red-600 dark:text-red-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 6h-15M6.75 6V4.5a2.25 2.25 0 012.25-2.25h6a2.25 2.25 0 012.25 2.25V6m2.25 0v12.75A2.25 2.25 0 0115.75 21h-7.5a2.25 2.25 0 01-2.25-2.25V6h13.5z"
+                            />
+                          </svg>
+                          Remove
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Order summary
-                </p>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                        Original price
-                      </dt>
-                      <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        ${calculateTotal().toFixed(2)}
-                      </dd>
-                    </dl>
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                        Savings
-                      </dt>
-                      <dd className="text-base font-medium text-green-600">
-                        -$0.00
-                      </dd>
-                    </dl>
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                        Store Pickup
-                      </dt>
-                      <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        $0.00
-                      </dd>
-                    </dl>
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                        Tax
-                      </dt>
-                      <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        $0.00
-                      </dd>
-                    </dl>
+              <div className="max-w-42 flex flex-col items-center border border-gray-300 rounded-md p-4 gap-4 bg-white py-4 md:top-16 md:bg-gray-50 lg:top-28 xl:w-80 xl:flex-none xl:bg-transparent">
+                <div className="flex w-full flex-col gap-4">
+                  <div className="flex justify-between text-sm font-medium text-gray-900 dark:text-white">
+                    <p>Subtotal</p>
+                    <p>${calculateTotal()}</p>
                   </div>
-                  <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                    <dt className="text-base font-bold text-gray-900 dark:text-white">
-                      Total
-                    </dt>
-                    <dd className="text-base font-bold text-gray-900 dark:text-white">
-                      ${calculateTotal().toFixed(2)}
-                    </dd>
-                  </dl>
-                </div>
-                <a
-                  href="#"
-                  className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
-                  Proceed to Checkout
-                </a>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                    {" "}
-                    or{" "}
-                  </span>
                   <Link
-                    to="/user-dashboard"
-                    title=""
-                    className="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
+                    onClick={handleProceedToCheckout}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-primary-600 px-4 py-2 text-base font-medium shadow-sm transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
                   >
-                    Continue Shopping
-                    <svg
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 12H5m14 0-4 4m4-4-4-4"
-                      />
-                    </svg>
+                    Proceed to Checkout
                   </Link>
+                  <p className="text-center text-sm font-medium text-gray-500">
+                    Shipping and taxes calculated at checkout.
+                  </p>
+                  <p className="text-center text-sm font-medium text-gray-500">
+                    or{" "}
+                    <Link
+                      to="/user-dashboard"
+                      className="text-primary-600 hover:text-primary-500 underline"
+                    >
+                      Continue Shopping
+                    </Link>
+                  </p>
                 </div>
               </div>
             </div>

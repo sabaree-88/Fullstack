@@ -21,6 +21,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import FavouritesPage from "./component/User/utils/FavouritesPage";
 import Cart from "./component/User/utils/Cart";
 import CartDemo from "./component/User/utils/CartDemo";
+import CategoryList from "./component/Categories/CategoryList";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -103,6 +104,14 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="admin">
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/categories"
+            element={
+              <ProtectedRoute role="admin">
+                <CategoryList />
               </ProtectedRoute>
             }
           />

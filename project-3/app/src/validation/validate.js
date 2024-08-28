@@ -28,7 +28,11 @@ function Validate(value) {
   } else {
     error.price = "";
   }
-
+  if (value.category === "") {
+    error.category = "Enter book category!";
+  } else {
+    error.category = "";
+  }
   if (!value.image) {
     error.image = "Upload an image!";
   } else {

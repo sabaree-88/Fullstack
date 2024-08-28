@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import Validate from "../../validation/validate";
@@ -17,13 +17,28 @@ const AddBook = () => {
     year: "",
     price: "",
     description: "",
+    category: "",
     image: null,
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
-
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/category/get-categories"
+        );
+        setCategories(res.data);
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategory();
+  }, [user]);
   const handleInputs = (event) => {
     const { name, value } = event.target;
     setValues((prev) => ({
@@ -53,7 +68,8 @@ const AddBook = () => {
       error.author === "" &&
       error.year === "" &&
       error.price === "" &&
-      error.description === ""
+      error.description === "" &&
+      error.category === ""
     ) {
       setLoading(true);
       try {
@@ -64,6 +80,7 @@ const AddBook = () => {
         formData.append("price", values.price);
         formData.append("description", values.description);
         formData.append("image", values.image);
+        formData.append("category", values.category);
         const token = localStorage.getItem("token");
         axios.post("http://localhost:3000/book", formData, {
           headers: {
@@ -207,6 +224,29 @@ const AddBook = () => {
                   <span className="text-red-500 text-sm">{error.author}</span>
                 )}
               </div>
+              <div className="relative z-0 w-full mb-5 group">
+                <label htmlFor="select_category" className="sr-only">
+                  Select Category
+                </label>
+                <select
+                  id="select_category"
+                  name="category"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                  value={values.category}
+                  onChange={handleInputs}
+                >
+                  <option value="">Choose a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                {error.category && (
+                  <span className="text-red-500 text-sm">{error.category}</span>
+                )}
+              </div>
+
               <div className="relative z-0 w-full mb-5 group">
                 <input
                   type="file"

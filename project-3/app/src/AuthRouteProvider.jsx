@@ -22,6 +22,9 @@ import FavouritesPage from "./component/User/utils/FavouritesPage";
 import Cart from "./component/User/utils/Cart";
 import CartDemo from "./component/User/utils/CartDemo";
 import CategoryList from "./component/Categories/CategoryList";
+import AddCategory from "./component/Categories/AddCategory";
+import EditCategory from "./component/Categories/EditCategory";
+import DeleteCategory from "./component/Categories/DeleteCategory";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -112,6 +115,30 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="admin">
                 <CategoryList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-categories"
+            element={
+              <ProtectedRoute role="admin">
+                <AddCategory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-categories/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <EditCategory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delete-categories/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <DeleteCategory />
               </ProtectedRoute>
             }
           />

@@ -1,22 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-import { Link, useNavigate } from "react-router-dom";
+import Spinner from "../AssetCopm/utils/Spinner";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 import {
   notifyError,
   notifySuccess,
 } from "../AssetCopm/utils/toastNotification";
-import Spinner from "../AssetCopm/utils/Spinner";
-import axios from "axios";
 
-const AddCategory = () => {
+const EditCategory = () => {
+  const [values, setValues] = useState({
+    image: null,
+  });
   const [name, setName] = useState("");
-  const [image, setImage] = useState(null);
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    axios
+      .get(`http://localhost:3000/category/get-categories/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const category = res.data;
+        setName(category.name);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(true);
+        console.log(err);
+      });
+  }, [id]);
+
+  const handleImage = (e) => {
+    setValues((prev) => ({
+      ...prev,
+      image: e.target.files[0],
+    }));
+  };
   const handleSubmit = async (e) => {
     if (!user) {
       setError("Your are not logged in!");
@@ -24,31 +52,31 @@ const AddCategory = () => {
     }
     e.preventDefault();
     setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("image", image);
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:3000/category/add-categories`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLoading(false);
-      notifySuccess("New Category added successfully");
-      navigate("/categories");
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-      notifyError("Failed to add Category.");
-    }
-  };
 
+    const formData = new FormData();
+    formData.append("name", name);
+    if (values.image) {
+      formData.append("image", values.image);
+    }
+    const token = localStorage.getItem("token");
+    axios
+      .put(`http://localhost:3000/category/edit-categories/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        notifySuccess("Category updated successfully!");
+        navigate("/categories");
+      })
+      .catch((err) => {
+        notifyError("Category updating the book!");
+        setError(err);
+        setLoading(false);
+      });
+  };
   return (
     <Layout>
       {loading ? (
@@ -57,7 +85,7 @@ const AddCategory = () => {
         <div className="flex items-center justify-center min-h-[100vh]">
           <div className="bg-white w-96 p-4 rounded-lg">
             <div className="flex justify-between mb-8">
-              <h2 className="max-w-md font-bold text-2xl">Add Category</h2>
+              <h2 className="max-w-md font-bold text-2xl">Edit Category</h2>
               <div className="flex justify-end items-center">
                 <Link to="/categories">
                   <FaWindowClose
@@ -88,7 +116,8 @@ const AddCategory = () => {
               <div className="relative z-0 w-full mb-5 group">
                 <input
                   type="file"
-                  onChange={(e) => setImage(e.target.files[0])}
+                  accept=".png, .jpg, .jpeg"
+                  onChange={handleImage}
                   name="image"
                   id="floating_image"
                   className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -115,4 +144,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default EditCategory;

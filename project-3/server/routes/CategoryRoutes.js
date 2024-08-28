@@ -21,11 +21,11 @@ router.post(
   createCategory
 );
 router.put(
-  "/edit-categories",
+  "/edit-categories/:id",
   requireAdmin,
   upload.single("image"),
   updateCategory
 );
-router.delete("/delete-categories", requireAdmin, deleteCategory);
+router.delete("/delete-categories/:id", requireAdmin, deleteCategory);
 
 export default router;

@@ -17,6 +17,7 @@ const EditBook = () => {
     year: "",
     price: "",
     description: "",
+    category: "",
     image: null,
   });
   const [error, setError] = useState({});
@@ -24,7 +25,7 @@ const EditBook = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
-
+  const [categories, setCategories] = useState([]);
   useEffect(() => {
     setLoading(true);
     const token = localStorage.getItem("token");
@@ -40,6 +41,7 @@ const EditBook = () => {
           year: book.year,
           price: book.price,
           description: book.description,
+          category: book.category,
         });
         setLoading(false);
       })
@@ -47,6 +49,17 @@ const EditBook = () => {
         setLoading(true);
         console.log(err);
       });
+    const fetchCategory = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/category/get-categories"
+        );
+        setCategories(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategory();
   }, [id]);
 
   const handleInputs = (e) => {
@@ -77,7 +90,8 @@ const EditBook = () => {
       error.author === "" &&
       error.year === "" &&
       error.price === "" &&
-      error.description === ""
+      error.description === "" &&
+      error.category === ""
     ) {
       setLoading(true);
       const formData = new FormData();
@@ -86,6 +100,7 @@ const EditBook = () => {
       formData.append("price", values.price);
       formData.append("year", values.year);
       formData.append("description", values.description);
+      formData.append("category", values.category);
       if (values.image) {
         formData.append("image", values.image);
       }
@@ -233,6 +248,28 @@ const EditBook = () => {
                 </label>
                 {error.author && (
                   <span className="text-red-500 text-sm">{error.author}</span>
+                )}
+              </div>
+              <div className="relative z-0 w-full mb-5 group">
+                <label htmlFor="select_category" className="sr-only">
+                  Select Category
+                </label>
+                <select
+                  id="select_category"
+                  name="category"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                  value={values.category}
+                  onChange={handleInputs}
+                >
+                  <option value="">Choose a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                {error.category && (
+                  <span className="text-red-500 text-sm">{error.category}</span>
                 )}
               </div>
               <div className="relative z-0 w-full mb-5 group">

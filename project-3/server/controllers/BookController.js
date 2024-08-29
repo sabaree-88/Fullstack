@@ -97,7 +97,10 @@ export const getBooks = async (req, res) => {
   const limit = parseInt(req.query.limit);
   const skip = (page - 1) * limit;
   try {
-    const books = await Books.find().skip(skip).limit(limit);
+    const books = await Books.find()
+      .populate("category")
+      .skip(skip)
+      .limit(limit);
     const total = await Books.countDocuments();
     res.json({ books, total, page, pages: Math.ceil(total / limit) });
   } catch (err) {
@@ -108,7 +111,7 @@ export const getBooks = async (req, res) => {
 export const getBookByID = async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await Books.findById(id);
+    const book = await Books.findById(id).populate("category");
     if (!book) {
       return res.status(404).send({ message: "Book not found!" });
     }

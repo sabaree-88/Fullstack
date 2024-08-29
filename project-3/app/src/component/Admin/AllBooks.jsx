@@ -138,30 +138,36 @@ const AllBooks = () => {
                     >
                       Book Title
                     </th>
+                    <th scope="col" className="px-6 py-3 bg-gray-50 ">
+                      Category
+                    </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                      className="px-6 py-3 bg-slate-900 text-white"
                     >
                       Price
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 bg-slate-900 text-white"
+                      className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
                     >
                       Published Year
-                    </th>
-                    <th scope="col" className="px-6 py-3 bg-gray-50">
-                      Author
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 bg-slate-900 text-white"
+                    >
+                      Author
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
                     >
                       Description
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-center bg-gray-50"
+                      className="px-6 py-3 bg-slate-900 text-white"
                     >
                       Action
                     </th>
@@ -211,17 +217,20 @@ const AllBooks = () => {
                       <td className="px-6 py-3 bg-slate-900 text-white">
                         {item.title}
                       </td>
-                      <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
-                        {item.price}
+                      <td className="px-6 py-3 bg-gray-50 ">
+                        {item.category.name}
                       </td>
                       <td className="px-6 py-4 bg-slate-900 dark:bg-gray-800 text-white">
-                        {item.year}
+                        {item.price}
                       </td>
-                      <td className="px-6 py-3 bg-gray-50">{item.author}</td>
-                      <td className="px-6 py-3 bg-slate-900 min-h-4 overflow-y-auto text-white">
+                      <td className="px-6 py-3 bg-gray-50">{item.year}</td>
+                      <td className="px-6 py-4 bg-slate-900 dark:bg-gray-800 text-white">
+                        {item.author}
+                      </td>
+                      <td className="px-6 py-3 bg-gray-50">
                         {item.description.substring(0, 80) + "..."}
                       </td>
-                      <td className="px-6 py-4 bg-gray-50">
+                      <td className="px-6 py-4 bg-slate-900 dark:bg-gray-800 text-white">
                         <span className="flex gap-6 items-center justify-center">
                           <Link to={`/view/${item._id}`}>
                             <FaRegEye className="text-2xl text-green-600" />

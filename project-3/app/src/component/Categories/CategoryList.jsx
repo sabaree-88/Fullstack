@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getCategories, deleteCategory } from "./categoryService.js";
 import Layout from "../AssetCopm/AdminLayout/Layout.jsx";
 import { Link } from "react-router-dom";
 import axios from "axios";

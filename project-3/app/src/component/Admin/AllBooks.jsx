@@ -43,6 +43,7 @@ const AllBooks = () => {
         }
       );
       setData(res.data.books);
+      console.log(res.data.books);
       setTotalPages(res.data.pages);
       setTotalEntries(res.data.total);
       setLoading(false);
@@ -218,7 +219,7 @@ const AllBooks = () => {
                         {item.title}
                       </td>
                       <td className="px-6 py-3 bg-gray-50 ">
-                        {item.category.name}
+                        {item.category?.name}
                       </td>
                       <td className="px-6 py-4 bg-slate-900 dark:bg-gray-800 text-white">
                         {item.price}

@@ -25,6 +25,7 @@ import CategoryList from "./component/Categories/CategoryList";
 import AddCategory from "./component/Categories/AddCategory";
 import EditCategory from "./component/Categories/EditCategory";
 import DeleteCategory from "./component/Categories/DeleteCategory";
+import Category from "./component/User/utils/Category";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -197,10 +198,10 @@ const AuthRouteProvider = () => {
             }
           />
           <Route
-            path="/cart-demo"
+            path="/category"
             element={
               <ProtectedRoute role="user">
-                <CartDemo />
+                <Category />
               </ProtectedRoute>
             }
           />

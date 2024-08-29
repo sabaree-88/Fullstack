@@ -150,3 +150,16 @@ export const searchBooks = async (req, res) => {
     res.status(500).json({ message: "Error searching for books", error });
   }
 };
+
+export const getBooksByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+
+  try {
+    const filter = categoryId === "all" ? {} : { category: categoryId };
+    const books = await Books.find(filter).populate("category");
+
+    res.json({ books });
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving books", error });
+  }
+};

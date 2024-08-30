@@ -23,14 +23,17 @@ const Category = () => {
   }, []);
 
   const fetchProducts = async (categoryId) => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `http://localhost:3000/book/category/${categoryId}`
       );
       setProducts(response.data.books);
       setTotalPages(response.data.pages);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setLoading(false);
     }
   };
 
@@ -79,7 +82,10 @@ const Category = () => {
 
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4">
           {products.map((product) => (
-            <div key={product._id} className="border border-gray-600 p-3 rounded-lg">
+            <div
+              key={product._id}
+              className="border border-gray-600 p-3 rounded-lg"
+            >
               <img
                 className="h-48 max-w-48 rounded-lg"
                 src={`http://localhost:3000${product.imagePath}`}

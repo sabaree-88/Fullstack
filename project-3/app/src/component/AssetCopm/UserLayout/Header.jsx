@@ -48,14 +48,17 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <a className="hover:text-gray-200" href="#">
+                  <Link
+                    className="hover:text-gray-200"
+                    to={"/product-collection"}
+                  >
                     Collections
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="hover:text-gray-200" href="#">
+                  <Link className="hover:text-gray-200" to={"/contact-us"}>
                     Contact Us
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <div className="hidden xl:flex items-center space-x-5">

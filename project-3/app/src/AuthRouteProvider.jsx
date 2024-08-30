@@ -26,6 +26,8 @@ import AddCategory from "./component/Categories/AddCategory";
 import EditCategory from "./component/Categories/EditCategory";
 import DeleteCategory from "./component/Categories/DeleteCategory";
 import Category from "./component/User/utils/Category";
+import ProductCollections from "./component/User/ProductCollections";
+import ContactUs from "./component/User/ContactUs";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -202,6 +204,22 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <Category />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/product-collection"
+            element={
+              <ProtectedRoute role="user">
+                <ProductCollections />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contact-us"
+            element={
+              <ProtectedRoute role="user">
+                <ContactUs />
               </ProtectedRoute>
             }
           />

@@ -1,114 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
+
 import { Link } from "react-router-dom";
 import CardSkeleton from "../AssetCopm/utils/skeleton/CardSkeleton";
-import {
-  notifySuccess,
-  notifyError,
-} from "../AssetCopm/utils/toastNotification.js";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout.jsx";
+import useBooks from "../../hooks/useBooks";
 
 const ProductCollections = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [favourites, setFavourites] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-
-        const booksRes = await axios.get(`http://localhost:3000/book`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(booksRes.data.books);
-
-        const favRes = await axios.get(
-          `http://localhost:3000/favourites/get-favourites`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setFavourites(favRes.data || []);
-
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "Something went wrong");
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
-  const handleFavouriteClick = async (bookId) => {
-    const token = localStorage.getItem("token");
-    const isFav = isFavourite(bookId);
-
-    try {
-      if (isFav) {
-        await axios.post(
-          `http://localhost:3000/favourites/remove-favourites`,
-          { bookId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        notifyError("Book removed from favorites");
-        setFavourites((prevFavourites) =>
-          prevFavourites.filter((fav) => fav._id !== bookId)
-        );
-      } else {
-        await axios.post(
-          `http://localhost:3000/favourites/add-favourites`,
-          { bookId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        notifySuccess("Book added to favorites");
-        setFavourites((prevFavourites) => [...prevFavourites, { _id: bookId }]);
-      }
-    } catch (err) {
-      console.error("Failed to update favourites", err);
-      notifyError("Failed to add favorites.");
-      setFavourites((prevFavourites) =>
-        isFav
-          ? [...prevFavourites, { _id: bookId }]
-          : prevFavourites.filter((fav) => fav._id !== bookId)
-      );
-    }
-  };
-
-  const handleAddToCart = async (bookId) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      await axios.post(
-        `http://localhost:3000/cart/add-to-cart`,
-        { bookId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCartItems((prevCartItems) => [...prevCartItems, { _id: bookId }]);
-    } catch (err) {
-      console.error("Failed to add to cart", err);
-    }
-  };
-
-  const isFavourite = (bookId) => {
-    return favourites && favourites.some((fav) => fav._id === bookId);
-  };
-
-  const isInCart = (bookId) => {
-    return cartItems && cartItems.some((item) => item._id === bookId);
-  };
+  const limit = 10;
+  const {
+    data,
+    favourites,
+    cartItems,
+    loading,
+    error,
+    handleFavouriteClick,
+    handleAddToCart,
+    isFavourite,
+    isInCart,
+  } = useBooks(user);
 
   if (error) {
     return (

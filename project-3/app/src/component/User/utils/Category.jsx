@@ -1,50 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
 import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
+import useCategoryProducts from "../../../hooks/useCategoryProducts";
+
 const Category = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/category/get-categories"
-        );
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const fetchProducts = async (categoryId) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/book/category/${categoryId}`
-      );
-      setProducts(response.data.books);
-      setTotalPages(response.data.pages);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setLoading(false);
-    }
-  };
-
-  const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
-    fetchProducts(categoryId);
-  };
-
-  useEffect(() => {
-    fetchProducts(selectedCategory);
-  }, [selectedCategory]);
+  const {
+    categories,
+    selectedCategory,
+    products,
+    loading,
+    handleCategoryClick,
+  } = useCategoryProducts();
 
   return (
     <UserLayout>

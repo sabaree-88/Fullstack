@@ -29,7 +29,6 @@ const ProductOverview = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(res.data);
         setData(res.data);
         setReviews(res.data.reviews);
         setLoading(false);
@@ -109,6 +108,9 @@ const ProductOverview = () => {
                     {data.description}
                   </p>
                 </div>
+              </div>
+              <div>
+                <Ratings reviews={reviews} />
                 <ReviewForm bookId={id} onReviewSubmit={handleReviewSubmit} />
                 <ReviewsList reviews={reviews} />
               </div>

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-const useBooks = (user, limit) => {
+
+const useBooks = (user, limit, page) => {
   const [data, setData] = useState([]);
   const [favourites, setFavourites] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +18,7 @@ const useBooks = (user, limit) => {
         const token = localStorage.getItem("token");
 
         const booksRes = await axios.get(
-          `http://localhost:3000/book?limit=${limit}`,
+          `http://localhost:3000/book?limit=${limit}&page=${page}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -24,17 +26,29 @@ const useBooks = (user, limit) => {
           }
         );
 
-        setData(booksRes.data.books);
+        const newBooks = booksRes.data.books;
+        setHasMore(newBooks.length > 0);
 
-        const favRes = await axios.get(
-          `http://localhost:3000/favourites/get-favourites`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setFavourites(favRes.data || []);
+        setData((prevData) => {
+          const combinedData = [...prevData, ...newBooks];
+          const uniqueData = combinedData.filter(
+            (book, index, self) =>
+              index === self.findIndex((b) => b._id === book._id)
+          );
+          return uniqueData;
+        });
+
+        if (page === 1) {
+          const favRes = await axios.get(
+            `http://localhost:3000/favourites/get-favourites`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setFavourites(favRes.data || []);
+        }
 
         setLoading(false);
       } catch (err) {
@@ -44,7 +58,7 @@ const useBooks = (user, limit) => {
     };
 
     fetchData();
-  }, [user, limit]);
+  }, [user, limit, page]);
 
   const handleFavouriteClick = async (bookId) => {
     const token = localStorage.getItem("token");
@@ -70,7 +84,7 @@ const useBooks = (user, limit) => {
       }
     } catch (err) {
       console.error("Failed to update favourites", err);
-      setError("Failed to add/remove favorites.");
+      setError("Failed to add/remove favourites.");
     }
   };
 
@@ -104,6 +118,7 @@ const useBooks = (user, limit) => {
     cartItems,
     loading,
     error,
+    hasMore,
     handleFavouriteClick,
     handleAddToCart,
     isFavourite,

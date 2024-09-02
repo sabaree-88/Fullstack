@@ -35,6 +35,14 @@ const UserSchema = mongoose.Schema({
       ref: "Books",
     },
   ],
+  resetOTP: {
+    type: String,
+    required: false,
+  },
+  resetToken: {
+    type: String,
+    required: false,
+  },
 });
 
 UserSchema.statics.signUp = async function (

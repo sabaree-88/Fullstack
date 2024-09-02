@@ -83,8 +83,8 @@ const useBooks = (user, limit, page) => {
         setFavourites((prevFavourites) => [...prevFavourites, { _id: bookId }]);
       }
     } catch (err) {
-      console.error("Failed to update favourites", err);
-      setError("Failed to add/remove favourites.");
+      console.error("Failed to update favorites", err);
+      setError("Failed to add/remove favorites.");
     }
   };
 

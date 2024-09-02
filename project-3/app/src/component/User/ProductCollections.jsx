@@ -8,7 +8,7 @@ import useBooks from "../../hooks/useBooks";
 const ProductCollections = () => {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const limit = 4;
 
   const {
     data,

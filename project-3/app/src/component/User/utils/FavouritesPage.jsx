@@ -1,58 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import CardSkeleton from "../../AssetCopm/utils/skeleton/CardSkeleton";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
+import useBooks from "../../../hooks/useBooks";
+import useFav from "../../../hooks/useFav";
 
 const FavouritesPage = () => {
-  const [favourites, setFavourites] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchFavourites = async () => {
-      if (!user) return;
-
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-
-        const favRes = await axios.get(
-          `http://localhost:3000/favourites/get-favourites`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setFavourites(favRes.data || []);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "Something went wrong");
-        setLoading(false);
-      }
-    };
-
-    fetchFavourites();
-  }, [user]);
-
-  const removeFavourite = async (bookId) => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.post(
-        `http://localhost:3000/favourites/remove-favourites`,
-        { bookId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setFavourites((prevFavourites) =>
-        prevFavourites.filter((fav) => fav._id !== bookId)
-      );
-    } catch (err) {
-      console.error("Failed to remove favourite", err);
-    }
-  };
+  const { loading, favourites, error, removeFavourite } = useFav(user);
+  const {
+    handleAddToCart,
+    isInCart,
+  } = useBooks(user);
 
   if (loading) {
     return (
@@ -89,10 +49,10 @@ const FavouritesPage = () => {
                 No favourites added yet.
               </p>
             ) : (
-              <div className="mt-6 space-y-12 lg:grid lg:grid-cols-4 lg:gap-x-6 lg:space-y-0">
-                {favourites.map((item) => (
+              <div className="mt-6 space-y-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:space-y-0">
+                {favourites.map((item, index) => (
                   <div
-                    key={item._id}
+                    key={index}
                     className="group relative border-2 p-3 rounded-md"
                   >
                     <div className="absolute z-10 top-4 right-2">
@@ -142,6 +102,34 @@ const FavouritesPage = () => {
                     <p className="font-normal text-sm text-gray-900">
                       {item.description.substring(0, 80) + "....."}
                     </p>
+                    <div className="flex justify-between mt-3">
+                      <button className="text-white font-semibold bg-slate-800 px-3 py-1 rounded-sm">
+                        Buy Now
+                      </button>
+                      <button
+                        className="relative z-10"
+                        onClick={() => handleAddToCart(item._id)}
+                        disabled={isInCart(item._id)}
+                      >
+                        <svg
+                          className="-ms-2 me-2 h-7 w-7"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={28}
+                          height={28}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

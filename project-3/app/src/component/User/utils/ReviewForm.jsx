@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useNavigate, useParams } from "react-router-dom";
 const ReviewForm = ({ bookId, onReviewSubmit }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
+  const { id } = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -25,6 +26,7 @@ const ReviewForm = ({ bookId, onReviewSubmit }) => {
       setRating(0);
       setComment("");
       onReviewSubmit(res.data);
+      navigate(`/book-details/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to submit review");
     }

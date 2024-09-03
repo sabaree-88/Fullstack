@@ -248,9 +248,31 @@ export const ForgetPassword = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: "Password Reset OTP",
-      text: `Your password reset OTP is: ${otp}\n\n
-        Please enter this OTP to reset your password.\n\n
-        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      html: ` <table role="presentation"
+    style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: white;">
+    <tbody>
+      <tr>
+        <td align="center" style="padding: 1rem 2rem; vertical-align: top; width: 100%;">
+          <table role="presentation" style="max-width: 600px; border-collapse: collapse; border: 0px; border-spacing: 0px; text-align: left;">
+            <tbody>
+              <tr>
+                <td style="padding: 40px 0px 0px;">
+                  <div style="padding: 20px; background-color: rgb(219 218 218);">
+                    <div style="color: rgb(0, 0, 0); text-align: left;">
+                      <h1 style="margin: 1rem 0">Verification code</h1>
+                      <p style="padding-bottom: 16px">Please use the verification code below to reset password.</p>
+                      <p style="padding-bottom: 16px"><strong style="font-size: 130%">${otp}</strong></p>
+                      <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>`,
     };
 
     await transporter.sendMail(mailOptions);

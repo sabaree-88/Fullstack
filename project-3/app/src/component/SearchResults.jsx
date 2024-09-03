@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import UserLayout from "./AssetCopm/UserLayout/UserLayout";
-
+import { useAuth } from "../context/AuthContext";
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
@@ -10,7 +10,7 @@ const useQuery = () => {
 const SearchResults = () => {
   const [results, setResults] = useState([]);
   const query = useQuery().get("query");
-
+  const { user } = useAuth();
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
@@ -30,30 +30,9 @@ const SearchResults = () => {
   }, [query]);
 
   return (
-    <UserLayout>
-      <div>
-        <h2>Search Results for "{query}"</h2>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {results.length > 0 ? (
-            results.map((item) => (
-              <div
-                key={item._id}
-                className="w-full px-2 py-1 rounded-md shadow-md shadow-slate-600"
-              >
-                <h3 className="font-semibold text-xl">
-                  {item.title ? item.title : item.name}
-                </h3>{" "}
-                {/* Title for books, name for categories */}
-                {item.description && <p>{item.description}</p>}{" "}
-                {/* Description only for books */}
-              </div>
-            ))
-          ) : (
-            <p>No results found.</p>
-          )}
-        </div>
-      </div>
-    </UserLayout>
+    <>
+      <h1>hi</h1>
+    </>
   );
 };
 

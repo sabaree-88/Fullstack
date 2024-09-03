@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useUser } from "../../../context/UserContext";
+import SearchBar from "../../Search";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -61,6 +62,7 @@ const Header = () => {
                   </Link>
                 </li>
               </ul>
+              <SearchBar />
               <div className="hidden xl:flex items-center space-x-5">
                 <Link className="hover:text-gray-200" to="/favourites">
                   <svg

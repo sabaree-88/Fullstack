@@ -10,6 +10,7 @@ import favouritesRoutes from "./routes/FavouritesRoutes.js";
 import cartRouter from "./routes/CartRoutes.js";
 import categoryRouter from "./routes/CategoryRoutes.js";
 import reviewRoutes from "./routes/ReviewRoutes.js";
+import searchRoutes from "./routes/SearchRoutes.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,7 @@ app.use("/favourites", favouritesRoutes);
 app.use("/cart", cartRouter);
 app.use("/category", categoryRouter);
 app.use("/reviews", reviewRoutes);
+app.use("/api", searchRoutes);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));

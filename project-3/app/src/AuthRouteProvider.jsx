@@ -28,6 +28,7 @@ import DeleteCategory from "./component/Categories/DeleteCategory";
 import Category from "./component/User/utils/Category";
 import ProductCollections from "./component/User/ProductCollections";
 import ContactUs from "./component/User/ContactUs";
+import SearchResults from "./component/SearchResults";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ const AuthRouteProvider = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
-
+      <Route path="/search-results" element={<SearchResults />} />
       {user && user.role === "admin" && (
         <>
           <Route

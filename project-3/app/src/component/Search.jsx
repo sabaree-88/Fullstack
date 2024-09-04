@@ -7,10 +7,13 @@ const SearchBar = () => {
   const [results, setResults] = useState([]);
   const handleSearch = async () => {
     try {
+      setResults([]);
+
       const response = await axios.get(
         `http://localhost:3000/api/search?query=${query}`
       );
       const newBooks = response.data.results;
+
       setResults((prevData) => {
         const combinedData = [...prevData, ...newBooks];
         const uniqueData = combinedData.filter(
@@ -71,17 +74,19 @@ const SearchBar = () => {
           <h2>Search Results for "{query}"</h2>
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-3">
             {results.length > 0 ? (
-              results.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-full px-2 py-1 rounded-md shadow-md shadow-slate-600"
-                >
-                  <h3 className="font-semibold text-xl">
-                    {item.title ? item.title : item.name}
-                  </h3>{" "}
-                  {item.description && <p>{item.description}</p>}{" "}
-                </div>
-              ))
+              results.map((item, index) =>
+                item && item._id ? (
+                  <div
+                    key={index}
+                    className="w-full px-2 py-1 rounded-md shadow-md shadow-slate-600"
+                  >
+                    <h3 className="font-semibold text-xl">
+                      {item.title ? item.title : item.name}
+                    </h3>{" "}
+                    {item.description && <p>{item.description}</p>}{" "}
+                  </div>
+                ) : null
+              )
             ) : (
               <p>No results found.</p>
             )}

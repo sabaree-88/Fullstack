@@ -2,15 +2,15 @@ import React from "react";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import Collections from "./Collections";
 import Banner from "./Banner";
-import ShopByCategory from "./blocks/ShopByCategory";
-import PromoSection from "./blocks/PromoSection";
+// import ShopByCategory from "./blocks/ShopByCategory";
+// import PromoSection from "./blocks/PromoSection";
 const UserDashboard = () => {
   return (
     <>
       <UserLayout>
-        <PromoSection />
+        {/* <PromoSection /> */}
         <Banner />
-        <ShopByCategory />
+        {/* <ShopByCategory /> */}
         <Collections />
       </UserLayout>
     </>

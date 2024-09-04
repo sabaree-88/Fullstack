@@ -6,20 +6,40 @@ import SearchBar from "../../Search";
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { getUserId } = useUser();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      const fetchProfile = async () => {
+        try {
+          const res = await getUserId(user._id);
+          setProfile(res);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
   const handleLogout = () => {
     logout();
   };
-  const { getUserId } = useUser();
-  const [profile, setProfile] = useState([]);
-  const id = user._id;
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await getUserId(id);
-      setProfile(res);
-    };
-    fetchProfile();
-  }, [user]);
-  const profileImage = `http://localhost:3000/${profile.profileImage}`;
+
+  const profileImage = profile?.profileImage
+    ? `http://localhost:3000/${profile.profileImage}`
+    : "/favico.png";
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="flex flex-wrap place-items-center overflow-hidden">
@@ -126,7 +146,7 @@ const Header = () => {
                 >
                   <span className="h-8 w-8 rounded-full bg-gray-400 focus:outline-2 focus:outline-white overflow-hidden">
                     <img
-                      src={user ? profileImage : "/favico.png"}
+                      src={profileImage}
                       alt="user-img"
                       className="w-full h-full object-cover"
                     />
@@ -172,17 +192,18 @@ const Header = () => {
             </a>
             <a className="navbar-burger self-center mr-12 xl:hidden" href="#">
               <svg
-                className="h-8 w-8 text-red-500"
-                viewBox="0 0 24 24"
+                className="h-6 w-6 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
                 fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
               >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               </svg>
             </a>
           </nav>

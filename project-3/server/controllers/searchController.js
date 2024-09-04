@@ -1,30 +1,55 @@
 import { Books } from "../models/BookModel.js";
 import Category from "../models/CategoryModel.js";
+
 export const searchController = async (req, res) => {
   try {
-    const { query } = req.query;
-    const books = await Books.find({
+    const { query, category, author, minPrice, maxPrice, sortBy, sortOrder } =
+      req.query;
+
+    let searchConditions = {
       $or: [
         { title: { $regex: query, $options: "i" } },
         { author: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
       ],
-    });
+    };
 
-    const categories = await Category.find({
-      name: { $regex: query, $options: "i" },
-    });
-
-    let categoryBooks = [];
-    if (categories.length > 0) {
-      const categoryIds = categories.map((cat) => cat._id);
-      categoryBooks = await Books.find({ category: { $in: categoryIds } });
+    if (category) {
+      const categoryObj = await Category.findOne({
+        name: { $regex: category, $options: "i" },
+      });
+      if (categoryObj) {
+        searchConditions.category = categoryObj._id;
+      } else {
+        return res.status(200).json({
+          success: true,
+          results: [],
+        });
+      }
     }
 
-    const results = [...books, ...categoryBooks];
+    if (author) {
+      searchConditions.author = { $regex: author, $options: "i" };
+    }
+
+    if (minPrice || maxPrice) {
+      searchConditions.price = {};
+      if (minPrice) searchConditions.price.$gte = parseFloat(minPrice);
+      if (maxPrice) searchConditions.price.$lte = parseFloat(maxPrice);
+    }
+
+    let sortOptions = {};
+    if (sortBy) {
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+    }
+
+    const books = await Books.find(searchConditions)
+      .populate("category")
+      .sort(sortOptions);
+
     res.status(200).json({
       success: true,
-      results,
+      results: books,
     });
   } catch (error) {
     res.status(500).json({

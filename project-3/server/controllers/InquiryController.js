@@ -29,10 +29,23 @@ export const storeInquiry = async (req, res) => {
 export const getInquiry = async (req, res) => {
   try {
     const inquiries = await Inquiry.find({}).sort({ date: -1 });
-    return res.status(200).json({ inquiries });
+    const count = await Inquiry.find({}).countDocuments();
+    return res.status(200).json({ inquiries, count });
   } catch (error) {
     return res.status(500).json({
       message: "An error occurred while fetching inquiries.",
+    });
+  }
+};
+
+export const removeInquiry = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const inquiries = await Inquiry.findByIdAndDelete(id);
+    return res.status(200).json({ inquiries });
+  } catch (error) {
+    return res.status(500).json({
+      message: "An error occurred while removing inquiries.",
     });
   }
 };

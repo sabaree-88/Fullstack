@@ -1,13 +1,29 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 const SideNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const [inquiryCount, setInquiryCount] = useState(0);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
+  const fetchInquiryCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/inquiry/get-inquiry"
+      );
+
+      setInquiryCount(response.data.count);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInquiryCount();
+  }, []);
   return (
     <>
       <div
@@ -92,14 +108,14 @@ const SideNav = () => {
               <i className="bx bx-envelope mr-3 text-lg" />
               <span className="text-sm">Messages</span>
               <span className="md:block px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-green-600 bg-green-200 rounded-full">
-                2 New
+                {inquiryCount > 0 ? `${inquiryCount} New` : "0"}
               </span>
             </Link>
           </li>
         </ul>
         <Outlet />
       </div>
-      
+
       {isOpen && (
         <div
           className="fixed top-0 left-0 w-full h-full bg-black/50 z-40 md:hidden sidebar-overlay"

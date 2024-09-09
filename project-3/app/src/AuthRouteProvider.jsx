@@ -31,6 +31,9 @@ import ContactUs from "./component/User/ContactUs";
 // import SearchResults from "./component/SearchResults";
 import SearchBar from "./component/Search";
 import Message from "./component/Admin/Message";
+import CheckoutPage from "./component/Order/CheckoutPage";
+import OrderSummaryPage from "./component/Order/OrderSummaryPage";
+import OrderHistoryPage from "./component/Order/OrderHistoryPage";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -42,6 +45,10 @@ const AuthRouteProvider = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/search" element={<SearchBar />}></Route>
+
+      <Route path="/order-summary" component={<OrderSummaryPage />} />
+      <Route path="/order-history" component={<OrderHistoryPage />} />
+
       {user && user.role === "admin" && (
         <>
           <Route
@@ -231,6 +238,14 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <ContactUs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute role="user">
+                <CheckoutPage />
               </ProtectedRoute>
             }
           />

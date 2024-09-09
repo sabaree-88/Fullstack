@@ -268,7 +268,8 @@ const Cart = () => {
                     <p>${calculateTotal()}</p>
                   </div>
                   <Link
-                    onClick={handleProceedToCheckout}
+                    // onClick={handleProceedToCheckout}
+                    to={"/checkout"}
                     className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-primary-600 px-4 py-2 text-base font-medium shadow-sm transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
                   >
                     Proceed to Checkout

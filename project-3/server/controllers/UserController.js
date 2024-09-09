@@ -76,7 +76,7 @@ export const getUsers = async (req, res) => {
 export const getUsersById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("address");
     if (!user) {
       return res.status(400).json({ message: "User not found!" });
     }
@@ -120,94 +120,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// const createResetToken = (email) => {
-//   return jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
-// };
-
-// export const ForgetPassword = async (req, res) => {
-//   const { email } = req.body;
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(400)
-//         .json({ message: "User with this email does not exist." });
-//     }
-
-//     const token = createResetToken(user.email);
-
-//     const transporter = nodemailer.createTransport({
-//       service: "Gmail",
-//       host: "smtp.gmail.com",
-//       port: 465,
-//       secure: true,
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     const mailOptions = {
-//       from: process.env.EMAIL_USER,
-//       to: user.email,
-//       subject: "Password Reset",
-//       text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-//         Please click on the following link, or paste this into your browser to complete the process:\n\n
-//         http://localhost:5173/reset-password/${token}\n\n
-//         If you did not request this, please ignore this email and your password will remain unchanged.\n`,
-//     };
-
-//     await transporter.sendMail(mailOptions);
-//     res.status(200).json({ message: "Recovery email sent." });
-//   } catch (error) {
-//     console.error("Error sending recovery email:", error);
-//     res.status(500).json({ message: "Error sending recovery email." });
-//   }
-// };
-
-// export const ResetPassword = async (req, res) => {
-//   const { token } = req.params;
-//   const { password } = req.body;
-
-//   try {
-//     const decoded = jwt.verify(token, process.env.SECRET);
-
-//     const user = await User.findOne({ email: decoded.email });
-//     if (!user) {
-//       return res.status(400).json({ message: "User not found." });
-//     }
-
-//     if (password && password.trim() !== "") {
-//       const salt = await bcrypt.genSalt(10);
-//       user.password = await bcrypt.hash(password, salt);
-//     } else {
-//       return res.status(400).json({ message: "Password is required." });
-//     }
-
-//     await user.save();
-//     res.status(200).json({ message: "Password has been updated." });
-//   } catch (error) {
-//     console.error("Error resetting password:", error);
-//     if (error.name === "TokenExpiredError") {
-//       return res
-//         .status(400)
-//         .json({ message: "Password reset token has expired." });
-//     }
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-
-// export const ResetPasswordPage = (req, res) => {
-//   const { token } = req.params;
-//   res.sendFile(path.join(__dirname, "..", "..", "app", "dist", "index.html"));
-// };
-
-//testing
-
-const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
 const createResetToken = (email) => {
   return jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
 };
@@ -222,17 +134,7 @@ export const ForgetPassword = async (req, res) => {
         .json({ message: "User with this email does not exist." });
     }
 
-    const otp = generateOTP();
     const token = createResetToken(user.email);
-
-    user.resetOTP = otp;
-    user.resetToken = token;
-    console.log("Before saving user:", user);
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { resetOTP: otp, resetToken: token } }
-    );
-    console.log("After saving user:", user);
 
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -244,72 +146,33 @@ export const ForgetPassword = async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Password Reset OTP",
-      html: ` <table role="presentation"
-    style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: white;">
-    <tbody>
-      <tr>
-        <td align="center" style="padding: 1rem 2rem; vertical-align: top; width: 100%;">
-          <table role="presentation" style="max-width: 600px; border-collapse: collapse; border: 0px; border-spacing: 0px; text-align: left;">
-            <tbody>
-              <tr>
-                <td style="padding: 40px 0px 0px;">
-                  <div style="padding: 20px; background-color: rgb(219 218 218);">
-                    <div style="color: rgb(0, 0, 0); text-align: left;">
-                      <h1 style="margin: 1rem 0">Verification code</h1>
-                      <p style="padding-bottom: 16px">Please use the verification code below to reset password.</p>
-                      <p style="padding-bottom: 16px"><strong style="font-size: 130%">${otp}</strong></p>
-                      <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </tbody>
-  </table>`,
+      subject: "Password Reset",
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process:\n\n
+        http://localhost:5173/reset-password/${token}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "OTP sent to your email." });
+    res.status(200).json({ message: "Recovery email sent." });
   } catch (error) {
-    console.error("Error sending OTP:", error);
-    res.status(500).json({ message: "Error sending OTP." });
-  }
-};
-
-export const VerifyOTP = async (req, res) => {
-  const { email, otp } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found." });
-    }
-
-    if (!user.resetOTP) {
-      return res.status(400).json({ message: "OTP not found." });
-    }
-
-    if (user.resetOTP.toString() !== otp) {
-      return res.status(400).json({ message: "Invalid OTP." });
-    }
-
-    res.status(200).json({ message: "OTP is valid." });
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error sending recovery email:", error);
+    res.status(500).json({ message: "Error sending recovery email." });
   }
 };
 
 export const ResetPassword = async (req, res) => {
-  const { email, password } = req.body;
+  const { token } = req.params;
+  const { password } = req.body;
+
   try {
-    const user = await User.findOne({ email });
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    const user = await User.findOne({ email: decoded.email });
     if (!user) {
       return res.status(400).json({ message: "User not found." });
     }
@@ -317,18 +180,155 @@ export const ResetPassword = async (req, res) => {
     if (password && password.trim() !== "") {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
-      user.resetOTP = null;
-      user.resetToken = null;
-      await user.save();
-      res.status(200).json({ message: "Password has been updated." });
     } else {
       return res.status(400).json({ message: "Password is required." });
     }
+
+    await user.save();
+    res.status(200).json({ message: "Password has been updated." });
   } catch (error) {
     console.error("Error resetting password:", error);
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json({ message: "Password reset token has expired." });
+    }
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const ResetPasswordPage = (req, res) => {
+  const { token } = req.params;
+  res.sendFile(path.join(__dirname, "..", "..", "app", "dist", "index.html"));
+};
+
+//testing
+
+// const generateOTP = () => {
+//   return Math.floor(100000 + Math.random() * 900000).toString();
+// };
+
+// const createResetToken = (email) => {
+//   return jwt.sign({ email }, process.env.SECRET, { expiresIn: "1h" });
+// };
+
+// export const ForgetPassword = async (req, res) => {
+//   const { email } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res
+//         .status(400)
+//         .json({ message: "User with this email does not exist." });
+//     }
+
+//     const otp = generateOTP();
+//     const token = createResetToken(user.email);
+
+//     user.resetOTP = otp;
+//     user.resetToken = token;
+//     console.log("Before saving user:", user);
+//     await User.updateOne(
+//       { _id: user._id },
+//       { $set: { resetOTP: otp, resetToken: token } }
+//     );
+//     console.log("After saving user:", user);
+
+//     const transporter = nodemailer.createTransport({
+//       service: "Gmail",
+//       host: "smtp.gmail.com",
+//       port: 465,
+//       secure: true,
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+//     const mailOptions = {
+//       from: process.env.EMAIL_USER,
+//       to: user.email,
+//       subject: "Password Reset OTP",
+//       html: ` <table role="presentation"
+//     style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: white;">
+//     <tbody>
+//       <tr>
+//         <td align="center" style="padding: 1rem 2rem; vertical-align: top; width: 100%;">
+//           <table role="presentation" style="max-width: 600px; border-collapse: collapse; border: 0px; border-spacing: 0px; text-align: left;">
+//             <tbody>
+//               <tr>
+//                 <td style="padding: 40px 0px 0px;">
+//                   <div style="padding: 20px; background-color: rgb(219 218 218);">
+//                     <div style="color: rgb(0, 0, 0); text-align: left;">
+//                       <h1 style="margin: 1rem 0">Verification code</h1>
+//                       <p style="padding-bottom: 16px">Please use the verification code below to reset password.</p>
+//                       <p style="padding-bottom: 16px"><strong style="font-size: 130%">${otp}</strong></p>
+//                       <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
+//                     </div>
+//                   </div>
+//                 </td>
+//               </tr>
+//             </tbody>
+//           </table>
+//         </td>
+//       </tr>
+//     </tbody>
+//   </table>`,
+//     };
+
+//     await transporter.sendMail(mailOptions);
+//     res.status(200).json({ message: "OTP sent to your email." });
+//   } catch (error) {
+//     console.error("Error sending OTP:", error);
+//     res.status(500).json({ message: "Error sending OTP." });
+//   }
+// };
+
+// export const VerifyOTP = async (req, res) => {
+//   const { email, otp } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: "User not found." });
+//     }
+
+//     if (!user.resetOTP) {
+//       return res.status(400).json({ message: "OTP not found." });
+//     }
+
+//     if (user.resetOTP.toString() !== otp) {
+//       return res.status(400).json({ message: "Invalid OTP." });
+//     }
+
+//     res.status(200).json({ message: "OTP is valid." });
+//   } catch (error) {
+//     console.error("Error verifying OTP:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// export const ResetPassword = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: "User not found." });
+//     }
+
+//     if (password && password.trim() !== "") {
+//       const salt = await bcrypt.genSalt(10);
+//       user.password = await bcrypt.hash(password, salt);
+//       user.resetOTP = null;
+//       user.resetToken = null;
+//       await user.save();
+//       res.status(200).json({ message: "Password has been updated." });
+//     } else {
+//       return res.status(400).json({ message: "Password is required." });
+//     }
+//   } catch (error) {
+//     console.error("Error resetting password:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // testing end
 export const googleLogin = async (req, res) => {

@@ -24,6 +24,13 @@ const UserSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  address: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+    },
+  ],
+
   role: {
     type: String,
     enum: ["admin", "user"],
@@ -35,14 +42,6 @@ const UserSchema = mongoose.Schema({
       ref: "Books",
     },
   ],
-  resetOTP: {
-    type: String,
-    required: false,
-  },
-  resetToken: {
-    type: String,
-    required: false,
-  },
 });
 
 UserSchema.statics.signUp = async function (

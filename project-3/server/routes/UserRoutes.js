@@ -6,11 +6,11 @@ import {
   SignUp,
   getUsers,
   getUsersById,
-  // ResetPasswordPage,
+  ResetPasswordPage,
   googleLogin,
   updateUser,
   searchUsers,
-  VerifyOTP,
+  // VerifyOTP,
 } from "../controllers/UserController.js";
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
@@ -19,25 +19,18 @@ import validateUser from "../middleware/validateUser.js";
 
 const router = express.Router();
 
-// Public routes
-router.post('/forget-password', ForgetPassword);
-router.post('/verify-otp', VerifyOTP);
-router.post('/reset-password', ResetPassword);
-
 router.post("/login", validateUser("login"), Login);
 router.post("/signup", validateUser("signup"), SignUp);
 router.post("/google-login", googleLogin);
-//testing
-// router.post("/forgot-password", validateUser("forgotPassword"), ForgetPassword);
-// router.post(
-//   "/reset-password/:token",
-//   validateUser("resetPassword"),
-//   ResetPassword
-// );
 
+router.post("/forgot-password", validateUser("forgotPassword"), ForgetPassword);
+router.post(
+  "/reset-password/:token",
+  validateUser("resetPassword"),
+  ResetPassword
+);
 
-
-// router.get("/reset-password/:token", ResetPasswordPage);
+router.get("/reset-password/:token", ResetPasswordPage);
 router.get("/search-user", searchUsers);
 // Protected routes
 router.use(requireAuth);

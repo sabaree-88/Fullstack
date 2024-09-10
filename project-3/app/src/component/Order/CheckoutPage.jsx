@@ -7,7 +7,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   const [shippingAddress, setShippingAddress] = useState({
-    fullName: "",
+    fullname: "",
     address: "",
     city: "",
     state: "",
@@ -17,7 +17,7 @@ const CheckoutPage = () => {
 
   const [paymentMethod, setPaymentMethod] = useState("stripe");
   const [error, setError] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleChange = (e) => {
     setShippingAddress({
       ...shippingAddress,
@@ -27,15 +27,28 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await axios.post("/api/checkout", {
-        shippingAddress,
+      const response = await axios.post("http://localhost:3000/address/add", {
+        fullname: shippingAddress.fullname,
+        address: shippingAddress.address,
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zipcode: shippingAddress.zip,
+        country: shippingAddress.country,
         paymentMethod,
       });
-      navigate("/order-summary");
+
+      if (response.status === 200) {
+        navigate("/payment", { state: { shippingAddress, paymentMethod } });
+      } else {
+        setError("Failed to store the address. Please try again.");
+      }
     } catch (err) {
       setError("Failed to process checkout. Please try again.");
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,8 +63,8 @@ const CheckoutPage = () => {
             <div className="grid grid-cols-1 gap-4">
               <input
                 type="text"
-                name="fullName"
-                value={shippingAddress.fullName}
+                name="fullname"
+                value={shippingAddress.fullname}
                 onChange={handleChange}
                 required
                 placeholder="Full Name"
@@ -138,8 +151,9 @@ const CheckoutPage = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition duration-200"
+            disabled={isLoading}
           >
-            Proceed to Payment
+            {isLoading ? "Processing..." : "Proceed to Payment"}
           </button>
         </form>
       </div>

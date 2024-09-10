@@ -34,6 +34,7 @@ import Message from "./component/Admin/Message";
 import CheckoutPage from "./component/Order/CheckoutPage";
 import OrderSummaryPage from "./component/Order/OrderSummaryPage";
 import OrderHistoryPage from "./component/Order/OrderHistoryPage";
+import PaymentPage from "./component/Order/PaymentPage";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -246,6 +247,14 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoute role="user">
+                <PaymentPage />
               </ProtectedRoute>
             }
           />

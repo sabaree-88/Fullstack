@@ -59,17 +59,21 @@ export const getUsers = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
   try {
-    const allUsers = await User.find({}).skip(skip).limit(limit);
+    const allUsers = await User.find({})
+      .skip(skip)
+      .limit(limit)
+      .populate("address");
     const totalUsers = await User.countDocuments();
-    res.json({
-      allUsers,
+
+    res.status(200).json({
+      users: allUsers,
       totalUsers,
-      page,
-      pages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
     });
   } catch (error) {
-    console.error("Get Users Error:", error);
-    res.status(500).send({ message: error.message });
+    console.error("Get Users Error:", error.message);
+    res.status(500).send({ message: "Failed to retrieve users." });
   }
 };
 
@@ -78,12 +82,13 @@ export const getUsersById = async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(id).populate("address");
     if (!user) {
-      return res.status(400).json({ message: "User not found!" });
+      return res.status(404).json({ message: "User not found." });
     }
-    return res.status(200).send(user);
+
+    return res.status(200).json(user);
   } catch (error) {
-    console.error("Get User By ID Error:", error);
-    res.status(500).send({ message: error.message });
+    console.error("Get User By ID Error:", error.message);
+    res.status(500).send({ message: "Failed to retrieve user." });
   }
 };
 

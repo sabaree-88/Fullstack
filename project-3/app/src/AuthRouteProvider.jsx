@@ -251,7 +251,7 @@ const AuthRouteProvider = () => {
             }
           />
           <Route
-            path="/payment"
+            path="/payment-success"
             element={
               <ProtectedRoute role="user">
                 <PaymentPage />

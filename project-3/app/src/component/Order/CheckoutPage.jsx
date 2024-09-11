@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { cartItems, userId } = state || { cartItems: [], userId: null };
 
   const [shippingAddress, setShippingAddress] = useState({
     fullname: "",
@@ -15,9 +17,10 @@ const CheckoutPage = () => {
     country: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("stripe");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e) => {
     setShippingAddress({
       ...shippingAddress,
@@ -29,18 +32,73 @@ const CheckoutPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:3000/address/add", {
-        fullname: shippingAddress.fullname,
-        address: shippingAddress.address,
-        city: shippingAddress.city,
-        state: shippingAddress.state,
-        zipcode: shippingAddress.zip,
-        country: shippingAddress.country,
-        paymentMethod,
-      });
+      const addressResponse = await axios.post(
+        "http://localhost:3000/address/add",
+        {
+          userId,
+          fullname: shippingAddress.fullname,
+          address: shippingAddress.address,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          zipcode: shippingAddress.zip,
+          country: shippingAddress.country,
+        }
+      );
 
-      if (response.status === 200) {
-        navigate("/payment", { state: { shippingAddress, paymentMethod } });
+      if (addressResponse.status === 200) {
+        const totalAmount = cartItems.reduce(
+          (sum, item) => sum + item.price,
+          0
+        );
+
+        const orderResponse = await axios.post(
+          "http://localhost:3000/payment/create-order",
+          {
+            amount: totalAmount * 100,
+            currency: "INR",
+          }
+        );
+
+        const { id: order_id, amount, currency } = orderResponse.data;
+
+        const options = {
+          key: "rzp_test_sahwpb5TiARJQe",
+          amount: amount,
+          currency: currency,
+          name: "Your Store Name",
+          description: "Book Purchase",
+          order_id: order_id,
+          handler: async function (response) {
+            const paymentId = response.razorpay_payment_id;
+            const signature = response.razorpay_signature;
+
+            try {
+  
+              await axios.post("http://localhost:3000/payment/verify-payment", {
+                paymentId,
+                order_id,
+                signature,
+                userId,
+                cartItems,
+              });
+              navigate("/payment-success");
+            } catch (error) {
+              setError("Payment verification failed. Please try again.");
+              console.error(error);
+            }
+          },
+          prefill: {
+            name: shippingAddress.fullname,
+            email: "user@example.com",
+            contact: "9999999999",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
       } else {
         setError("Failed to store the address. Please try again.");
       }
@@ -68,7 +126,7 @@ const CheckoutPage = () => {
                 onChange={handleChange}
                 required
                 placeholder="Full Name"
-                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 p-2 rounded-md"
               />
               <input
                 type="text"
@@ -77,7 +135,7 @@ const CheckoutPage = () => {
                 onChange={handleChange}
                 required
                 placeholder="Address"
-                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 p-2 rounded-md"
               />
               <div className="flex space-x-4">
                 <input
@@ -87,7 +145,7 @@ const CheckoutPage = () => {
                   onChange={handleChange}
                   required
                   placeholder="City"
-                  className="flex-1 border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 border border-gray-300 p-2 rounded-md"
                 />
                 <input
                   type="text"
@@ -96,7 +154,7 @@ const CheckoutPage = () => {
                   onChange={handleChange}
                   required
                   placeholder="State"
-                  className="flex-1 border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 border border-gray-300 p-2 rounded-md"
                 />
               </div>
               <input
@@ -106,7 +164,7 @@ const CheckoutPage = () => {
                 onChange={handleChange}
                 required
                 placeholder="ZIP Code"
-                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 p-2 rounded-md"
               />
               <input
                 type="text"
@@ -115,36 +173,8 @@ const CheckoutPage = () => {
                 onChange={handleChange}
                 required
                 placeholder="Country"
-                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 p-2 rounded-md"
               />
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <h3 className="text-xl font-medium mb-2">Payment Method</h3>
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="stripe"
-                  checked={paymentMethod === "stripe"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="form-radio h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2">Stripe</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="paypal"
-                  checked={paymentMethod === "paypal"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="form-radio h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2">PayPal</span>
-              </label>
             </div>
           </div>
 

@@ -10,14 +10,17 @@ const razorpay = new Razorpay({
 });
 
 const calculateTotalAmount = (items) => {
-  return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  return items.reduce(
+    (total, item) => total + item.bookId.price * item.quantity,
+    0
+  );
 };
 
 export const addPayment = async (req, res) => {
-  const { userId, items } = req.body;
+  const userId = req.user._id;
 
   try {
-    const totalAmount = calculateTotalAmount(items);
+    const totalAmount = calculateTotalAmount(req.body.items);
 
     const options = {
       amount: totalAmount * 100,
@@ -29,7 +32,7 @@ export const addPayment = async (req, res) => {
 
     const newOrder = new Order({
       userId,
-      items,
+      items: req.body.items,
       totalAmount,
       paymentStatus: "Pending",
       paymentDetails: {
@@ -46,57 +49,52 @@ export const addPayment = async (req, res) => {
       currency: razorpayOrder.currency,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Order creation failed", error });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const verifyPayment = async (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-    req.body;
+  console.log("Received verification request:", req.body); // Log the received data
+  const { paymentId, order_id, signature } = req.body;
+
+  if (!paymentId || !order_id || !signature) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing payment details" });
+  }
 
   try {
-    const generatedSignature = crypto
+    const body = order_id + "|" + paymentId;
+    const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .update(body.toString())
       .digest("hex");
 
-    if (generatedSignature === razorpay_signature) {
-      const order = await Order.findOneAndUpdate(
-        { "paymentDetails.razorpay_order_id": razorpay_order_id },
+    if (expectedSignature === signature) {
+      // Payment is verified, update order status
+      await Order.updateOne(
+        { "paymentDetails.razorpay_order_id": order_id },
         {
-          paymentStatus: "Paid",
-          paymentDetails: {
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
+          $set: {
+            paymentStatus: "Completed",
+            paymentDetails: {
+              razorpay_payment_id: paymentId,
+              razorpay_signature: signature,
+            },
           },
-          orderStatus: "Processing",
-        },
-        { new: true }
+        }
       );
 
-      res.status(200).json({
-        success: true,
-        message: "Payment verified successfully",
-        order,
-      });
+      res
+        .status(200)
+        .json({ success: true, message: "Payment verified successfully" });
     } else {
-      res.status(400).json({
-        success: false,
-        message: "Payment verification failed",
-      });
+      res.status(400).json({ success: false, message: "Invalid signature" });
     }
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error verifying payment",
-      error,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
-
 export const getOrder = async (req, res) => {
   const { userId } = req.params;
 

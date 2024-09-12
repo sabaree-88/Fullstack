@@ -6,8 +6,9 @@ import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { cartItems, userId } = state || { cartItems: [], userId: null };
-
+  const { items = [], userId = null } = state || {};
+  console.log(items);
+  console.log(userId);
   const [shippingAddress, setShippingAddress] = useState({
     fullname: "",
     address: "",
@@ -17,7 +18,7 @@ const CheckoutPage = () => {
     country: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("razorpay");
+  // const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,45 +47,50 @@ const CheckoutPage = () => {
       );
 
       if (addressResponse.status === 200) {
-        const totalAmount = cartItems.reduce(
-          (sum, item) => sum + item.price,
-          0
-        );
+        const totalAmount = Array.isArray(items)
+          ? items.reduce(
+              (sum, item) => sum + item.bookId.price * item.quantity,
+              0
+            )
+          : 0;
 
         const orderResponse = await axios.post(
           "http://localhost:3000/payment/create-order",
           {
+            items,
+            userId,
             amount: totalAmount * 100,
             currency: "INR",
           }
         );
 
         const { id: order_id, amount, currency } = orderResponse.data;
-
+        console.log("Order response:", orderResponse.data);
         const options = {
-          key: "rzp_test_sahwpb5TiARJQe",
+          key: "rzp_test_sahwpb5TiARJQe", // Add your Razorpay test/live key
           amount: amount,
           currency: currency,
           name: "Your Store Name",
           description: "Book Purchase",
-          order_id: order_id,
+          order_id: order_id, // This must be passed correctly from Razorpay order creation
           handler: async function (response) {
+            console.log("Razorpay response:", response); // Debugging purpose
             const paymentId = response.razorpay_payment_id;
+            const order_id = response.razorpay_order_id;
             const signature = response.razorpay_signature;
-
+            console.log("PaymentId:", paymentId, "OrderId:", order_id, "Signature:", signature);
             try {
-  
+              // Pass these values to your backend
               await axios.post("http://localhost:3000/payment/verify-payment", {
                 paymentId,
                 order_id,
                 signature,
                 userId,
-                cartItems,
+                items,
               });
               navigate("/payment-success");
             } catch (error) {
-              setError("Payment verification failed. Please try again.");
-              console.error(error);
+              console.error("Payment verification failed", error);
             }
           },
           prefill: {

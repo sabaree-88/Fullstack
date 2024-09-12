@@ -91,16 +91,16 @@ const Cart = () => {
   };
 
   const handleProceedToCheckout = async () => {
-    const itemsToCheckout = cartItems.filter((item) =>
+    const items = cartItems.filter((item) =>
       selectedItems.includes(item.bookId._id)
     );
-
+    console.log(items);
     const userId = user._id;
 
     navigate("/checkout", {
       state: {
-        itemsToCheckout,
-        userId,
+        items,
+        userId
       },
     });
   };

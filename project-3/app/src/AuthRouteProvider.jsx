@@ -49,7 +49,7 @@ const AuthRouteProvider = () => {
 
       <Route path="/order-summary" component={<OrderSummaryPage />} />
       <Route path="/order-history" component={<OrderHistoryPage />} />
-
+      <Route path="/checkout" element={<CheckoutPage />} />
       {user && user.role === "admin" && (
         <>
           <Route
@@ -242,14 +242,14 @@ const AuthRouteProvider = () => {
               </ProtectedRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/checkout"
             element={
               <ProtectedRoute role="user">
                 <CheckoutPage />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route
             path="/payment-success"
             element={

@@ -20,7 +20,6 @@ import Error from "./component/AssetCopm/utils/Error";
 import ProtectedRoute from "./ProtectedRoute";
 import FavouritesPage from "./component/User/utils/FavouritesPage";
 import Cart from "./component/User/utils/Cart";
-import CartDemo from "./component/User/utils/CartDemo";
 import CategoryList from "./component/Categories/CategoryList";
 import AddCategory from "./component/Categories/AddCategory";
 import EditCategory from "./component/Categories/EditCategory";
@@ -28,7 +27,6 @@ import DeleteCategory from "./component/Categories/DeleteCategory";
 import Category from "./component/User/utils/Category";
 import ProductCollections from "./component/User/ProductCollections";
 import ContactUs from "./component/User/ContactUs";
-// import SearchResults from "./component/SearchResults";
 import SearchBar from "./component/Search";
 import Message from "./component/Admin/Message";
 import CheckoutPage from "./component/Order/CheckoutPage";
@@ -47,7 +45,6 @@ const AuthRouteProvider = () => {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/search" element={<SearchBar />}></Route>
 
-      <Route path="/order-summary" component={<OrderSummaryPage />} />
       <Route path="/order-history" component={<OrderHistoryPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       {user && user.role === "admin" && (
@@ -242,14 +239,14 @@ const AuthRouteProvider = () => {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-            path="/checkout"
+          <Route
+            path="/order-summary"
             element={
               <ProtectedRoute role="user">
-                <CheckoutPage />
+                <OrderSummaryPage />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route
             path="/payment-success"
             element={

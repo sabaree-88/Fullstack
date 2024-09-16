@@ -33,6 +33,7 @@ export const addPayment = async (req, res) => {
     const newOrder = new Order({
       userId,
       items: req.body.items,
+      addressId: req.body.addressId,
       totalAmount,
       paymentStatus: "Pending",
       paymentDetails: {
@@ -54,7 +55,6 @@ export const addPayment = async (req, res) => {
 };
 
 export const verifyPayment = async (req, res) => {
-  console.log("Received verification request:", req.body); // Log the received data
   const { paymentId, order_id, signature } = req.body;
 
   if (!paymentId || !order_id || !signature) {
@@ -71,7 +71,6 @@ export const verifyPayment = async (req, res) => {
       .digest("hex");
 
     if (expectedSignature === signature) {
-      // Payment is verified, update order status
       await Order.updateOne(
         { "paymentDetails.razorpay_order_id": order_id },
         {
@@ -99,7 +98,9 @@ export const getOrder = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const orders = await Order.find({ userId }).populate("items.bookId");
+    const orders = await Order.find({ userId })
+      .populate("addressId")
+      .populate("items.bookId");
     res.status(200).json({ success: true, orders });
   } catch (error) {
     res

@@ -33,6 +33,7 @@ import CheckoutPage from "./component/Order/CheckoutPage";
 import OrderSummaryPage from "./component/Order/OrderSummaryPage";
 import OrderHistoryPage from "./component/Order/OrderHistoryPage";
 import PaymentPage from "./component/Order/PaymentPage";
+import TrackOrder from "./component/Order/TrackOrder";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -45,7 +46,6 @@ const AuthRouteProvider = () => {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/search" element={<SearchBar />}></Route>
 
-      <Route path="/order-history" component={<OrderHistoryPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       {user && user.role === "admin" && (
         <>
@@ -244,6 +244,22 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <OrderSummaryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-history"
+            element={
+              <ProtectedRoute role="user">
+                <OrderHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/track-order/:orderId"
+            element={
+              <ProtectedRoute role="user">
+                <TrackOrder />
               </ProtectedRoute>
             }
           />

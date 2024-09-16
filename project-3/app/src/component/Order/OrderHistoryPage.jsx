@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const { user } = useAuth();
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    // Fetch user's orders from backend
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("/api/orders");
-        setOrders(response.data);
+        const response = await axios.get(
+          `http://localhost:3000/payment/orders/${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setOrders(response.data.orders);
       } catch (err) {
         setError("Failed to fetch orders.");
         console.error(err);
@@ -27,8 +35,15 @@ const OrderHistoryPage = () => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return;
 
     try {
-      await axios.post(`/api/orders/${orderId}/cancel`);
-      // Update the order status locally
+      await axios.post(
+        `http://localhost:3000/payment/cancel-order/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, orderStatus: "Canceled" } : order
@@ -87,9 +102,11 @@ const OrderHistoryPage = () => {
                     {order.items.map((item) => (
                       <li key={item.bookId} className="flex justify-between">
                         <span>
-                          {item.title} (x{item.quantity})
+                          {item.bookId.title} (x{item.quantity})
                         </span>
-                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>
+                          ${(item.bookId.price * item.quantity).toFixed(2)}
+                        </span>
                       </li>
                     ))}
                   </ul>

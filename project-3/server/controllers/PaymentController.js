@@ -108,3 +108,52 @@ export const getOrder = async (req, res) => {
       .json({ success: false, message: "Failed to fetch orders", error });
   }
 };
+
+export const trackOrder = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId)
+      .populate("addressId")
+      .populate("items.bookId");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({ success: true, order });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to track order", error });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (order.orderStatus === "Completed" || order.orderStatus === "Shipped" || order.orderStatus === "Delivered") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cannot cancel this order" });
+    }
+
+    order.orderStatus = "Canceled";
+    await order.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Order canceled successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to cancel order", error });
+  }
+};

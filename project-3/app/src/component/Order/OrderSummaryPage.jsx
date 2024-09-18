@@ -1,24 +1,69 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 
 const OrderSummaryPage = () => {
   const [order, setOrder] = useState([]);
-  const { user } = useAuth();
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const { orderId } = state || {};
+  const token = localStorage.getItem("token");
+  console.log("orderid",orderId);
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await axios.get(
-        `http://localhost:3000/payment/orders/${user._id}`
-      );
-      setOrder(response.data.orders);
-    };
-    fetchOrders();
-  }, [user._id]);
+      if (!orderId) {
+        setError("Order ID is missing. Redirecting to cart...");
+        setTimeout(() => {
+          navigate("/cart");
+        }, 3000);
+        return;
+      }
 
-  if (!order.length) {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:3000/payment/orders/${orderId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response);
+        setOrder(response.data.orders);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch order details.");
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [orderId, token, navigate]);
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <p>Loading order details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <p className="text-red-500">{error}</p>
+        <Link to="/cart" className="text-blue-500 underline">
+          Go back to Cart
+        </Link>
+      </div>
+    );
+  }
+
+  if (!order || !order.length) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md">
         <p className="text-red-500">No order details available.</p>

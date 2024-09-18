@@ -49,7 +49,6 @@ const CheckoutPage = () => {
 
     try {
       let addressId = selectedAddress;
-      console.log(addressId);
       if (!selectedAddress || editAddress) {
         const addressResponse = await axios.post(
           "http://localhost:3000/address/add",
@@ -84,17 +83,24 @@ const CheckoutPage = () => {
         }
       );
 
-      const { order_id, amount, currency } = orderResponse.data;
+      const {
+        order_id: razorpayOrderId,
+        amount,
+        currency,
+      } = orderResponse.data;
+      const orderId = orderResponse.data.newOrder._id;
+      // console.log("OrderId", orderId);
       const options = {
         key: "rzp_test_sahwpb5TiARJQe",
         amount,
         currency,
         name: "BOOKSTORE",
         description: "Book Purchase",
-        order_id,
+        order_id: razorpayOrderId,
         handler: async function (response) {
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
             response;
+
           try {
             await axios.post("http://localhost:3000/payment/verify-payment", {
               paymentId: razorpay_payment_id,
@@ -103,7 +109,7 @@ const CheckoutPage = () => {
               userId,
               items,
             });
-            navigate("/order-summary");
+            navigate("/order-summary", { state: { orderId } });
           } catch (error) {
             console.error("Payment verification failed", error);
           }
@@ -172,7 +178,6 @@ const CheckoutPage = () => {
               Add New Address
             </button>
 
-            {/* Add "Proceed to Payment" button here */}
             {selectedAddress && (
               <button
                 onClick={handleSubmit}

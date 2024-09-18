@@ -45,6 +45,7 @@ export const addPayment = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      newOrder,
       order_id: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
@@ -109,6 +110,28 @@ export const getOrder = async (req, res) => {
   }
 };
 
+export const getOrderById = async (req, res) => {
+  const { id } = req.params;
+  console.log("Order id:", id); 
+  try {
+    const order = await Order.findById(id)
+      .populate("addressId")
+      .populate("items.bookId");
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+    console.log("Order fetched:", order);
+    res.status(200).json({ success: true, order });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch order", error });
+  }
+};
+
 export const trackOrder = async (req, res) => {
   const { orderId } = req.params;
 
@@ -118,7 +141,9 @@ export const trackOrder = async (req, res) => {
       .populate("items.bookId");
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     res.status(200).json({ success: true, order });
@@ -136,10 +161,16 @@ export const cancelOrder = async (req, res) => {
     const order = await Order.findById(orderId);
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
-    if (order.orderStatus === "Completed" || order.orderStatus === "Shipped" || order.orderStatus === "Delivered") {
+    if (
+      order.orderStatus === "Completed" ||
+      order.orderStatus === "Shipped" ||
+      order.orderStatus === "Delivered"
+    ) {
       return res
         .status(400)
         .json({ success: false, message: "Cannot cancel this order" });

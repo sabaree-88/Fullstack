@@ -81,11 +81,11 @@ const OrderSummaryPage = () => {
           <div className="border p-4">
             <div className="mb-6">
               <h3 className="text-xl font-medium mb-2">Shipping Address</h3>
-              {/* <p>{order.addressId.address}</p>
+              <p>{order.addressId.address}</p>
               <p>
                 {order.addressId.state} {order.addressId.zipcode}
               </p>
-              <p>{order.addressId.country}</p> */}
+              <p>{order.addressId.country}</p>
             </div>
 
             <div className="mb-6">

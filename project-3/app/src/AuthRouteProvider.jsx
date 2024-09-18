@@ -34,6 +34,7 @@ import OrderSummaryPage from "./component/Order/OrderSummaryPage";
 import OrderHistoryPage from "./component/Order/OrderHistoryPage";
 import PaymentPage from "./component/Order/PaymentPage";
 import TrackOrder from "./component/Order/TrackOrder";
+import AdminOrderTable from "./component/Admin/ManageOrders/AdminOrderTable";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
@@ -158,6 +159,14 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="admin">
                 <Message />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-table"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminOrderTable />
               </ProtectedRoute>
             }
           />

@@ -74,7 +74,9 @@ const OrderHistoryPage = () => {
             <div key={order._id} className="border p-4 rounded-md">
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h3 className="text-xl font-medium">Order #{order._id}</h3>
+                  <h3 className="text-xl font-medium">
+                    Order #{order.paymentDetails.razorpay_payment_id}
+                  </h3>
                   <p className="text-gray-600">
                     Placed on {new Date(order.createdAt).toLocaleDateString()}
                   </p>

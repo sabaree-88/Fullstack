@@ -186,3 +186,58 @@ export const cancelOrder = async (req, res) => {
       .json({ success: false, message: "Failed to cancel order", error });
   }
 };
+
+//manage orders admin
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name email")
+      .populate("addressId")
+      .populate("items.bookId");
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch orders", error });
+  }
+};
+
+export const getOrderDetailsById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await Order.findById(id)
+      .populate("userId", "name email")
+      .populate("addressId")
+      .populate("items.bookId");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+    res.status(200).json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch order", error });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    const allowedStatuses = ["Pending", "Shipped", "Delivered", "Canceled"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status update" });
+    }
+
+    order.orderStatus = status;
+    await order.save();
+
+    res.status(200).json({ success: true, message: "Order status updated", order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to update order status", error });
+  }
+};

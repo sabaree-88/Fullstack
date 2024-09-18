@@ -86,6 +86,16 @@ const SideNav = () => {
               <i className="ri-arrow-right-s-line ml-auto" />
             </Link>
           </li>
+          <li className="mb-1 group">
+            <Link
+              to="/order-table"
+              className="flex font-semibold items-center py-2 px-4 text-white hover:bg-gray-950 hover:text-gray-100 rounded-md"
+            >
+              <i className="bx bx-book mr-3 text-lg" />
+              <span className="text-sm">Orders</span>
+              <i className="ri-arrow-right-s-line ml-auto" />
+            </Link>
+          </li>
 
           <span className="text-white font-bold">PERSONAL</span>
           <li className="mb-1 group">

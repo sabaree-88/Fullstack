@@ -112,7 +112,6 @@ export const getOrder = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   const { id } = req.params;
-  console.log("Order id:", id); 
   try {
     const order = await Order.findById(id)
       .populate("addressId")
@@ -123,7 +122,6 @@ export const getOrderById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
-    console.log("Order fetched:", order);
     res.status(200).json({ success: true, order });
   } catch (error) {
     res

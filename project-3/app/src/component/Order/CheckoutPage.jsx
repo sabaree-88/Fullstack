@@ -89,7 +89,7 @@ const CheckoutPage = () => {
         currency,
       } = orderResponse.data;
       const orderId = orderResponse.data.newOrder._id;
-      // console.log("OrderId", orderId);
+      console.log("OrderId", orderId);
       const options = {
         key: "rzp_test_sahwpb5TiARJQe",
         amount,

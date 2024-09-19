@@ -8,7 +8,7 @@ import OrderDetailsModal from "./OrderDetailsModal";
 const AdminOrderTable = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [status, setStatus] = useState("");
+  const [statuses, setStatuses] = useState({});
 
   useEffect(() => {
     const getOrders = async () => {
@@ -22,7 +22,16 @@ const AdminOrderTable = () => {
     getOrders();
   }, []);
 
-  const handleStatusChange = async (orderId) => {
+  const handleStatusChange = (orderId, newStatus) => {
+    setStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [orderId]: newStatus,
+    }));
+  };
+
+  const handleUpdateStatus = async (orderId) => {
+    const status = statuses[orderId];
+    if (!status) return;
     try {
       await updateOrderStatus(orderId, status);
       setOrders((prevOrders) =>
@@ -62,8 +71,10 @@ const AdminOrderTable = () => {
                 <td className="border px-4 py-2">
                   <select
                     className="border p-2 rounded-md"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    value={statuses[order._id] || ""}
+                    onChange={(e) =>
+                      handleStatusChange(order._id, e.target.value)
+                    }
                   >
                     <option value="">Select Status</option>
                     <option value="Pending">Pending</option>
@@ -72,7 +83,7 @@ const AdminOrderTable = () => {
                     <option value="Canceled">Canceled</option>
                   </select>
                   <button
-                    onClick={() => handleStatusChange(order._id)}
+                    onClick={() => handleUpdateStatus(order._id)}
                     className="bg-blue-500 text-white ml-2 px-4 py-2 rounded-md hover:bg-blue-600"
                   >
                     Update

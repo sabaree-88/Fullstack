@@ -28,12 +28,12 @@ export const fetchOrderDetails = async (id) => {
 export const updateOrderStatus = async (id, status) => {
   const response = await axios.put(
     `http://localhost:3000/payment/orders/status/${id}`,
+    { status },
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    },
-    { status }
+    }
   );
   return response.data;
 };

@@ -189,14 +189,32 @@ export const cancelOrder = async (req, res) => {
 
 //manage orders admin
 export const getAllOrders = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit);
+  if (!limit || limit <= 0) {
+    limit = 10;
+  }
+  const skip = (page - 1) * limit;
   try {
     const orders = await Order.find()
+      .skip(skip)
+      .limit(limit)
+      .sort([["createdAt", -1]])
       .populate("userId", "name email")
       .populate("addressId")
       .populate("items.bookId");
-    res.status(200).json({ success: true, orders });
+    const total = await Order.countDocuments();
+    res.status(200).json({
+      success: true,
+      orders,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to fetch orders", error });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch orders", error });
   }
 };
 
@@ -209,11 +227,15 @@ export const getOrderDetailsById = async (req, res) => {
       .populate("items.bookId");
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
     res.status(200).json({ success: true, order });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to fetch order", error });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch order", error });
   }
 };
 
@@ -225,19 +247,29 @@ export const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(id);
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     const allowedStatuses = ["Pending", "Shipped", "Delivered", "Canceled"];
     if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status update" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status update" });
     }
 
     order.orderStatus = status;
     await order.save();
 
-    res.status(200).json({ success: true, message: "Order status updated", order });
+    res
+      .status(200)
+      .json({ success: true, message: "Order status updated", order });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to update order status", error });
+    res.status(500).json({
+      success: false,
+      message: "Failed to update order status",
+      error,
+    });
   }
 };

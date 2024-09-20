@@ -23,7 +23,7 @@ const Users = () => {
     handlePageChange,
     setTotalPages,
     setTotalEntries,
-  } = usePagination();
+  } = usePagination(1, 5);
 
   const getUsers = async (page = 1) => {
     setLoading(true);
@@ -35,7 +35,8 @@ const Users = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setUsers(res.data.allUsers);
+      console.log(res);
+      setUsers(res.data.users);
       setTotalPages(res.data.pages);
       setTotalEntries(res.data.totalUsers);
     } catch (error) {
@@ -146,11 +147,11 @@ const Users = () => {
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      {item.name}
+                      {item?.name}
                     </th>
                     <td>
                       <a
-                        href={`http://localhost:3000/${item.profileImage}`}
+                        href={`http://localhost:3000/${item?.profileImage}`}
                         target="blank"
                         className="flex justify-center align-middle"
                       >
@@ -169,12 +170,12 @@ const Users = () => {
                         </svg>
                       </a>
                     </td>
-                    <td className="px-6 py-4">{item.role}</td>
-                    <td className="px-6 py-4">{item.email}</td>
-                    <td className="px-6 py-4">{item.phoneNumber || "null"}</td>
+                    <td className="px-6 py-4">{item?.role}</td>
+                    <td className="px-6 py-4">{item?.email}</td>
+                    <td className="px-6 py-4">{item?.phoneNumber || "null"}</td>
                     <td className="px-6 py-4 text-start">
                       <Link
-                        to={`/update-user/${item._id}`}
+                        to={`/update-user/${item?._id}`}
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit

@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 
 const OrderSummaryPage = () => {
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { state } = useLocation();
@@ -31,7 +31,6 @@ const OrderSummaryPage = () => {
             },
           }
         );
-        console.log(response.data.order);
         setOrder(response.data.order);
         setLoading(false);
       } catch (err) {
@@ -81,43 +80,55 @@ const OrderSummaryPage = () => {
           <div className="border p-4">
             <div className="mb-6">
               <h3 className="text-xl font-medium mb-2">Shipping Address</h3>
-              <p>{order.addressId.address}</p>
+              <p>{order.addressId?.address || "Address not available"}</p>
               <p>
-                {order.addressId.state} {order.addressId.zipcode}
+                {order.addressId?.state || "State not available"}{" "}
+                {order.addressId?.zipcode || "ZIP code not available"}
               </p>
-              <p>{order.addressId.country}</p>
+              <p>{order.addressId?.country || "Country not available"}</p>
             </div>
 
             <div className="mb-6">
               <h3 className="text-xl font-medium mb-2">Payment Method</h3>
-              <p className="mt-1">Payment Status: {order.paymentStatus}</p>
+              <p className="mt-1">
+                Payment Status: {order.paymentStatus || "N/A"}
+              </p>
             </div>
 
             <div className="mb-6">
               <h3 className="text-xl font-medium mb-2">Items</h3>
               <ul className="space-y-4">
-                {order.items.map((product) => (
-                  <li key={product._id} className="flex justify-between">
-                    <span>
-                      {product.bookId.title} (x{product.quantity})
-                    </span>
-                    <span>
-                      ${(product.bookId.price * product.quantity).toFixed(2)}
-                    </span>
-                  </li>
-                ))}
+                {order.items?.length > 0 ? (
+                  order.items.map((product) => (
+                    <li key={product._id} className="flex justify-between">
+                      <span>
+                        {product.bookId?.title || "Product title not available"}{" "}
+                        (x
+                        {product.quantity})
+                      </span>
+                      <span>
+                        $
+                        {(
+                          product.bookId?.price * product.quantity || 0
+                        ).toFixed(2)}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>No items available</li>
+                )}
               </ul>
             </div>
 
             <div className="mb-6 text-right">
               <span className="text-lg font-semibold">
-                Total: ${order.totalAmount}
+                Total: ${order.totalAmount || "0.00"}
               </span>
             </div>
 
             <div className="mb-6">
               <h3 className="text-xl font-medium mb-2">Order Status</h3>
-              <p>{order.orderStatus}</p>
+              <p>{order.orderStatus || "Status not available"}</p>
             </div>
           </div>
         </div>

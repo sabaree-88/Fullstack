@@ -189,21 +189,29 @@ export const cancelOrder = async (req, res) => {
 
 //manage orders admin
 export const getAllOrders = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit);
-  if (!limit || limit <= 0) {
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 10;
+
+  if (page < 1) {
+    page = 1;
+  }
+  if (limit < 1) {
     limit = 10;
   }
+
   const skip = (page - 1) * limit;
+
   try {
     const orders = await Order.find()
       .skip(skip)
       .limit(limit)
-      .sort([["createdAt", -1]])
+      .sort({ createdAt: -1 })
       .populate("userId", "name email")
       .populate("addressId")
       .populate("items.bookId");
+
     const total = await Order.countDocuments();
+
     res.status(200).json({
       success: true,
       orders,
@@ -212,11 +220,14 @@ export const getAllOrders = async (req, res) => {
       pages: Math.ceil(total / limit),
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch orders", error });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch orders",
+      error: error.message || error,
+    });
   }
 };
+
 
 export const getOrderDetailsById = async (req, res) => {
   const { id } = req.params;

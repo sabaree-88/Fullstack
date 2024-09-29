@@ -7,11 +7,9 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import usePagination from "../../hooks/usePagination";
+import useAdminBooks from "../../hooks/useAdminBooks";
 
 const AllBooks = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
   const {
@@ -24,44 +22,34 @@ const AllBooks = () => {
     handlePageChange,
     setTotalPages,
     setTotalEntries,
-  } = usePagination();
+  } = usePagination(1, 5);
+
+  const { books, loading, error, fetchBooks, deleteBook } = useAdminBooks();
 
   useEffect(() => {
     if (user) {
-      fetchData(currentPage);
+      const fetchData = async () => {
+        const { totalPages, totalEntries } = await fetchBooks(
+          currentPage,
+          itemsPerPage
+        );
+        setTotalPages(totalPages);
+        setTotalEntries(totalEntries);
+      };
+      fetchData();
     }
-  }, [user, currentPage]);
+  }, [user, currentPage, itemsPerPage]);
 
-  const fetchData = async (page = 1) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `http://localhost:3000/book?page=${page}&limit=${itemsPerPage}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setData(res.data.books);
-      console.log(res.data.books);
-      setTotalPages(res.data.pages);
-      setTotalEntries(res.data.total);
-      setLoading(false);
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    deleteBook(id);
   };
-
   const handleSearch = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     const res = await axios.get(
       `http://localhost:3000/book/search?query=${searchQuery}`
     );
     setData(res.data);
-    setLoading(false);
   };
 
   return (
@@ -175,7 +163,7 @@ const AllBooks = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item) => (
+                  {books.map((item) => (
                     <tr
                       key={item._id}
                       className="border-b border-gray-200 dark:border-gray-700"
@@ -239,9 +227,9 @@ const AllBooks = () => {
                           <Link to={`/edit/${item._id}`}>
                             <FaRegEdit className="text-2xl text-blue-600" />
                           </Link>
-                          <Link to={`/delete/${item._id}`}>
+                          <button onClick={() => handleDelete(item._id)}>
                             <IoTrashBinSharp className="text-2xl text-red-600" />
-                          </Link>
+                          </button>
                         </span>
                       </td>
                     </tr>
@@ -269,46 +257,16 @@ const AllBooks = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900"
                 >
-                  <svg
-                    className="w-3.5 h-3.5 me-2 rtl:rotate-180"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 10"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 5H1m0 0 4 4M1 5l4-4"
-                    />
-                  </svg>
                   Prev
                 </button>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-e hover:bg-gray-900"
                 >
                   Next
-                  <svg
-                    className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 10"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M1 5h12m0 0L9 1m4 4L9 9"
-                    />
-                  </svg>
                 </button>
               </div>
             </div>

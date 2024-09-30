@@ -3,7 +3,7 @@ import axios from "axios";
 
 const useAdminBooks = () => {
   const [books, setBooks] = useState([]);
-  const [book, setBook] = useState(null);
+  const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
@@ -96,6 +96,12 @@ const useAdminBooks = () => {
     }
   };
 
+  const searchBook = async (searchQuery) => {
+    const res = await axios.get(
+      `http://localhost:3000/book/search?query=${searchQuery}`
+    );
+    setBooks(res.data);
+  };
   return {
     books,
     book,
@@ -108,6 +114,7 @@ const useAdminBooks = () => {
     addBook,
     editBook,
     deleteBook,
+    searchBook,
   };
 };
 

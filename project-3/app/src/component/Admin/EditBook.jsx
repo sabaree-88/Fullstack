@@ -22,59 +22,32 @@ const EditBook = () => {
     image: null,
   });
   const [error, setError] = useState({});
-  // const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const { editBook, fetchBookById, loading, book } = useAdminBooks();
   useEffect(() => {
-    // setLoading(true);
-    // const token = localStorage.getItem("token");
-    // axios
-    //   .get(`http://localhost:3000/book/${id}`, {
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   })
-    //   .then((res) => {
-    //     const book = res.data;
-    //     setValues({
-    //       title: book.title,
-    //       author: book.author,
-    //       year: book.year,
-    //       price: book.price,
-    //       description: book.description,
-    //       category: book.category,
-    //     });
-    //     setLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     setLoading(true);
-    //     console.log(err);
-    const fetchBook = () => {
-      fetchBookById(id);
-      const data = book;
+    axios
+      .get("http://localhost:3000/category/get-categories")
+      .then((res) => {
+        setCategories(res.data);
+        console.log("Category", res.data);
+      })
+      .catch((err) => console.log(err));
+    const fetchBook = async () => {
+      await fetchBookById(id);
       setValues({
-        title: data.title,
-        author: data.author,
-        year: data.year,
-        price: data.price,
-        description: data.description,
-        category: data.category,
+        title: book?.title,
+        author: book?.author,
+        year: book?.year,
+        price: book?.price,
+        description: book?.description,
+        category: book?.category?._id,
       });
+      console.log("Book", book);
     };
     fetchBook();
-    // });
-    const fetchCategory = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:3000/category/get-categories"
-        );
-        setCategories(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchCategory();
   }, [id]);
 
   const handleInputs = (e) => {
@@ -108,7 +81,6 @@ const EditBook = () => {
       error.description === "" &&
       error.category === ""
     ) {
-      setLoading(true);
       const formData = new FormData();
       formData.append("title", values.title);
       formData.append("author", values.author);
@@ -119,25 +91,8 @@ const EditBook = () => {
       if (values.image) {
         formData.append("image", values.image);
       }
-
-      const token = localStorage.getItem("token");
-      axios
-        .put(`http://localhost:3000/book/${id}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          setLoading(false);
-          notifySuccess("Book updated successfully!");
-          navigate("/all-books");
-        })
-        .catch((err) => {
-          notifyError("Error updating the book!");
-          setError(err);
-          setLoading(false);
-        });
+      editBook(id, formData);
+      navigate("/all-books");
     }
   };
 
@@ -273,7 +228,7 @@ const EditBook = () => {
                   id="select_category"
                   name="category"
                   className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-                  value={values.category._id}
+                  value={values.category}
                   onChange={handleInputs}
                 >
                   <option value="">Choose a category</option>

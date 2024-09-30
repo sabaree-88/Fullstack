@@ -24,8 +24,8 @@ const AllBooks = () => {
     setTotalEntries,
   } = usePagination(1, 5);
 
-  const { books, loading, error, fetchBooks, deleteBook } = useAdminBooks();
-
+  const { books, loading, error, fetchBooks, deleteBook, searchBook } =
+    useAdminBooks();
   useEffect(() => {
     if (user) {
       const fetchData = async () => {
@@ -45,11 +45,7 @@ const AllBooks = () => {
   };
   const handleSearch = async (e) => {
     e.preventDefault();
-
-    const res = await axios.get(
-      `http://localhost:3000/book/search?query=${searchQuery}`
-    );
-    setData(res.data);
+    searchBook(searchQuery);
   };
 
   return (

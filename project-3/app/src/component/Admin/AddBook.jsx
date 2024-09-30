@@ -10,6 +10,7 @@ import {
   notifySuccess,
   notifyError,
 } from "../AssetCopm/utils/toastNotification";
+import useAdminBooks from "../../hooks/useAdminBooks";
 const AddBook = () => {
   const [values, setValues] = useState({
     title: "",
@@ -21,10 +22,11 @@ const AddBook = () => {
     image: null,
   });
   const [error, setError] = useState({});
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const { addBook, loading } = useAdminBooks();
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -71,7 +73,6 @@ const AddBook = () => {
       error.description === "" &&
       error.category === ""
     ) {
-      setLoading(true);
       try {
         const formData = new FormData();
         formData.append("title", values.title);
@@ -81,19 +82,10 @@ const AddBook = () => {
         formData.append("description", values.description);
         formData.append("image", values.image);
         formData.append("category", values.category);
-        const token = localStorage.getItem("token");
-        axios.post("http://localhost:3000/book", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setLoading(false);
+        addBook(formData);
         notifySuccess("New book added successfully");
         navigate("/all-books");
       } catch (err) {
-        setLoading(false);
         notifyError("Failed to add book. Please try again.");
         setError({ err: "Failed to add book. Please try again." });
       }

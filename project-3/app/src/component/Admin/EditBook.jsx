@@ -10,6 +10,7 @@ import {
   notifySuccess,
   notifyError,
 } from "../AssetCopm/utils/toastNotification";
+import useAdminBooks from "../../hooks/useAdminBooks";
 const EditBook = () => {
   const [values, setValues] = useState({
     title: "",
@@ -21,34 +22,48 @@ const EditBook = () => {
     image: null,
   });
   const [error, setError] = useState({});
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
+  const { editBook, fetchBookById, loading, book } = useAdminBooks();
   useEffect(() => {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    axios
-      .get(`http://localhost:3000/book/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const book = res.data;
-        setValues({
-          title: book.title,
-          author: book.author,
-          year: book.year,
-          price: book.price,
-          description: book.description,
-          category: book.category,
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(true);
-        console.log(err);
+    // setLoading(true);
+    // const token = localStorage.getItem("token");
+    // axios
+    //   .get(`http://localhost:3000/book/${id}`, {
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   })
+    //   .then((res) => {
+    //     const book = res.data;
+    //     setValues({
+    //       title: book.title,
+    //       author: book.author,
+    //       year: book.year,
+    //       price: book.price,
+    //       description: book.description,
+    //       category: book.category,
+    //     });
+    //     setLoading(false);
+    //   })
+    //   .catch((err) => {
+    //     setLoading(true);
+    //     console.log(err);
+    const fetchBook = () => {
+      fetchBookById(id);
+      const data = book;
+      setValues({
+        title: data.title,
+        author: data.author,
+        year: data.year,
+        price: data.price,
+        description: data.description,
+        category: data.category,
       });
+    };
+    fetchBook();
+    // });
     const fetchCategory = async () => {
       try {
         const res = await axios.get(

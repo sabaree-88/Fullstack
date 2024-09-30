@@ -10,7 +10,10 @@ const useAdminBooks = () => {
   const [totalEntries, setTotalEntries] = useState(0);
 
   const token = localStorage.getItem("token");
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data",
+  };
 
   const fetchBooks = async (page = 1, limit = 5) => {
     setLoading(true);
@@ -86,7 +89,7 @@ const useAdminBooks = () => {
         headers,
       });
       setLoading(false);
-      return res.data;
+      setBooks((prev) => prev.filter((book) => book._id !== id));
     } catch (err) {
       setError(err);
       setLoading(false);

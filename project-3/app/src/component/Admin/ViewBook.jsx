@@ -5,30 +5,21 @@ import { FaWindowClose } from "react-icons/fa";
 import Spinner from "../AssetCopm/utils/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-
+import useAdminBooks from "../../hooks/useAdminBooks";
 const ViewBook = () => {
-  const [data, setData] = useState({});
   const { id } = useParams();
-  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const [item, setItem] = useState({});
+  const { fetchBookById, loading } = useAdminBooks();
   useEffect(() => {
-    setLoading(true);
     if (!user) {
       return;
     }
-    const token = localStorage.getItem("token");
-    axios
-      .get(`http://localhost:3000/book/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    const fetchData = async () => {
+      const { data } = await fetchBookById(id);
+      setItem(data);
+    };
+    fetchData();
   }, [id]);
 
   return (
@@ -38,7 +29,7 @@ const ViewBook = () => {
           <Spinner />
         ) : (
           <div
-            key={data._id}
+            key={item._id}
             className="w-6/12 bg-white min-h-[50vh] p-5 rounded shadow-lg"
           >
             <div className="flex justify-end">
@@ -46,13 +37,13 @@ const ViewBook = () => {
                 <FaWindowClose className="text-red-600 text-2xl" />
               </Link>
             </div>
-            <h1 className="text-2xl font-bold mb-4">{data.title}</h1>
-            <h2 className="text-xl mb-2">{data.author}</h2>
-            <h3 className="text-lg">{data.year}</h3>
-            {data.imagePath && (
+            <h1 className="text-2xl font-bold mb-4">{item.title}</h1>
+            <h2 className="text-xl mb-2">{item.author}</h2>
+            <h3 className="text-lg">{item.year}</h3>
+            {item.imagePath && (
               <img
-                src={`http://localhost:3000${data.imagePath}`}
-                alt={data.title}
+                src={`http://localhost:3000${item.imagePath}`}
+                alt={item.title}
                 className="max-w-40"
               />
             )}

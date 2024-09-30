@@ -17,6 +17,7 @@ const useAdminBooks = () => {
 
   const fetchBooks = async (page = 1, limit = 5) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(
         `http://localhost:3000/book?page=${page}&limit=${limit}`,
@@ -38,34 +39,41 @@ const useAdminBooks = () => {
 
   const fetchBookById = async (id) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(`http://localhost:3000/book/${id}`, {
         headers,
       });
-      setBook(res.data);
-      setLoading(false);
+      // setBook(res.data);
+      // console.log(res.data);
+      return {
+        data: res.data,
+      };
     } catch (err) {
       setError(err);
+    } finally {
       setLoading(false);
     }
   };
 
   const addBook = async (bookData) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.post("http://localhost:3000/book", bookData, {
         headers,
       });
-      setLoading(false);
       return res.data;
     } catch (err) {
       setError(err);
+    } finally {
       setLoading(false);
     }
   };
 
   const editBook = async (id, bookData) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.put(
         `http://localhost:3000/book/${id}`,
@@ -74,34 +82,47 @@ const useAdminBooks = () => {
           headers,
         }
       );
-      setLoading(false);
       return res.data;
     } catch (err) {
       setError(err);
+    } finally {
       setLoading(false);
     }
   };
 
   const deleteBook = async (id) => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await axios.delete(`http://localhost:3000/book/${id}`, {
+      await axios.delete(`http://localhost:3000/book/${id}`, {
         headers,
       });
-      setLoading(false);
       setBooks((prev) => prev.filter((book) => book._id !== id));
     } catch (err) {
       setError(err);
+    } finally {
       setLoading(false);
     }
   };
 
   const searchBook = async (searchQuery) => {
-    const res = await axios.get(
-      `http://localhost:3000/book/search?query=${searchQuery}`
-    );
-    setBooks(res.data);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/book/search?query=${searchQuery}`,
+        {
+          headers,
+        }
+      );
+      setBooks(res.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return {
     books,
     book,

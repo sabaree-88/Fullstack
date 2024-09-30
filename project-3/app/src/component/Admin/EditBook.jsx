@@ -22,31 +22,45 @@ const EditBook = () => {
     image: null,
   });
   const [error, setError] = useState({});
+  const [fetchingBook, setFetchingBook] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const { editBook, fetchBookById, loading, book } = useAdminBooks();
+
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/category/get-categories")
-      .then((res) => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/category/get-categories"
+        );
         setCategories(res.data);
         console.log("Category", res.data);
-      })
-      .catch((err) => console.log(err));
-    const fetchBook = async () => {
-      await fetchBookById(id);
-      setValues({
-        title: book?.title,
-        author: book?.author,
-        year: book?.year,
-        price: book?.price,
-        description: book?.description,
-        category: book?.category?._id,
-      });
-      console.log("Book", book);
+      } catch (err) {
+        console.log(err);
+      }
     };
+
+    const fetchBook = async () => {
+      try {
+        const { data } = await fetchBookById(id);
+        setValues({
+          title: data?.title || "",
+          author: data?.author || "",
+          year: data?.year || "",
+          price: data?.price || "",
+          description: data?.description || "",
+          category: data?.category?._id || "",
+        });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setFetchingBook(false);
+      }
+    };
+
+    fetchCategories();
     fetchBook();
   }, [id]);
 
@@ -65,7 +79,7 @@ const EditBook = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       return;
@@ -91,15 +105,22 @@ const EditBook = () => {
       if (values.image) {
         formData.append("image", values.image);
       }
-      editBook(id, formData);
-      navigate("/all-books");
+
+      try {
+        await editBook(id, formData);
+        notifySuccess("Book updated successfully!");
+        navigate("/all-books");
+      } catch (err) {
+        notifyError("Failed to update the book.");
+        console.log(err);
+      }
     }
   };
 
   return (
     <Layout>
       <div className="bg-slate-300 min-h-[100vh] w-full flex justify-center items-center flex-col">
-        {loading ? (
+        {loading || fetchingBook ? (
           <Spinner />
         ) : (
           <div className="w-6/12 bg-white p-5 rounded shadow-lg">

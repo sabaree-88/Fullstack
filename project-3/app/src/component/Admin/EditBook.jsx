@@ -36,7 +36,6 @@ const EditBook = () => {
           "http://localhost:3000/category/get-categories"
         );
         setCategories(res.data);
-        console.log("Category", res.data);
       } catch (err) {
         console.log(err);
       }

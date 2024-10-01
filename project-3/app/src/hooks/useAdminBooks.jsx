@@ -44,8 +44,6 @@ const useAdminBooks = () => {
       const res = await axios.get(`http://localhost:3000/book/${id}`, {
         headers,
       });
-      // setBook(res.data);
-      // console.log(res.data);
       return {
         data: res.data,
       };

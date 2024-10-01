@@ -9,16 +9,13 @@ import useFav from "../../../hooks/useFav";
 const FavouritesPage = () => {
   const { user } = useAuth();
   const { loading, favourites, error, removeFavourite } = useFav(user);
-  const {
-    handleAddToCart,
-    isInCart,
-  } = useBooks(user);
+  const { handleAddToCart, isInCart } = useBooks(user);
 
   if (loading) {
     return (
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl py-2 sm:py-2 lg:max-w-none lg:py-2">
-          <h2 className="text-2xl font-bold text-gray-900">My Favourites</h2>
+          <h2 className="text-2xl font-bold text-gray-900">My Favorites</h2>
           <div className="mt-6 space-y-12 lg:grid lg:grid-cols-4 lg:gap-x-6 lg:space-y-0">
             {[...Array(4)].map((_, index) => (
               <CardSkeleton key={index} />
@@ -42,11 +39,11 @@ const FavouritesPage = () => {
       <div className="mt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl py-2 sm:py-2 lg:max-w-none lg:py-2">
-            <h2 className="text-2xl font-bold text-gray-900">My Favourites</h2>
+            <h2 className="text-2xl font-bold text-gray-900">My Favorites</h2>
 
             {favourites.length === 0 ? (
               <p className="text-center text-gray-500">
-                No favourites added yet.
+                No favorites added yet.
               </p>
             ) : (
               <div className="mt-6 space-y-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:space-y-0">
@@ -56,7 +53,7 @@ const FavouritesPage = () => {
                     className="group relative border-2 p-3 rounded-md"
                   >
                     <div className="absolute z-10 top-4 right-2">
-                      <label className="sr-only">Remove Favourite</label>
+                      <label className="sr-only">Remove Favorite</label>
                       <button
                         onClick={() => removeFavourite(item._id)}
                         aria-label="Remove from favourites"

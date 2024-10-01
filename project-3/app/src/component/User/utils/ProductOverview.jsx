@@ -1,49 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { useParams } from "react-router-dom";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
-import { useAuth } from "../../../context/AuthContext";
 import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
 import Ratings from "./Ratings";
 import ReviewForm from "./ReviewForm";
 import ReviewsList from "./ReviewsList";
-
+import useProduct from "../../../hooks/useProduct";
 const ProductOverview = () => {
-  const [data, setData] = useState({});
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const { user } = useAuth();
   const { id } = useParams();
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) {
-        return;
-      }
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`http://localhost:3000/book/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(res.data);
-        setReviews(res.data.reviews);
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
-  const handleReviewSubmit = (newReview) => {
-    setReviews([newReview, ...reviews]);
-  };
+  const { data, reviews, loading, error, handleReviewSubmit } = useProduct(id);
 
   return (
     <UserLayout>

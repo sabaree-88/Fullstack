@@ -1,34 +1,26 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import useProduct from "../../../hooks/useProduct";
+
 const ReviewForm = ({ bookId, onReviewSubmit }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const { handleReviewSubmit } = useProduct(id);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        `http://localhost:3000/reviews/books/${bookId}/reviews`,
-        {
-          rating,
-          comment,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const newReview = await handleReviewSubmit(bookId, rating, comment);
       setRating(0);
       setComment("");
-      onReviewSubmit(res.data);
+      onReviewSubmit(newReview);
       navigate(`/book-details/${id}`);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to submit review");
+      setError(err.message || "Failed to submit review");
     }
   };
 

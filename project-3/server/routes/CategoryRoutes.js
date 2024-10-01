@@ -6,11 +6,13 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
+  searchCategory,
 } from "../controllers/CategoryController.js";
 import requireAuth from "../middleware/authMiddleware.js";
 import requireAdmin from "../middleware/requireAdmin.js";
 const router = Router();
 
+router.get("/search", searchCategory);
 router.use(requireAuth);
 router.get("/get-categories", getCategories);
 router.get("/get-categories/:id", getCategoryById);

@@ -3,7 +3,6 @@ import axios from "axios";
 
 const useAdminBooks = () => {
   const [books, setBooks] = useState([]);
-  const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
@@ -123,7 +122,6 @@ const useAdminBooks = () => {
 
   return {
     books,
-    book,
     loading,
     error,
     totalPages,

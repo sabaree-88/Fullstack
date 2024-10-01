@@ -1,55 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../AssetCopm/AdminLayout/Layout";
-import axios from "axios";
+
 import { useAuth } from "../../context/AuthContext";
 import { IoIosClose } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import useMessages from "../../hooks/useMessages";
 const Message = () => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
   const { user } = useAuth();
-  const token = localStorage.getItem("token");
+  const { messages, loading, error, removeMessage, fetchMessages } =
+    useMessages();
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/inquiry/get-inquiry",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setMessages(response.data.inquiries);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load messages");
-        setLoading(false);
-      }
-    };
-
     fetchMessages();
   }, [user]);
 
   const handleRemove = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:3000/inquiry/remove-inquiry/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMessages((prevMessages) =>
-        prevMessages.filter((message) => message._id !== id)
-      );
-    } catch (error) {
-      setError("Failed to load messages");
-    }
+    removeMessage(id);
   };
   if (loading) return <div>Loading messages...</div>;
   if (error) return <div>{error}</div>;

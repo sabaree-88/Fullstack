@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import Validate from "../../validation/validate";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { FaWindowClose } from "react-icons/fa";
-import Spinner from "../AssetCopm/utils/Spinner";
-import { useAuth } from "../../context/AuthContext";
-import Layout from "../AssetCopm/AdminLayout/Layout";
+import { Link, useNavigate } from "react-router-dom";
+import Validate from "../../../validation/validate";
+import axios from "axios";
+import Spinner from "../../AssetCopm/utils/Spinner";
+import { useAuth } from "../../../context/AuthContext";
+import Layout from "../../AssetCopm/AdminLayout/Layout";
 import {
   notifySuccess,
   notifyError,
-} from "../AssetCopm/utils/toastNotification";
-import useAdminBooks from "../../hooks/useAdminBooks";
-const EditBook = () => {
+} from "../../AssetCopm/utils/toastNotification";
+import useAdminBooks from "../../../hooks/useAdminBooks";
+const AddBook = () => {
   const [values, setValues] = useState({
     title: "",
     author: "",
@@ -22,67 +22,45 @@ const EditBook = () => {
     image: null,
   });
   const [error, setError] = useState({});
-  const [fetchingBook, setFetchingBook] = useState(true);
-  const navigate = useNavigate();
-  const { id } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const { editBook, fetchBookById, loading, book } = useAdminBooks();
-
+  const { addBook, loading } = useAdminBooks();
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategory = async () => {
       try {
         const res = await axios.get(
           "http://localhost:3000/category/get-categories"
         );
         setCategories(res.data);
-      } catch (err) {
-        console.log(err);
+        console.log(res);
+      } catch (error) {
+        console.log(error);
       }
     };
-
-    const fetchBook = async () => {
-      try {
-        const { data } = await fetchBookById(id);
-        setValues({
-          title: data?.title || "",
-          author: data?.author || "",
-          year: data?.year || "",
-          price: data?.price || "",
-          description: data?.description || "",
-          category: data?.category?._id || "",
-        });
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setFetchingBook(false);
-      }
-    };
-
-    fetchCategories();
-    fetchBook();
-  }, [id]);
-
-  const handleInputs = (e) => {
-    const { name, value } = e.target;
+    fetchCategory();
+  }, [user]);
+  const handleInputs = (event) => {
+    const { name, value } = event.target;
     setValues((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleImage = (e) => {
+  const handleImage = (event) => {
     setValues((prev) => ({
       ...prev,
-      image: e.target.files[0],
+      image: event.target.files[0],
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
     if (!user) {
+      setError("Your are not logged in!");
       return;
     }
+    event.preventDefault();
     const validationErrors = Validate(values);
     setError(validationErrors);
 
@@ -94,24 +72,21 @@ const EditBook = () => {
       error.description === "" &&
       error.category === ""
     ) {
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("author", values.author);
-      formData.append("price", values.price);
-      formData.append("year", values.year);
-      formData.append("description", values.description);
-      formData.append("category", values.category);
-      if (values.image) {
-        formData.append("image", values.image);
-      }
-
       try {
-        await editBook(id, formData);
-        notifySuccess("Book updated successfully!");
+        const formData = new FormData();
+        formData.append("title", values.title);
+        formData.append("author", values.author);
+        formData.append("year", values.year);
+        formData.append("price", values.price);
+        formData.append("description", values.description);
+        formData.append("image", values.image);
+        formData.append("category", values.category);
+        addBook(formData);
+        notifySuccess("New book added successfully");
         navigate("/all-books");
       } catch (err) {
-        notifyError("Failed to update the book.");
-        console.log(err);
+        notifyError("Failed to add book. Please try again.");
+        setError({ err: "Failed to add book. Please try again." });
       }
     }
   };
@@ -119,10 +94,10 @@ const EditBook = () => {
   return (
     <Layout>
       <div className="bg-slate-300 min-h-[100vh] w-full flex justify-center items-center flex-col">
-        {loading || fetchingBook ? (
+        {loading ? (
           <Spinner />
         ) : (
-          <div className="w-6/12 bg-white p-5 rounded shadow-lg">
+          <div className="md:w-full sm:w-full lg:w-6/12 bg-white p-5 rounded shadow-lg">
             <div className="flex justify-end">
               <Link to="/all-books">
                 <FaWindowClose
@@ -132,7 +107,7 @@ const EditBook = () => {
               </Link>
             </div>
             <h1 className="max-w-md mx-auto font-bold text-2xl mb-2">
-              Edit Book
+              Add Book
             </h1>
             <form
               className="max-w-md mx-auto"
@@ -151,7 +126,7 @@ const EditBook = () => {
                 />
                 <label
                   htmlFor="floating_title"
-                  className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
                   Book Title
                 </label>
@@ -262,6 +237,7 @@ const EditBook = () => {
                   <span className="text-red-500 text-sm">{error.category}</span>
                 )}
               </div>
+
               <div className="relative z-0 w-full mb-5 group">
                 <input
                   type="file"
@@ -277,12 +253,18 @@ const EditBook = () => {
                 >
                   Upload Book Image
                 </label>
+                {error.image && (
+                  <span className="text-red-500 text-sm">{error.image}</span>
+                )}
               </div>
+              {error.api && (
+                <div className="text-red-500 text-sm mb-3">{error.api}</div>
+              )}
               <button
                 type="submit"
                 className="text-white bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center"
               >
-                Update
+                Add
               </button>
             </form>
           </div>
@@ -292,4 +274,4 @@ const EditBook = () => {
   );
 };
 
-export default EditBook;
+export default AddBook;

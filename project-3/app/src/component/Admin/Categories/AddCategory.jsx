@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import Layout from "../AssetCopm/AdminLayout/Layout";
+import Layout from "../../AssetCopm/AdminLayout/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import {
   notifyError,
   notifySuccess,
-} from "../AssetCopm/utils/toastNotification";
-import Spinner from "../AssetCopm/utils/Spinner";
-import axios from "axios";
+} from "../../AssetCopm/utils/toastNotification";
+import Spinner from "../../AssetCopm/utils/Spinner";
+import useCategory from "../../../hooks/useCategory";
 
 const AddCategory = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
-  const [error, setError] = useState({});
-  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { loading, error, addCategory } = useCategory();
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     if (!user) {
@@ -23,32 +22,22 @@ const AddCategory = () => {
       return;
     }
     e.preventDefault();
-    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", image);
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:3000/category/add-categories`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLoading(false);
+      await addCategory(formData);
       notifySuccess("New Category added successfully");
       navigate("/categories");
     } catch (error) {
       console.log(error);
-      setLoading(false);
       notifyError("Failed to add Category.");
     }
   };
 
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
   return (
     <Layout>
       {loading ? (

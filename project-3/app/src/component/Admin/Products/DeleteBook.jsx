@@ -2,13 +2,13 @@ import axios from "axios";
 import { useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Spinner from "../AssetCopm/utils/Spinner";
-import { useAuth } from "../../context/AuthContext";
-import Layout from "../AssetCopm/AdminLayout/Layout";
+import Spinner from "../../AssetCopm/utils/Spinner";
+import { useAuth } from "../../../context/AuthContext";
+import Layout from "../../AssetCopm/AdminLayout/Layout";
 import {
   notifySuccess,
   notifyError,
-} from "../AssetCopm/utils/toastNotification";
+} from "../../AssetCopm/utils/toastNotification";
 const DeleteBook = () => {
   const { id } = useParams();
   const navigate = useNavigate();

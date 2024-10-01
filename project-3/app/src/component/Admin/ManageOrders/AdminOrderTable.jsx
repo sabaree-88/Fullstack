@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  fetchOrders,
-  updateOrderStatus,
-} from "../services/adminOrderService.js";
 import OrderDetailsModal from "./OrderDetailsModal";
 import Layout from "../../AssetCopm/AdminLayout/Layout.jsx";
 import { FaRegEye } from "react-icons/fa";
 import usePagination from "../../../hooks/usePagination.jsx";
+import useOrders from "../../../hooks/useOrders.js";
 const AdminOrderTable = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -26,6 +23,7 @@ const AdminOrderTable = () => {
     setTotalEntries,
   } = usePagination(1, 5);
 
+  const { updateOrderStatus, fetchOrderDetails, fetchOrders } = useOrders();
   useEffect(() => {
     loadOrders();
   }, [currentPage]);

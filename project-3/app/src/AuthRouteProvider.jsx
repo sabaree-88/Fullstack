@@ -3,14 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Login from "./component/UserLogin/Login";
 import SignUp from "./component/UserLogin/SignUp";
-import ViewBook from "./component/Admin/ViewBook";
-import AddBook from "./component/Admin/AddBook";
-import EditBook from "./component/Admin/EditBook";
-import DeleteBook from "./component/Admin/DeleteBook";
+import ViewBook from "./component/Admin/Products/ViewBook";
+import AddBook from "./component/Admin/Products/AddBook";
+import EditBook from "./component/Admin/Products/EditBook";
 import UserDashboard from "./component/User/UserDashboard";
 import AdminDashboard from "./component/Admin/AdminDashboard";
-import Users from "./component/Admin/Users";
-import AllBooks from "./component/Admin/AllBooks";
+import Users from "./component/Admin/User/Users";
+import AllBooks from "./component/Admin/Products/AllBooks";
 import UpdateUser from "./component/Profile/UpdateUser";
 import ForgotPassword from "./component/UserLogin/ForgotPassword";
 import ResetPassword from "./component/UserLogin/ResetPassword";
@@ -20,10 +19,9 @@ import Error from "./component/AssetCopm/utils/Error";
 import ProtectedRoute from "./ProtectedRoute";
 import FavouritesPage from "./component/User/utils/FavouritesPage";
 import Cart from "./component/User/utils/Cart";
-import CategoryList from "./component/Categories/CategoryList";
-import AddCategory from "./component/Categories/AddCategory";
-import EditCategory from "./component/Categories/EditCategory";
-import DeleteCategory from "./component/Categories/DeleteCategory";
+import CategoryList from "./component/Admin/Categories/CategoryList";
+import AddCategory from "./component/Admin/Categories/AddCategory";
+import EditCategory from "./component/Admin/Categories/EditCategory";
 import Category from "./component/User/utils/Category";
 import ProductCollections from "./component/User/ProductCollections";
 import ContactUs from "./component/User/ContactUs";
@@ -83,14 +81,6 @@ const AuthRouteProvider = () => {
             }
           />
           <Route
-            path="/delete/:id"
-            element={
-              <ProtectedRoute role="admin">
-                <DeleteBook />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/all-books"
             element={
               <ProtectedRoute role="admin">
@@ -143,14 +133,6 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="admin">
                 <EditCategory />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/delete-categories/:id"
-            element={
-              <ProtectedRoute role="admin">
-                <DeleteCategory />
               </ProtectedRoute>
             }
           />

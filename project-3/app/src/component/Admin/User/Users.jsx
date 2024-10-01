@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../AssetCopm/AdminLayout/Layout";
+import Layout from "../../AssetCopm/AdminLayout/Layout";
 import { Link } from "react-router-dom";
-import Spinner from "../AssetCopm/utils/Spinner";
-import { useUser } from "../../context/UserContext";
-import { useAuth } from "../../context/AuthContext";
-import usePagination from "../../hooks/usePagination";
+import Spinner from "../../AssetCopm/utils/Spinner";
+import { useUser } from "../../../context/UserContext";
+import { useAuth } from "../../../context/AuthContext";
+import usePagination from "../../../hooks/usePagination";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -153,69 +153,53 @@ const Users = () => {
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col items-center mt-5">
-            <span className="text-sm text-gray-700 dark:text-gray-400">
+          <nav
+            className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+            aria-label="Table navigation"
+          >
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
               Showing{" "}
               <span className="font-semibold text-gray-900 dark:text-white">
-                {startEntry}
-              </span>{" "}
-              to{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {endEntry}
+                {startEntry}-{endEntry}
               </span>{" "}
               of{" "}
               <span className="font-semibold text-gray-900 dark:text-white">
                 {totalEntries}
-              </span>{" "}
-              Entries
+              </span>
             </span>
-            <div className="inline-flex mt-2 xs:mt-0">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                <svg
-                  className="w-3.5 h-3.5 me-2 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 10"
+            <ul className="inline-flex items-stretch -space-x-px">
+              <li>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 5H1m0 0 4 4M1 5l4-4"
-                  />
-                </svg>
-                Prev
-              </button>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Next
-                <svg
-                  className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 10"
+                  Previous
+                </button>
+              </li>
+              {[...Array(totalPages)].map((_, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`flex items-center justify-center text-sm h-full py-1.5 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                      currentPage === index + 1 ? "font-bold text-blue-600" : ""
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M1 5h12m0 0-4-4m4 4-4 4"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       )}
     </Layout>

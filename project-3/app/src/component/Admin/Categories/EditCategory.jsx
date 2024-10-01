@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../AssetCopm/AdminLayout/Layout";
-import Spinner from "../AssetCopm/utils/Spinner";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
 import {
   notifyError,
   notifySuccess,
-} from "../AssetCopm/utils/toastNotification";
+} from "../../AssetCopm/utils/toastNotification";
+import { useAuth } from "../../../context/AuthContext";
+import Spinner from "../../AssetCopm/utils/Spinner";
+import Layout from "../../AssetCopm/AdminLayout/Layout";
+import useCategory from "../../../hooks/useCategory";
 
 const EditCategory = () => {
   const [values, setValues] = useState({
     image: null,
   });
   const [name, setName] = useState("");
-  const [error, setError] = useState({});
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
+  const { loading, error, editCategory, fetchCategoryId } = useCategory();
 
   useEffect(() => {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    axios
-      .get(`http://localhost:3000/category/get-categories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const category = res.data;
-        setName(category.name);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(true);
-        console.log(err);
-      });
+    const fetchCategory = async () => {
+      const { data } = await fetchCategoryId(id);
+      setName(data.name);
+    };
+    fetchCategory();
   }, [id]);
 
   const handleImage = (e) => {
@@ -51,32 +40,23 @@ const EditCategory = () => {
       return;
     }
     e.preventDefault();
-    setLoading(true);
-
     const formData = new FormData();
     formData.append("name", name);
     if (values.image) {
       formData.append("image", values.image);
     }
-    const token = localStorage.getItem("token");
-    axios
-      .put(`http://localhost:3000/category/edit-categories/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        notifySuccess("Category updated successfully!");
-        navigate("/categories");
-      })
-      .catch((err) => {
-        notifyError("Category updating the book!");
-        setError(err);
-        setLoading(false);
-      });
+    try {
+      await editCategory(id, formData);
+      navigate("/categories");
+      notifySuccess("Category updated successfully!");
+    } catch (error) {
+      notifyError("Category updating the book!");
+    }
   };
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
   return (
     <Layout>
       {loading ? (

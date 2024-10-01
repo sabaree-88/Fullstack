@@ -1,9 +1,15 @@
 import Category from "../models/CategoryModel.js";
 
 export const getCategories = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit);
+  const skip = (page - 1) * limit;
   try {
-    const categories = await Category.find();
-    res.status(200).json(categories);
+    const categories = await Category.find().skip(skip).limit(limit);
+    const total = await Category.countDocuments();
+    res
+      .status(200)
+      .json({ categories, total, page, pages: Math.ceil(total / limit) });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving categories", error });
   }
@@ -72,5 +78,17 @@ export const deleteCategory = async (req, res) => {
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting category", error });
+  }
+};
+
+export const searchCategory = async (req, res) => {
+  const { query } = req.query;
+  try {
+    const result = await Category.find({
+      $or: [{ name: { $regex: query, $options: "i" } }],
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Error searching for category", error });
   }
 };

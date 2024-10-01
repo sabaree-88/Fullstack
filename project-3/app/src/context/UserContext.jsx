@@ -1,21 +1,45 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import axios from "axios";
-import { useAuth } from "./AuthContext";
 
 const UserContext = createContext();
 
+export const useUser = () => {
+  return useContext(UserContext);
+};
+const token = localStorage.getItem("token");
+const headers = {
+  Authorization: `Bearer ${token}`,
+  "Content-Type": "multipart/form-data",
+};
 export const UserProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
-  const user = useAuth();
+  const [user, setUser] = useState();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // const getUsers = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get("http://localhost:3000/user/user-list");
-  //     setUsers(res.data);
-  //   } catch (error) {
-  //     throw new Error(error.response?.data?.error || "Users not found");
-  //   }
-  // }, []);
+  const getUsers = async (page = 1, limit = 5) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/user/user-list?page=${page}&limit=${limit}`,
+        {
+          headers,
+        }
+      );
+      const { users } = response.data;
+      setUsers(users);
+      return {
+        totalPages: response.data.totalPages,
+        totalEntries: response.data.totalUsers,
+      };
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      setError("Failed to fetch users.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getUserId = useCallback(async (id) => {
     try {
@@ -26,16 +50,6 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const handleSearch = useCallback(async (searchQuery) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/user/search-user?query=${searchQuery}`
-      );
-      setUsers(res.data.allUsers);
-    } catch (error) {
-      throw new Error(error.response?.data?.error || "User not found");
-    }
-  });
   const updateUser = useCallback(
     async (id, formData) => {
       try {
@@ -64,90 +78,35 @@ export const UserProvider = ({ children }) => {
     [user]
   );
 
+  const searchUsers = async (searchQuery) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/user/search-user?query=${searchQuery}`
+      );
+      setUsers(response.data);
+    } catch (err) {
+      console.error("Error searching users:", err);
+      setError("Failed to search users.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         users,
-        getUserId,
+        loading,
+        error,
+        getUsers,
+        searchUsers,
         updateUser,
-        user,
-        setUser,
-        handleSearch,
+        getUserId,
       }}
     >
       {children}
     </UserContext.Provider>
   );
 };
-
-export const useUser = () => useContext(UserContext);
-
-// import React, { createContext, useContext, useState } from "react";
-// import axios from "axios";
-
-// const UserContext = createContext();
-
-// export const useUser = () => {
-//   return useContext(UserContext);
-// };
-// const token = localStorage.getItem("token");
-// const headers = {
-//   Authorization: `Bearer ${token}`,
-//   "Content-Type": "multipart/form-data",
-// };
-// export const UserProvider = ({ children }) => {
-//   const [users, setUsers] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-//   const getUsers = async (page, limit) => {
-//     setLoading(true);
-//     setError(null);
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:3000/user/user-list?page=${page}&limit=${limit}`,
-//         {
-//           headers,
-//         }
-//       );
-//       const { users, totalPages, totalUsers } = response.data;
-//       setUsers(users);
-//       return { totalPages, totalUsers };
-//     } catch (err) {
-//       console.error("Error fetching users:", err);
-//       setError("Failed to fetch users.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const searchUsers = async (searchQuery) => {
-//     setLoading(true);
-//     setError(null);
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:3000/user/search-user?query=${searchQuery}`
-//       );
-//       // setUsers(response.data.users);
-//       console.log(response);
-//     } catch (err) {
-//       console.error("Error searching users:", err);
-//       setError("Failed to search users.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <UserContext.Provider
-//       value={{
-//         users,
-//         loading,
-//         error,
-//         getUsers,
-//         searchUsers,
-//       }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   );
-// };

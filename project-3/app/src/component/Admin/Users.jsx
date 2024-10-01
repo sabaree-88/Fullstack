@@ -23,7 +23,15 @@ const Users = () => {
   } = usePagination(1, 5);
 
   useEffect(() => {
-    getUsers(currentPage, itemsPerPage);
+    const fetchData = async () => {
+      const { totalPages, totalEntries } = await getUsers(
+        currentPage,
+        itemsPerPage
+      );
+      setTotalPages(totalPages);
+      setTotalEntries(totalEntries);
+    };
+    fetchData();
   }, [user, currentPage]);
 
   const handleSearch = async (e) => {

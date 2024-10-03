@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const useBooks = (user, limit, page) => {
   const [data, setData] = useState([]);
@@ -8,6 +9,8 @@ const useBooks = (user, limit, page) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,17 +41,23 @@ const useBooks = (user, limit, page) => {
           return uniqueData;
         });
 
-        if (page === 1) {
-          const favRes = await axios.get(
-            `http://localhost:3000/favourites/get-favourites`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setFavourites(favRes.data || []);
-        }
+        const favRes = await axios.get(
+          `http://localhost:3000/favourites/get-favourites`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFavourites(favRes.data || []);
+
+        const cartRes = await axios.get(`http://localhost:3000/cart/get-cart`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(cartRes);
+        setCartItems(cartRes.data.items || []);
 
         setLoading(false);
       } catch (err) {
@@ -60,6 +69,7 @@ const useBooks = (user, limit, page) => {
     fetchData();
   }, [user, limit, page]);
 
+  // Handle adding to favorites
   const handleFavouriteClick = async (bookId) => {
     const token = localStorage.getItem("token");
     const isFav = isFavourite(bookId);
@@ -104,12 +114,79 @@ const useBooks = (user, limit, page) => {
     }
   };
 
+  const handleRemoveFromCart = async (bookId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.post(
+        `http://localhost:3000/cart/remove-from-cart`,
+        { bookId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.bookId._id !== bookId)
+      );
+      setSelectedItems((prevItems) =>
+        prevItems.filter((itemId) => itemId !== bookId)
+      );
+    } catch (err) {
+      console.error("Failed to remove item from cart", err);
+    }
+  };
+
+  const handleQuantityChange = async (bookId, newQuantity) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.post(
+        `http://localhost:3000/cart/update-quantity`,
+        { bookId, quantity: newQuantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.bookId._id === bookId ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update quantity", err);
+    }
+  };
+
+  const handleSelectItem = (bookId) => {
+    setSelectedItems((prevSelectedItems) =>
+      prevSelectedItems.includes(bookId)
+        ? prevSelectedItems.filter((item) => item !== bookId)
+        : [...prevSelectedItems, bookId]
+    );
+  };
+
+  const calculateTotal = () => {
+    return cartItems
+      .filter((item) => selectedItems.includes(item.bookId._id))
+      .reduce((total, item) => total + item.bookId.price * item.quantity, 0);
+  };
+
+  const handleProceedToCheckout = () => {
+    const items = cartItems.filter((item) =>
+      selectedItems.includes(item.bookId._id)
+    );
+    const userId = user._id;
+
+    navigate("/checkout", {
+      state: {
+        items,
+        userId,
+      },
+    });
+  };
+
   const isFavourite = (bookId) => {
     return favourites && favourites.some((fav) => fav._id === bookId);
   };
 
   const isInCart = (bookId) => {
-    return cartItems && cartItems.some((item) => item._id === bookId);
+    return cartItems && cartItems.some((item) => item.bookId._id === bookId);
   };
 
   return {
@@ -119,8 +196,14 @@ const useBooks = (user, limit, page) => {
     loading,
     error,
     hasMore,
+    selectedItems,
     handleFavouriteClick,
     handleAddToCart,
+    handleRemoveFromCart,
+    handleQuantityChange,
+    handleSelectItem,
+    calculateTotal,
+    handleProceedToCheckout,
     isFavourite,
     isInCart,
   };

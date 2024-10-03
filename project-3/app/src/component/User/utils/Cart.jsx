@@ -1,109 +1,25 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
 import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
 import { Link, useNavigate } from "react-router-dom";
+import useBooks from "../../../hooks/useBooks"; // Assuming the useBooks hook is in the hooks directory
+
 const Cart = () => {
   const { user } = useAuth();
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedItems, setSelectedItems] = useState([]);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      if (!user) return;
 
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3000/cart/get-cart",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setCartItems(response.data.items);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "Failed to load cart items");
-        setLoading(false);
-      }
-    };
-
-    fetchCartItems();
-  }, [user]);
-
-  const handleRemoveFromCart = async (bookId) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      await axios.post(
-        `http://localhost:3000/cart/remove-from-cart`,
-        { bookId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCartItems((prevItems) =>
-        prevItems.filter((item) => item.bookId._id !== bookId)
-      );
-      setSelectedItems((prevItems) =>
-        prevItems.filter((itemId) => itemId !== bookId)
-      );
-    } catch (err) {
-      console.error("Failed to remove item from cart", err);
-    }
-  };
-
-  const handleQuantityChange = async (bookId, newQuantity) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      await axios.post(
-        `http://localhost:3000/cart/update-quantity`,
-        { bookId, quantity: newQuantity },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.bookId._id === bookId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update quantity", err);
-    }
-  };
-
-  const handleSelectItem = (bookId) => {
-    setSelectedItems((prevSelectedItems) =>
-      prevSelectedItems.includes(bookId)
-        ? prevSelectedItems.filter((item) => item !== bookId)
-        : [...prevSelectedItems, bookId]
-    );
-  };
-
-  const calculateTotal = () => {
-    return cartItems
-      .filter((item) => selectedItems.includes(item.bookId._id))
-      .reduce((total, item) => total + item.bookId.price * item.quantity, 0);
-  };
-
-  const handleProceedToCheckout = async () => {
-    const items = cartItems.filter((item) =>
-      selectedItems.includes(item.bookId._id)
-    );
-    console.log(items);
-    const userId = user._id;
-
-    navigate("/checkout", {
-      state: {
-        items,
-        userId
-      },
-    });
-  };
+  const {
+    cartItems,
+    loading,
+    error,
+    selectedItems,
+    handleRemoveFromCart,
+    handleQuantityChange,
+    handleSelectItem,
+    calculateTotal,
+    handleProceedToCheckout,
+  } = useBooks(user);
 
   if (loading) {
     return <ProductLoading />;
@@ -192,10 +108,8 @@ const Cart = () => {
                               id="counter-input"
                               data-input-counter=""
                               className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                              placeholder=""
-                              defaultValue={item.quantity}
                               value={item.quantity}
-                              required=""
+                              readOnly
                             />
                             <button
                               onClick={() =>
@@ -276,22 +190,12 @@ const Cart = () => {
                   </div>
                   <button
                     onClick={handleProceedToCheckout}
-                    // to={"/checkout"}
                     className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-primary-600 px-4 py-2 text-base font-medium shadow-sm transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
                   >
                     Proceed to Checkout
                   </button>
-                  <p className="text-center text-sm font-medium text-gray-500">
+                  <p className="text-center text-sm text-gray-600 dark:text-gray-400">
                     Shipping and taxes calculated at checkout.
-                  </p>
-                  <p className="text-center text-sm font-medium text-gray-500">
-                    or{" "}
-                    <Link
-                      to="/user-dashboard"
-                      className="text-primary-600 hover:text-primary-500 underline"
-                    >
-                      Continue Shopping
-                    </Link>
                   </p>
                 </div>
               </div>

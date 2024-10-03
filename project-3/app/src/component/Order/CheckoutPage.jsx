@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
+import useOrders from "../../hooks/useOrders";
 
 const CheckoutPage = () => {
-  const navigate = useNavigate();
   const { state } = useLocation();
   const { items = [], userId = null } = state || {};
 
+  const { handleCheckout, addresses } = useOrders(userId);
+
+  // useEffect(() => {
+  //   fetchAddresses();
+  // }, []);
   const [shippingAddress, setShippingAddress] = useState({
     fullname: "",
     address: "",
@@ -17,24 +21,10 @@ const CheckoutPage = () => {
     country: "",
   });
 
-  const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [editAddress, setEditAddress] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/address/get`);
-        console.log(response.data);
-        setAddresses(response.data);
-      } catch (err) {
-        console.error("Failed to fetch addresses", err);
-      }
-    };
-    fetchAddresses();
-  }, [userId]);
 
   const handleChange = (e) => {
     setShippingAddress({
@@ -48,83 +38,14 @@ const CheckoutPage = () => {
     setIsLoading(true);
 
     try {
-      let addressId = selectedAddress;
-      if (!selectedAddress || editAddress) {
-        const addressResponse = await axios.post(
-          "http://localhost:3000/address/add",
-          {
-            userId,
-            fullname: shippingAddress.fullname,
-            address: shippingAddress.address,
-            city: shippingAddress.city,
-            state: shippingAddress.state,
-            zipcode: shippingAddress.zip,
-            country: shippingAddress.country,
-          }
-        );
-        addressId = addressResponse.data.newAddress._id;
-      }
-
-      const totalAmount = Array.isArray(items)
-        ? items.reduce(
-            (sum, item) => sum + item.bookId.price * item.quantity,
-            0
-          )
-        : 0;
-
-      const orderResponse = await axios.post(
-        "http://localhost:3000/payment/create-order",
-        {
-          items,
-          userId,
-          addressId,
-          amount: totalAmount * 100,
-          currency: "INR",
-        }
+      await handleCheckout(
+        items,
+        userId,
+        shippingAddress,
+        selectedAddress,
+        editAddress
       );
-
-      const {
-        order_id: razorpayOrderId,
-        amount,
-        currency,
-      } = orderResponse.data;
-      const orderId = orderResponse.data.newOrder._id;
-      const options = {
-        key: "rzp_test_sahwpb5TiARJQe",
-        amount,
-        currency,
-        name: "BOOKSTORE",
-        description: "Book Purchase",
-        order_id: razorpayOrderId,
-        handler: async function (response) {
-          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
-            response;
-
-          try {
-            await axios.post("http://localhost:3000/payment/verify-payment", {
-              paymentId: razorpay_payment_id,
-              order_id: razorpay_order_id,
-              signature: razorpay_signature,
-              userId,
-              items,
-            });
-            navigate("/order-summary", { state: { orderId } });
-          } catch (error) {
-            console.error("Payment verification failed", error);
-          }
-        },
-        prefill: {
-          name: shippingAddress.fullname,
-          email: "user@example.com",
-          contact: "9999999999",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+      setError("");
     } catch (err) {
       setError("Failed to process checkout. Please try again.");
       console.error(err);

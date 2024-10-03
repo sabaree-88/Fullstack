@@ -28,7 +28,6 @@ const useBooks = (user, limit, page) => {
             },
           }
         );
-
         const newBooks = booksRes.data.books;
         setHasMore(newBooks.length > 0);
 
@@ -56,7 +55,6 @@ const useBooks = (user, limit, page) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(cartRes);
         setCartItems(cartRes.data.items || []);
 
         setLoading(false);
@@ -186,7 +184,7 @@ const useBooks = (user, limit, page) => {
   };
 
   const isInCart = (bookId) => {
-    return cartItems && cartItems.some((item) => item.bookId._id === bookId);
+    // return cartItems && cartItems.some((item) => item.bookId._id === bookId);
   };
 
   return {

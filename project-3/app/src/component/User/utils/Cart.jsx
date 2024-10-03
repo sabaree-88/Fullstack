@@ -2,12 +2,10 @@ import React, { useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
 import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
-import { Link, useNavigate } from "react-router-dom";
 import useBooks from "../../../hooks/useBooks"; // Assuming the useBooks hook is in the hooks directory
 
 const Cart = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const {
     cartItems,
@@ -158,7 +156,7 @@ const Cart = () => {
                       <div className="flex items-center justify-end gap-4 pt-4 md:pt-6">
                         <button
                           type="button"
-                          onClick={() => handleRemoveFromCart(item.bookId._id)}
+                          onClick={() => handleRemoveFromCart(item.bookId)}
                           className="inline-flex gap-2 text-sm font-medium text-primary-600 hover:text-primary-500"
                         >
                           <svg

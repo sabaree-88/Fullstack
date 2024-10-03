@@ -111,7 +111,6 @@ const useOrders = () => {
         }
       );
 
-      // Initiate Razorpay payment
       const {
         order_id: razorpayOrderId,
         amount,
@@ -119,7 +118,7 @@ const useOrders = () => {
       } = orderResponse.data;
       const orderId = orderResponse.data.newOrder._id;
       const options = {
-        key: "rzp_test_sahwpb5TiARJQe", // Use your own Razorpay test key
+        key: "rzp_test_sahwpb5TiARJQe", 
         amount,
         currency,
         name: "BOOKSTORE",

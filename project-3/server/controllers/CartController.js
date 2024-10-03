@@ -44,7 +44,6 @@ export const getCart = async (req, res) => {
   }
 };
 
-
 export const removeFromCart = async (req, res) => {
   const { bookId } = req.body;
   const userId = req.user._id;

@@ -157,7 +157,7 @@ const Cart = () => {
                         <div className="flex items-center justify-end gap-4 pt-4 md:pt-6">
                           <button
                             type="button"
-                            onClick={() => handleRemoveFromCart(item.bookId)}
+                            onClick={() => handleRemoveFromCart(item.bookId._id)}
                             className="inline-flex gap-2 text-sm font-medium text-primary-600 hover:text-primary-500"
                           >
                             <svg

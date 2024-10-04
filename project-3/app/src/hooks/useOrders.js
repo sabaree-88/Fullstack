@@ -5,16 +5,18 @@ import { useNavigate } from "react-router-dom";
 const useOrders = () => {
   const navigate = useNavigate();
   const [addresses, setAddresses] = useState([]);
+  const [order, setOrder] = useState(null);
+  const [orderData, setOrderData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
-
+  const headers = { Authorization: `Bearer ${token}` };
   const fetchOrders = async (page = 1, limit = 5) => {
     try {
       const response = await axios.get(
         `http://localhost:3000/payment/orders-admin?page=${page}&limit=${limit}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         }
       );
       return response.data;
@@ -29,9 +31,7 @@ const useOrders = () => {
       const response = await axios.get(
         `http://localhost:3000/payment/orders-admin/${id}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         }
       );
       return response.data;
@@ -47,9 +47,7 @@ const useOrders = () => {
         `http://localhost:3000/payment/orders/status/${id}`,
         { status },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         }
       );
       return response.data;
@@ -81,9 +79,7 @@ const useOrders = () => {
             country: shippingAddress.country,
           },
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers,
           }
         );
         addressId = addressResponse.data.newAddress._id;
@@ -94,7 +90,6 @@ const useOrders = () => {
         0
       );
 
-      // Create order in the backend
       const orderResponse = await axios.post(
         "http://localhost:3000/payment/create-order",
         {
@@ -105,9 +100,7 @@ const useOrders = () => {
           currency: "INR",
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         }
       );
 
@@ -118,7 +111,7 @@ const useOrders = () => {
       } = orderResponse.data;
       const orderId = orderResponse.data.newOrder._id;
       const options = {
-        key: "rzp_test_sahwpb5TiARJQe", 
+        key: "rzp_test_sahwpb5TiARJQe",
         amount,
         currency,
         name: "BOOKSTORE",
@@ -138,9 +131,7 @@ const useOrders = () => {
                 items,
               },
               {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+                headers,
               }
             );
             navigate("/order-summary", { state: { orderId } });
@@ -171,8 +162,7 @@ const useOrders = () => {
       const response = await axios.get(`http://localhost:3000/address/get`);
       setAddresses(response.data);
     } catch (err) {
-      console.error("Failed to fetch addresses", err);
-      throw err;
+      setError(err);
     }
   };
 
@@ -180,13 +170,93 @@ const useOrders = () => {
     fetchAddresses();
   }, []);
 
+  const trackOrder = async (orderId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/payment/track-order/${orderId}`
+      );
+      setOrder(response.data.order);
+    } catch (err) {
+      setError("Failed to fetch order details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const orderSummery = async (orderId) => {
+    if (!orderId) {
+      setError("Order ID is missing. Redirecting to cart...");
+      setTimeout(() => {
+        navigate("/cart");
+      }, 3000);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:3000/payment/ordersId/${orderId}`,
+        {
+          headers,
+        }
+      );
+      setOrder(response.data.order);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const orderHistory = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/payment/orders`, {
+        headers,
+      });
+      setOrderData(response.data.orders);
+    } catch (err) {
+      setError(err);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+
+    try {
+      await axios.post(
+        `http://localhost:3000/payment/cancel-order/${orderId}`,
+        {
+          headers,
+        }
+      );
+      setOrderData((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, orderStatus: "Canceled" } : order
+        )
+      );
+    } catch (err) {
+      console.log(err);
+      setError(err);
+    }
+  };
   return {
+    loading,
+    error,
+    addresses,
+    order,
+    orderData,
     fetchOrders,
     fetchOrderDetails,
     updateOrderStatus,
     handleCheckout,
-    addresses,
     fetchAddresses,
+    trackOrder,
+    orderHistory,
+    cancelOrder,
+    orderSummery,
   };
 };
 

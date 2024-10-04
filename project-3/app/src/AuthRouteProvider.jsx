@@ -28,7 +28,6 @@ import ContactUs from "./component/User/ContactUs";
 import SearchBar from "./component/Search";
 import Message from "./component/Admin/Message";
 import CheckoutPage from "./component/Order/CheckoutPage";
-import OrderSummaryPage from "./component/Order/OrderSummaryPage";
 import OrderHistoryPage from "./component/Order/OrderHistoryPage";
 import PaymentPage from "./component/Order/PaymentPage";
 import TrackOrder from "./component/Order/TrackOrder";
@@ -234,7 +233,7 @@ const AuthRouteProvider = () => {
             path="/order-summary"
             element={
               <ProtectedRoute role="user">
-                <OrderSummaryPage />
+                <PaymentPage />
               </ProtectedRoute>
             }
           />
@@ -251,14 +250,6 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <TrackOrder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/payment-success"
-            element={
-              <ProtectedRoute role="user">
-                <PaymentPage />
               </ProtectedRoute>
             }
           />

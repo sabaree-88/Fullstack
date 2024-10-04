@@ -96,7 +96,7 @@ export const verifyPayment = async (req, res) => {
   }
 };
 export const getOrder = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
 
   try {
     const orders = await Order.find({ userId })
@@ -227,7 +227,6 @@ export const getAllOrders = async (req, res) => {
     });
   }
 };
-
 
 export const getOrderDetailsById = async (req, res) => {
   const { id } = req.params;

@@ -16,7 +16,6 @@ const Category = () => {
   } = useCategoryProducts();
   const { handleFavouriteClick, handleAddToCart, isFavourite, isInCart } =
     useBooks(user);
-  console.log(products);
   return (
     <UserLayout>
       {loading ? (

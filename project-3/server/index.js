@@ -14,6 +14,7 @@ import searchRoutes from "./routes/SearchRoutes.js";
 import inquiryRoutes from "./routes/InquiryRoutes.js";
 import addressRoutes from "./routes/AddressRoutes.js";
 import paymentRouter from "./routes/PaymentRoutes.js";
+import dashboardRouter from "./routes/AdminDashboardRoutes.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +43,7 @@ app.use("/api", searchRoutes);
 app.use("/inquiry", inquiryRoutes);
 app.use("/address", addressRoutes);
 app.use("/payment", paymentRouter);
+app.use("/", dashboardRouter);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));

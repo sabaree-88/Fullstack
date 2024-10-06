@@ -7,7 +7,7 @@ import ViewBook from "./component/Admin/Products/ViewBook";
 import AddBook from "./component/Admin/Products/AddBook";
 import EditBook from "./component/Admin/Products/EditBook";
 import UserDashboard from "./component/User/UserDashboard";
-import AdminDashboard from "./component/Admin/AdminDashboard";
+import AdminDashboard from "./component/Admin/Dashboard/AdminDashboard";
 import Users from "./component/Admin/User/Users";
 import AllBooks from "./component/Admin/Products/AllBooks";
 import UpdateUser from "./component/Profile/UpdateUser";

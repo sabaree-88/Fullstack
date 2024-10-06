@@ -7,6 +7,7 @@ import { useAuth } from "../../../context/AuthContext";
 import usePagination from "../../../hooks/usePagination";
 import Pagination from "../../AssetCopm/utils/Pagination";
 import SearchBox from "../../AssetCopm/utils/SearchBox";
+import { Table } from "../../AssetCopm/utils/skeleton/AllSkeleton";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +31,7 @@ const Users = () => {
         currentPage,
         itemsPerPage
       );
+      await new Promise((resolve) => setTimeout(resolve, 8000));
       setTotalPages(totalPages);
       setTotalEntries(totalEntries);
     };
@@ -44,7 +46,7 @@ const Users = () => {
   return (
     <Layout>
       {loading ? (
-        <Spinner />
+        <Table />
       ) : (
         <div className="p-6">
           <SearchBox

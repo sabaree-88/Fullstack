@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/AuthContext";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
 import ProductLoading from "../../AssetCopm/utils/skeleton/ProductLoading";
 import useBooks from "../../../hooks/useBooks"; // Assuming the useBooks hook is in the hooks directory
+import API_BASE_URL from "../../../config";
 
 const Cart = () => {
   const { user } = useAuth();
@@ -59,12 +60,12 @@ const Cart = () => {
                           <a href="#" className="shrink-0 md:order-1">
                             <img
                               className="h-20 w-20 dark:hidden"
-                              src={`http://localhost:3000${item.bookId.imagePath}`}
+                              src={`${API_BASE_URL}${item.bookId.imagePath}`}
                               alt={item.bookId.title}
                             />
                             <img
                               className="hidden h-20 w-20 dark:block"
-                              src={`http://localhost:3000${item.bookId.imagePath}`}
+                              src={`${API_BASE_URL}${item.bookId.imagePath}`}
                               alt={item.bookId.title}
                             />
                           </a>

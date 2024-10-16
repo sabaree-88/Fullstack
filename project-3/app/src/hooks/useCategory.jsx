@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import API_BASE_URL from "../config";
 
 const useCategory = () => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const useCategory = () => {
       setLoading(true);
       setError(null);
       const response = await axios.get(
-        `http://localhost:3000/category/get-categories?page=${page}&limit=${limit}`
+        `${API_BASE_URL}/category/get-categories?page=${page}&limit=${limit}`
       );
       setCategories(response.data.categories);
       console.log();
@@ -35,7 +36,7 @@ const useCategory = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:3000/category/get-categories/${id}`,
+        `${API_BASE_URL}/category/get-categories/${id}`,
         {
           headers,
         }
@@ -53,7 +54,7 @@ const useCategory = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:3000/category/add-categories",
+        `${API_BASE_URL}/category/add-categories`,
         category,
         {
           headers,
@@ -72,7 +73,7 @@ const useCategory = () => {
     setError(null);
     try {
       const response = await axios.put(
-        `http://localhost:3000/category/edit-categories/${id}`,
+        `${API_BASE_URL}/category/edit-categories/${id}`,
         category,
         {
           headers,
@@ -90,7 +91,7 @@ const useCategory = () => {
     setError(null);
     try {
       await axios.delete(
-        `http://localhost:3000/category/delete-categories/${id}`,
+        `${API_BASE_URL}/category/delete-categories/${id}`,
         {
           headers,
         }
@@ -108,7 +109,7 @@ const useCategory = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:3000/category/search?query=${query}`,
+        `${API_BASE_URL}/category/search?query=${query}`,
         {
           headers,
         }

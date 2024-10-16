@@ -5,6 +5,7 @@ import CardSkeleton from "../../AssetCopm/utils/skeleton/CardSkeleton";
 import UserLayout from "../../AssetCopm/UserLayout/UserLayout";
 import useBooks from "../../../hooks/useBooks";
 import useFav from "../../../hooks/useFav";
+import API_BASE_URL from "../../../config";
 
 const FavouritesPage = () => {
   const { user } = useAuth();
@@ -80,7 +81,7 @@ const FavouritesPage = () => {
                     <div className="relative h-40 w-full overflow-hidden bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-40">
                       <img
                         alt={item.title}
-                        src={`http://localhost:3000${item.imagePath}`}
+                        src={`${API_BASE_URL}${item.imagePath}`}
                         className="h-full w-full object-contain object-center"
                       />
                     </div>

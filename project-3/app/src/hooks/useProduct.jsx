@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import API_BASE_URL from "../config";
 
 const useProduct = (id) => {
   const [data, setData] = useState({});
@@ -15,7 +16,7 @@ const useProduct = (id) => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`http://localhost:3000/book/${id}`, {
+        const res = await axios.get(`${API_BASE_URL}/book/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -36,7 +37,7 @@ const useProduct = (id) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:3000/reviews/books/${bookId}/reviews`,
+        `${API_BASE_URL}/reviews/books/${bookId}/reviews`,
         { rating, comment },
         {
           headers: {

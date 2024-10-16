@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import API_BASE_URL from "../../../config";
 
 const SideNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +13,8 @@ const SideNav = () => {
   const fetchInquiryCount = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/inquiry/get-inquiry"
+        `${API_BASE_URL}/inquiry/get-inquiry`
       );
-
       setInquiryCount(response.data.count);
     } catch (error) {
       console.error(error);
@@ -27,9 +27,9 @@ const SideNav = () => {
   return (
     <>
       <div
-        className={`fixed left-0 top-0 w-64 h-full bg-gray-900 p-4 z-50 sidebar-menu transition-transform ${
-          isOpen ? "transform-none" : "-translate-x-full"
-        } md:transform-none`}
+        className={`fixed left-0 top-0 w-64 h-full bg-gray-900 p-4 z-50 transition-transform transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:block`}
       >
         <Link
           to="/admin-dashboard"
@@ -75,7 +75,6 @@ const SideNav = () => {
               <i className="ri-arrow-right-s-line ml-auto" />
             </Link>
           </li>
-
           <li className="mb-1 group">
             <Link
               to="/categories"
@@ -99,18 +98,6 @@ const SideNav = () => {
 
           <span className="text-white font-bold">PERSONAL</span>
           <li className="mb-1 group">
-            <a
-              href="#"
-              className="flex font-semibold items-center py-2 px-4 text-white hover:bg-gray-950 hover:text-gray-100 rounded-md"
-            >
-              <i className="bx bx-bell mr-3 text-lg" />
-              <span className="text-sm">Notifications</span>
-              <span className="md:block px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-red-600 bg-red-200 rounded-full">
-                5
-              </span>
-            </a>
-          </li>
-          <li className="mb-1 group">
             <Link
               to={"/message"}
               className="flex font-semibold items-center py-2 px-4 text-white hover:bg-gray-950 hover:text-gray-100 rounded-md"
@@ -126,19 +113,30 @@ const SideNav = () => {
         <Outlet />
       </div>
 
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed top-0 left-0 w-full h-full bg-black/50 z-40 md:hidden sidebar-overlay"
+          className="fixed top-0 left-0 w-full h-full bg-black/50 z-40 md:hidden"
           onClick={toggleSidebar}
         />
       )}
 
-      <button
-        className="md:hidden fixed top-4 left-52 z-50  p-2 rounded text-white"
-        onClick={toggleSidebar}
-      >
-        <i className="ri-menu-line" />
-      </button>
+      {!isOpen && (
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-900 text-white"
+          onClick={toggleSidebar}
+        >
+          <i className="ri-menu-line" />
+        </button>
+      )}
+      {isOpen && (
+        <button
+          className="md:hidden fixed top-4 left-1/2 z-50 p-2 rounded bg-gray-900 text-white"
+          onClick={toggleSidebar}
+        >
+          <i className="ri-close-line" />
+        </button>
+      )}
     </>
   );
 };

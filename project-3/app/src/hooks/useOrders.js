@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
 const useOrders = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const useOrders = () => {
   const fetchOrders = async (page = 1, limit = 5) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/payment/orders-admin?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/payment/orders-admin?page=${page}&limit=${limit}`,
         {
           headers,
         }
@@ -29,7 +30,7 @@ const useOrders = () => {
   const fetchOrderDetails = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/payment/orders-admin/${id}`,
+        `${API_BASE_URL}/payment/orders-admin/${id}`,
         {
           headers,
         }
@@ -44,7 +45,7 @@ const useOrders = () => {
   const updateOrderStatus = async (id, status) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/payment/orders/status/${id}`,
+        `${API_BASE_URL}/payment/orders/status/${id}`,
         { status },
         {
           headers,
@@ -68,7 +69,7 @@ const useOrders = () => {
       let addressId = selectedAddress;
       if (!selectedAddress || editAddress) {
         const addressResponse = await axios.post(
-          "http://localhost:3000/address/add",
+          `${API_BASE_URL}/address/add`,
           {
             userId,
             fullname: shippingAddress.fullname,
@@ -91,7 +92,7 @@ const useOrders = () => {
       );
 
       const orderResponse = await axios.post(
-        "http://localhost:3000/payment/create-order",
+        `${API_BASE_URL}/payment/create-order`,
         {
           items,
           userId,
@@ -122,7 +123,7 @@ const useOrders = () => {
             response;
           try {
             await axios.post(
-              "http://localhost:3000/payment/verify-payment",
+              `${API_BASE_URL}/payment/verify-payment`,
               {
                 paymentId: razorpay_payment_id,
                 order_id: razorpay_order_id,
@@ -159,7 +160,7 @@ const useOrders = () => {
 
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/address/get`);
+      const response = await axios.get(`${API_BASE_URL}/address/get`);
       setAddresses(response.data);
     } catch (err) {
       setError(err);
@@ -173,7 +174,7 @@ const useOrders = () => {
   const trackOrder = async (orderId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/payment/track-order/${orderId}`
+        `${API_BASE_URL}/payment/track-order/${orderId}`
       );
       setOrder(response.data.order);
     } catch (err) {
@@ -195,7 +196,7 @@ const useOrders = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/payment/ordersId/${orderId}`,
+        `${API_BASE_URL}/payment/ordersId/${orderId}`,
         {
           headers,
         }
@@ -210,7 +211,7 @@ const useOrders = () => {
 
   const orderHistory = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/payment/orders`, {
+      const response = await axios.get(`${API_BASE_URL}/payment/orders`, {
         headers,
       });
       setOrderData(response.data.orders);
@@ -227,7 +228,7 @@ const useOrders = () => {
 
     try {
       await axios.post(
-        `http://localhost:3000/payment/cancel-order/${orderId}`,
+        `${API_BASE_URL}/payment/cancel-order/${orderId}`,
         {
           headers,
         }

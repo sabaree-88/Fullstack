@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 const UserContext = createContext();
 
@@ -22,11 +23,12 @@ export const UserProvider = ({ children }) => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:3000/user/user-list?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/user/user-list?page=${page}&limit=${limit}`,
         {
           headers,
         }
       );
+      console.log(response);
       const { users } = response.data;
       setUsers(users);
       return {
@@ -43,7 +45,7 @@ export const UserProvider = ({ children }) => {
 
   const getUserId = useCallback(async (id) => {
     try {
-      const res = await axios.get(`http://localhost:3000/user/user-list/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/user/user-list/${id}`);
       return res.data;
     } catch (error) {
       throw new Error(error.response?.data?.error || "User not found");
@@ -54,7 +56,7 @@ export const UserProvider = ({ children }) => {
     async (id, formData) => {
       try {
         const res = await axios.put(
-          `http://localhost:3000/user/user-update/${id}`,
+          `${API_BASE_URL}/user/user-update/${id}`,
           formData,
           {
             headers: {
@@ -83,7 +85,7 @@ export const UserProvider = ({ children }) => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:3000/user/search-user?query=${searchQuery}`
+        `${API_BASE_URL}/user/search-user?query=${searchQuery}`
       );
       setUsers(response.data);
     } catch (err) {

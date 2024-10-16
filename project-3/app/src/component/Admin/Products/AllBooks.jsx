@@ -10,6 +10,7 @@ import usePagination from "../../../hooks/usePagination";
 import useAdminBooks from "../../../hooks/useAdminBooks";
 import Pagination from "../../AssetCopm/utils/Pagination";
 import SearchBox from "../../AssetCopm/utils/SearchBox";
+import API_BASE_URL from "../../../config";
 
 const AllBooks = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -132,7 +133,7 @@ const AllBooks = () => {
                     >
                       <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
                         <a
-                          href={`http://localhost:3000${item.imagePath}`}
+                          href={`${API_BASE_URL}${item.imagePath}`}
                           target="blank"
                           className="flex justify-center align-middle"
                         >

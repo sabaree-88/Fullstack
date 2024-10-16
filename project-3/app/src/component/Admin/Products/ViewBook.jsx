@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaWindowClose } from "react-icons/fa";
@@ -6,6 +5,7 @@ import Spinner from "../../AssetCopm/utils/Spinner";
 import { useAuth } from "../../../context/AuthContext";
 import Layout from "../../AssetCopm/AdminLayout/Layout";
 import useAdminBooks from "../../../hooks/useAdminBooks";
+import API_BASE_URL from "../../../config";
 const ViewBook = () => {
   const { id } = useParams();
   const { user } = useAuth();
@@ -42,7 +42,7 @@ const ViewBook = () => {
             <h3 className="text-lg">{item.year}</h3>
             {item.imagePath && (
               <img
-                src={`http://localhost:3000${item.imagePath}`}
+                src={`${API_BASE_URL}${item.imagePath}`}
                 alt={item.title}
                 className="max-w-40"
               />

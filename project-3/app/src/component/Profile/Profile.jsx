@@ -4,6 +4,7 @@ import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import { Link } from "react-router-dom";
 import Layout from "../AssetCopm/AdminLayout/Layout";
 import { useUser } from "../../context/UserContext";
+import API_BASE_URL from "../../config";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -52,7 +53,7 @@ const Profile = () => {
           <img
             src={
               currentUser?.profileImage
-                ? `http://localhost:3000/${currentUser.profileImage}`
+                ? `${API_BASE_URL}/${currentUser.profileImage}`
                 : "/favico.png"
             }
             alt="Profile"

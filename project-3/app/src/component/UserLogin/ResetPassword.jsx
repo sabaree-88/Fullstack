@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import API_BASE_URL from "../../config";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -16,7 +17,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:3000/user/reset-password/${token}`, { password });
+      const response = await axios.post(`${API_BASE_URL}/user/reset-password/${token}`, { password });
       setMessage("Password has been updated successfully.");
       navigate("/");
     } catch (error) {

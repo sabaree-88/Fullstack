@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 const useCategoryProducts = () => {
   const [categories, setCategories] = useState([]);
@@ -11,7 +12,7 @@ const useCategoryProducts = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/category/get-categories"
+          `${API_BASE_URL}/category/get-categories`
         );
         setCategories(response.data.categories);
       } catch (error) {
@@ -27,8 +28,8 @@ const useCategoryProducts = () => {
     try {
       const response = await axios.get(
         categoryId === "all"
-          ? "http://localhost:3000/book"
-          : `http://localhost:3000/book/category/${categoryId}`
+          ? `${API_BASE_URL}/book`
+          : `${API_BASE_URL}/book/category/${categoryId}`
       );
       setProducts(response.data.books);
       setLoading(false);

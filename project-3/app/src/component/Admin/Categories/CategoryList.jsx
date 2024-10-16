@@ -10,6 +10,7 @@ import {
 } from "../../AssetCopm/utils/toastNotification";
 import Pagination from "../../AssetCopm/utils/Pagination.jsx";
 import SearchBox from "../../AssetCopm/utils/SearchBox.jsx";
+import API_BASE_URL from "../../../config.js";
 const CategoryList = () => {
   const {
     currentPage,
@@ -114,7 +115,7 @@ const CategoryList = () => {
                 </th>
                 <td className="px-12 py-4 flex-1 justify-center items-center">
                   <img
-                    src={`http://localhost:3000/${item.imagePath}`}
+                    src={`${API_BASE_URL}/${item.imagePath}`}
                     alt={item.name}
                     className="w-10 h-10 object-cover bg-gray-500 p-1 rounded-full"
                   />

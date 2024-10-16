@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import UserLayout from "../AssetCopm/UserLayout/UserLayout";
 import axios from "axios";
+import API_BASE_URL from "../../config";
 const ContactUs = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -28,7 +29,7 @@ const ContactUs = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/inquiry/add-inquiry",
+        `${API_BASE_URL}/inquiry/add-inquiry`,
         formData
       );
 

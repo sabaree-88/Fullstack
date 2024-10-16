@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 const useAdminBooks = () => {
   const [books, setBooks] = useState([]);
@@ -19,7 +20,7 @@ const useAdminBooks = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:3000/book?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/book?page=${page}&limit=${limit}`,
         {
           headers,
         }
@@ -40,7 +41,7 @@ const useAdminBooks = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`http://localhost:3000/book/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/book/${id}`, {
         headers,
       });
       return {
@@ -57,7 +58,7 @@ const useAdminBooks = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post("http://localhost:3000/book", bookData, {
+      const res = await axios.post(`${API_BASE_URL}/book`, bookData, {
         headers,
       });
       return res.data;
@@ -73,7 +74,7 @@ const useAdminBooks = () => {
     setError(null);
     try {
       const res = await axios.put(
-        `http://localhost:3000/book/${id}`,
+        `${API_BASE_URL}/book/${id}`,
         bookData,
         {
           headers,
@@ -91,7 +92,7 @@ const useAdminBooks = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`http://localhost:3000/book/${id}`, {
+      await axios.delete(`${API_BASE_URL}/book/${id}`, {
         headers,
       });
       setBooks((prev) => prev.filter((book) => book._id !== id));
@@ -107,7 +108,7 @@ const useAdminBooks = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:3000/book/search?query=${searchQuery}`,
+        `${API_BASE_URL}/book/search?query=${searchQuery}`,
         {
           headers,
         }

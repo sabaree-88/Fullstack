@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
 const useBooks = (user, limit, page) => {
   const [data, setData] = useState([]);
@@ -21,7 +22,7 @@ const useBooks = (user, limit, page) => {
         const token = localStorage.getItem("token");
 
         const booksRes = await axios.get(
-          `http://localhost:3000/book?limit=${limit}&page=${page}`,
+          `${API_BASE_URL}/book?limit=${limit}&page=${page}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -41,7 +42,7 @@ const useBooks = (user, limit, page) => {
         });
 
         const favRes = await axios.get(
-          `http://localhost:3000/favourites/get-favourites`,
+          `${API_BASE_URL}/favourites/get-favourites`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -50,7 +51,7 @@ const useBooks = (user, limit, page) => {
         );
         setFavourites(favRes.data || []);
 
-        const cartRes = await axios.get(`http://localhost:3000/cart/get-cart`, {
+        const cartRes = await axios.get(`${API_BASE_URL}/cart/get-cart`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -74,7 +75,7 @@ const useBooks = (user, limit, page) => {
     try {
       if (isFav) {
         await axios.post(
-          `http://localhost:3000/favourites/remove-favourites`,
+          `${API_BASE_URL}/favourites/remove-favourites`,
           { bookId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -83,7 +84,7 @@ const useBooks = (user, limit, page) => {
         );
       } else {
         await axios.post(
-          `http://localhost:3000/favourites/add-favourites`,
+          `${API_BASE_URL}/favourites/add-favourites`,
           { bookId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -106,7 +107,7 @@ const useBooks = (user, limit, page) => {
 
     try {
       await axios.post(
-        `http://localhost:3000/cart/add-to-cart`,
+        `${API_BASE_URL}/cart/add-to-cart`,
         { bookId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -122,7 +123,7 @@ const useBooks = (user, limit, page) => {
 
     try {
       await axios.post(
-        `http://localhost:3000/cart/remove-from-cart`,
+        `${API_BASE_URL}/cart/remove-from-cart`,
         { bookId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -143,7 +144,7 @@ const useBooks = (user, limit, page) => {
 
     try {
       await axios.post(
-        `http://localhost:3000/cart/update-quantity`,
+        `${API_BASE_URL}/cart/update-quantity`,
         { bookId, quantity: newQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );

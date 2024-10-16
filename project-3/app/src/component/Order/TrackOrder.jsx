@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import useOrders from "../../hooks/useOrders";
+import API_BASE_URL from "../../config";
 
 const TrackOrder = () => {
   const { orderId } = useParams();
@@ -59,7 +60,7 @@ const TrackOrder = () => {
               >
                 <div className="img-box max-lg:w-full">
                   <img
-                    src={`http://localhost:3000${item.bookId.imagePath}`}
+                    src={`${API_BASE_URL}${item.bookId.imagePath}`}
                     alt="Premium Watch image"
                     className="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
                   />

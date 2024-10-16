@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import API_BASE_URL from "../config";
 
 const useMessages = () => {
   const [messages, setMessages] = useState([]);
@@ -11,7 +12,7 @@ const useMessages = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:3000/inquiry/get-inquiry",
+        `${API_BASE_URL}/inquiry/get-inquiry`,
         {
           headers,
         }
@@ -27,7 +28,7 @@ const useMessages = () => {
   const removeMessage = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/inquiry/remove-inquiry/${id}`,
+        `${API_BASE_URL}/inquiry/remove-inquiry/${id}`,
         {
           headers,
         }

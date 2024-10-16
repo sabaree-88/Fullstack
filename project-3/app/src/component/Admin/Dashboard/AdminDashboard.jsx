@@ -6,6 +6,7 @@ import {
   DashboardCard,
   DashboardBarChart,
 } from "../../AssetCopm/utils/skeleton/AllSkeleton";
+import API_BASE_URL from "../../../config";
 
 const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState({
@@ -36,12 +37,12 @@ const AdminDashboard = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const { data } = await axios.get("http://localhost:3000/dashboard", {
+        const { data } = await axios.get(`${API_BASE_URL}/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 3000));
         setDashboardData(data);
         const categories = data.salesData.map((item) => `Month ${item._id}`);
         const sales = data.salesData.map((item) => item.total);

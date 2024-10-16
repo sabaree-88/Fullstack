@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import API_BASE_URL from "../config";
 
 const useFav = (user) => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,7 @@ const useFav = (user) => {
         const token = localStorage.getItem("token");
 
         const favRes = await axios.get(
-          `http://localhost:3000/favourites/get-favourites`,
+          `${API_BASE_URL}/favourites/get-favourites`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -36,7 +37,7 @@ const useFav = (user) => {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        `http://localhost:3000/favourites/remove-favourites`,
+        `${API_BASE_URL}/favourites/remove-favourites`,
         { bookId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -9,6 +9,7 @@ import {
   notifySuccess,
   notifyError,
 } from "../../AssetCopm/utils/toastNotification";
+import API_BASE_URL from "../../../config";
 const DeleteBook = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const DeleteBook = () => {
     }
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://localhost:3000/book/${id}`, {
+      .delete(`${API_BASE_URL}/book/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

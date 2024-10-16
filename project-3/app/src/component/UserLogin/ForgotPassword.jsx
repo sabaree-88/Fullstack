@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../../config";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -8,7 +9,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/user/forgot-password", { email });
+      await axios.post(`${API_BASE_URL}/user/forgot-password`, { email });
       alert("Email is sent successfully.");
       navigate("/");
     } catch (err) {

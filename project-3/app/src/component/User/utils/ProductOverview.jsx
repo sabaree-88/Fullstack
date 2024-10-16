@@ -6,6 +6,7 @@ import Ratings from "./Ratings";
 import ReviewForm from "./ReviewForm";
 import ReviewsList from "./ReviewsList";
 import useProduct from "../../../hooks/useProduct";
+import API_BASE_URL from "../../../config";
 const ProductOverview = () => {
   const { id } = useParams();
   const { data, reviews, loading, error, handleReviewSubmit } = useProduct(id);
@@ -27,7 +28,7 @@ const ProductOverview = () => {
               <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
                 <img
                   className="w-full"
-                  src={`http://localhost:3000${data.imagePath}`}
+                  src={`${API_BASE_URL}${data.imagePath}`}
                   alt={data.title}
                 />
               </div>

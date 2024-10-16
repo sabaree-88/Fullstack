@@ -11,6 +11,7 @@ import {
   notifyError,
 } from "../../AssetCopm/utils/toastNotification";
 import useAdminBooks from "../../../hooks/useAdminBooks";
+import API_BASE_URL from "../../../config";
 const AddBook = () => {
   const [values, setValues] = useState({
     title: "",
@@ -30,10 +31,10 @@ const AddBook = () => {
     const fetchCategory = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/category/get-categories"
+          `${API_BASE_URL}/category/get-categories`
         );
-        setCategories(res.data);
         console.log(res);
+        setCategories(res.data.categories);
       } catch (error) {
         console.log(error);
       }

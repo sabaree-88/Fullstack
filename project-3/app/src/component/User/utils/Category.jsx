@@ -5,6 +5,7 @@ import useCategoryProducts from "../../../hooks/useCategoryProducts";
 import useBooks from "../../../hooks/useBooks";
 import { useAuth } from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../../../config";
 const Category = () => {
   const { user } = useAuth();
   const {
@@ -42,7 +43,7 @@ const Category = () => {
                 <div className="flex items-center gap-2">
                   <span>
                     <img
-                      src={`http://localhost:3000/${category.imagePath}`}
+                      src={`${API_BASE_URL}/${category.imagePath}`}
                       alt={category.name}
                       className="w-8 h-8 rounded-full"
                     />
@@ -89,7 +90,7 @@ const Category = () => {
                 <div className="relative h-40 w-full overflow-hidden bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-40">
                   <img
                     alt={item.title}
-                    src={`http://localhost:3000${item.imagePath}`}
+                    src={`${API_BASE_URL}${item.imagePath}`}
                     className="h-full w-full object-contain object-center"
                   />
                 </div>

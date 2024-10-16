@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import CardSkeleton from "../AssetCopm/utils/skeleton/CardSkeleton";
 import useBooks from "../../hooks/useBooks.jsx";
+import API_BASE_URL from "../../config.js";
 const Collections = () => {
   const { user } = useAuth();
   const limit = 4;
@@ -82,7 +83,7 @@ const Collections = () => {
                 <div className="relative h-40 w-full overflow-hidden bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-40">
                   <img
                     alt={item.title}
-                    src={`http://localhost:3000${item.imagePath}`}
+                    src={`${API_BASE_URL}${item.imagePath}`}
                     className="h-full w-full object-contain object-center"
                   />
                 </div>

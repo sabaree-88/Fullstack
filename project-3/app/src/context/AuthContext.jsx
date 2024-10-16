@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config";
 
 const AuthContext = createContext();
 
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, rememberMe) => {
     try {
-      const res = await axios.post("http://localhost:3000/user/login", {
+      const res = await axios.post(`${API_BASE_URL}/user/login`, {
         email,
         password,
       });
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (name, email, password) => {
     try {
-      const res = await axios.post("http://localhost:3000/user/signup", {
+      const res = await axios.post(`${API_BASE_URL}/user/signup`, {
         name,
         email,
         password,
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   const googleLogin = async (idToken) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/user/google-login",
+        `${API_BASE_URL}/user/google-login`,
         { idToken }
       );
       const { user, token } = response.data;

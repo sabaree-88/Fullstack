@@ -31,7 +31,7 @@ const Users = () => {
         currentPage,
         itemsPerPage
       );
-      await new Promise((resolve) => setTimeout(resolve, 8000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       setTotalPages(totalPages);
       setTotalEntries(totalEntries);
     };
@@ -92,7 +92,7 @@ const Users = () => {
                     </th>
                     <td>
                       <a
-                        href={`http://localhost:3000/${item?.profileImage}`}
+                        href={`API_BASE_URL/${item?.profileImage}`}
                         target="blank"
                         className="flex justify-center align-middle"
                       >

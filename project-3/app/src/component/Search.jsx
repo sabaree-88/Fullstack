@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import UserLayout from "./AssetCopm/UserLayout/UserLayout";
 import axios from "axios";
 import debounce from "lodash.debounce";
+import API_BASE_URL from "../config";
 
 const SearchBar = () => {
   const [filters, setFilters] = useState({
@@ -24,7 +25,7 @@ const SearchBar = () => {
       setError(null);
       setResults([]);
 
-      const response = await axios.get("http://localhost:3000/api/search", {
+      const response = await axios.get(`${API_BASE_URL}/api/search`, {
         params: filters,
       });
       setResults(response.data.results);
@@ -55,8 +56,9 @@ const SearchBar = () => {
 
   return (
     <UserLayout>
-      <div className="flex gap-4">
-        <div className="w-3/12 min-h-[100vh] bg-slate-400 p-4 rounded-md">
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Filters Sidebar */}
+        <div className="w-full md:w-3/12 min-h-[100vh] bg-slate-400 p-4 rounded-md">
           <h3 className="font-semibold mb-2">Filters</h3>
 
           <div className="mb-4">
@@ -154,7 +156,8 @@ const SearchBar = () => {
           </div>
         </div>
 
-        <div className="w-8/12">
+        {/* Search Results */}
+        <div className="w-full md:w-8/12">
           <label
             htmlFor="default-search"
             className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"

@@ -93,9 +93,6 @@ const ContactUs = () => {
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   Our friendly team is here to help.
                 </p>
-                <p className="mt-2 text-sm text-blue-500 dark:text-blue-400">
-                  hello@merakiui.com
-                </p>
               </div>
               <div>
                 <span className="inline-block p-3 text-blue-500 rounded-full bg-blue-100/80 dark:bg-gray-800">
@@ -156,9 +153,6 @@ const ContactUs = () => {
                 </h2>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   Come say hello at our office HQ.
-                </p>
-                <p className="mt-2 text-sm text-blue-500 dark:text-blue-400">
-                  100 Smith Street Collingwood VIC 3066 AU
                 </p>
               </div>
               <div>

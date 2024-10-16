@@ -56,11 +56,16 @@ const useBooks = (user, limit, page) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setCartItems(cartRes.data.items || []);
+        if (cartRes.data.message && cartRes.data.message === "Cart not found") {
+          console.log("inside if");
+          setCartItems([]);
+        } else {
+          setCartItems(cartRes.data.items || []);
+        }
 
         setLoading(false);
       } catch (err) {
-        setError(err.message || "Something went wrong");
+        setError(err.response.data.message || "Something went wrong");
         setLoading(false);
       }
     };
@@ -194,7 +199,10 @@ const useBooks = (user, limit, page) => {
   };
 
   const isInCart = (bookId) => {
-    return cartItems && cartItems.some((item) => item.bookId && item.bookId._id === bookId);
+    return (
+      cartItems &&
+      cartItems.some((item) => item.bookId && item.bookId._id === bookId)
+    );
   };
 
   return {

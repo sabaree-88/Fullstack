@@ -32,13 +32,16 @@ import OrderHistoryPage from "./component/Order/OrderHistoryPage";
 import PaymentPage from "./component/Order/PaymentPage";
 import TrackOrder from "./component/Order/TrackOrder";
 import AdminOrderTable from "./component/Admin/ManageOrders/AdminOrderTable";
+import TrackOrderForm from "./component/Order/TrackOrderForm";
+import LandingPage from "./component/LandingPage";
 
 const AuthRouteProvider = () => {
   const { user } = useAuth();
 
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -250,6 +253,14 @@ const AuthRouteProvider = () => {
             element={
               <ProtectedRoute role="user">
                 <TrackOrder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/track-order"
+            element={
+              <ProtectedRoute role="user">
+                <TrackOrderForm />
               </ProtectedRoute>
             }
           />

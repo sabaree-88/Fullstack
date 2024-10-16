@@ -152,6 +152,22 @@ export const trackOrder = async (req, res) => {
   }
 };
 
+export const trackOrderById = async (req, res) => {
+  const { orderId } = req.params.orderId;
+  try {
+    const order = await Order.findOne({
+      "paymentDetails.razorpay_payment_id": orderId,
+    });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const cancelOrder = async (req, res) => {
   const { orderId } = req.params;
 

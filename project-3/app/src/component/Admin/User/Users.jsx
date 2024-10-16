@@ -8,6 +8,7 @@ import usePagination from "../../../hooks/usePagination";
 import Pagination from "../../AssetCopm/utils/Pagination";
 import SearchBox from "../../AssetCopm/utils/SearchBox";
 import { Table } from "../../AssetCopm/utils/skeleton/AllSkeleton";
+import API_BASE_URL from "../../../config";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,22 +93,16 @@ const Users = () => {
                     </th>
                     <td>
                       <a
-                        href={`API_BASE_URL/${item?.profileImage}`}
+                        href={`${API_BASE_URL}/${item?.profileImage}`}
                         target="blank"
                         className="flex justify-center align-middle"
                       >
                         <svg
-                          fill="#000000"
-                          className="h-6 w-6"
-                          version="1.1"
                           xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 463 463"
-                          xmlnsXlink="http://www.w3.org/1999/xlink"
-                          enableBackground="new 0 0 463 463"
+                          viewBox="0 0 448 512"
+                          className="h-6 w-6"
                         >
-                          <g>
-                            <path d="..." />
-                          </g>
+                          <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
                         </svg>
                       </a>
                     </td>

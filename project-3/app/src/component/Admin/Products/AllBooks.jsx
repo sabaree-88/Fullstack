@@ -50,7 +50,13 @@ const AllBooks = () => {
     e.preventDefault();
     searchBook(searchQuery);
   };
-
+  if (error) {
+    return (
+      <>
+        <p className="text-red-500">{error}</p>
+      </>
+    );
+  }
   return (
     <Layout>
       <div className="bg-slate-300 min-h-[100vh] p-10">

@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       throw new Error(error.response?.data?.error || "Signup failed");
     }

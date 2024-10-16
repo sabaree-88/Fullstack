@@ -3,7 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Spinner from "../AssetCopm/utils/Spinner";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { notifySuccess, notifyError } from "../AssetCopm/utils/toastNotification.js";
+import {
+  notifySuccess,
+  notifyError,
+} from "../AssetCopm/utils/toastNotification.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -89,7 +92,7 @@ const Login = () => {
           <div className="grid md:grid-cols-2 items-center gap-8 h-full">
             <div className="max-md:order-1 p-4">
               <img
-                src="https://readymadeui.com/signin-image.webp"
+                src="./public/signin-image.webp"
                 className="lg:max-w-[80%] w-full h-full object-contain block mx-auto"
                 alt="login-image"
               />

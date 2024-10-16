@@ -19,7 +19,6 @@ const useCategory = () => {
         `${API_BASE_URL}/category/get-categories?page=${page}&limit=${limit}`
       );
       setCategories(response.data.categories);
-      console.log();
       return {
         totalPages: response.data.pages,
         totalEntries: response.data.total,

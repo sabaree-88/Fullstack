@@ -3,6 +3,9 @@ import UserLayout from "./AssetCopm/UserLayout/UserLayout";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import API_BASE_URL from "../config";
+import useBooks from "../hooks/useBooks";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const SearchBar = () => {
   const [filters, setFilters] = useState({
@@ -18,7 +21,10 @@ const SearchBar = () => {
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const { user } = useAuth();
+  const limit = 4;
+  const { handleFavouriteClick, handleAddToCart, isFavourite, isInCart } =
+    useBooks(user, limit);
   const handleSearch = useCallback(async () => {
     try {
       setLoading(true);
@@ -58,13 +64,13 @@ const SearchBar = () => {
     <UserLayout>
       <div className="flex flex-col md:flex-row gap-4">
         {/* Filters Sidebar */}
-        <div className="w-full md:w-3/12 min-h-[100vh] bg-slate-400 p-4 rounded-md">
-          <h3 className="font-semibold mb-2">Filters</h3>
+        <div className="w-full md:w-3/12  bg-slate-800 p-4 rounded-md">
+          <h3 className="font-semibold mb-2 text-white">Filters</h3>
 
           <div className="mb-4">
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-gray-900"
+              className="block text-sm font-medium text-white mb-3"
             >
               Category
             </label>
@@ -73,7 +79,7 @@ const SearchBar = () => {
               id="category"
               value={filters.category}
               onChange={(e) => updateFilter("category", e.target.value)}
-              className="block w-full p-2 text-sm border border-gray-300 rounded-md"
+              className="block w-full p-2 text-sm border border-white rounded-sm bg-transparent"
               placeholder="Enter category"
             />
           </div>
@@ -81,7 +87,7 @@ const SearchBar = () => {
           <div className="mb-4">
             <label
               htmlFor="author"
-              className="block text-sm font-medium text-gray-900"
+              className="block text-sm font-medium text-white mb-3"
             >
               Author
             </label>
@@ -90,13 +96,13 @@ const SearchBar = () => {
               id="author"
               value={filters.author}
               onChange={(e) => updateFilter("author", e.target.value)}
-              className="block w-full p-2 text-sm border border-gray-300 rounded-md"
+              className="block w-full p-2 text-sm border border-white rounded-sm bg-transparent"
               placeholder="Enter author"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-900">
+            <label className="block text-sm font-medium text-white mb-3">
               Price Range
             </label>
             <div className="flex gap-2">
@@ -104,14 +110,14 @@ const SearchBar = () => {
                 type="number"
                 value={filters.minPrice}
                 onChange={(e) => updateFilter("minPrice", e.target.value)}
-                className="w-1/2 p-2 text-sm border border-gray-300 rounded-md"
+                className="w-1/2 p-2 text-sm border border-white rounded-sm bg-transparent"
                 placeholder="Min Price"
               />
               <input
                 type="number"
                 value={filters.maxPrice}
                 onChange={(e) => updateFilter("maxPrice", e.target.value)}
-                className="w-1/2 p-2 text-sm border border-gray-300 rounded-md"
+                className="w-1/2 p-2 text-sm border border-white rounded-sm bg-transparent"
                 placeholder="Max Price"
               />
             </div>
@@ -120,7 +126,7 @@ const SearchBar = () => {
           <div className="mb-4">
             <label
               htmlFor="sortBy"
-              className="block text-sm font-medium text-gray-900"
+              className="block text-sm font-medium text-white mb-3"
             >
               Sort By
             </label>
@@ -128,7 +134,7 @@ const SearchBar = () => {
               id="sortBy"
               value={filters.sortBy}
               onChange={(e) => updateFilter("sortBy", e.target.value)}
-              className="block w-full p-2 text-sm border border-gray-300 rounded-md"
+              className="block w-full p-2 text-sm border border-white rounded-sm bg-transparent"
             >
               <option value="">Select</option>
               <option value="price">Price</option>
@@ -140,7 +146,7 @@ const SearchBar = () => {
           <div className="mb-4">
             <label
               htmlFor="sortOrder"
-              className="block text-sm font-medium text-gray-900"
+              className="block text-sm font-medium text-white mb-3"
             >
               Sort Order
             </label>
@@ -148,7 +154,7 @@ const SearchBar = () => {
               id="sortOrder"
               value={filters.sortOrder}
               onChange={(e) => updateFilter("sortOrder", e.target.value)}
-              className="block w-full p-2 text-sm border border-gray-300 rounded-md"
+              className="block w-full p-2 text-sm border border-white rounded-sm bg-transparent"
             >
               <option value="asc">Ascending</option>
               <option value="desc">Descending</option>
@@ -207,24 +213,89 @@ const SearchBar = () => {
               <h2>Search Results for "{filters.query}"</h2>
               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mt-3">
                 {results.length > 0 ? (
-                  results.map((item, index) =>
+                  results.map((item) =>
                     item && item._id ? (
                       <div
-                        key={index}
-                        className="w-full px-2 py-1 rounded-md shadow-md shadow-slate-600"
+                        key={item._id}
+                        className="group relative border-2 p-3 rounded-md"
                       >
-                        <h3 className="text-lg font-semibold mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-gray-600 mb-2">
-                          Author: {item.author}
+                        <div className="absolute z-10 top-4 right-2">
+                          <label className="sr-only">Favourite</label>
+                          <button
+                            onClick={() => handleFavouriteClick(item._id)}
+                            aria-label={`${
+                              isFavourite(item._id) ? "Remove from" : "Add to"
+                            } favourites`}
+                          >
+                            <svg
+                              className="w-6 h-6"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              fill={isFavourite(item._id) ? "red" : "white"}
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <div className="relative h-40 w-full overflow-hidden bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-40">
+                          <img
+                            alt={item.title}
+                            src={`${API_BASE_URL}${item.imagePath}`}
+                            className="h-full w-full object-contain object-center"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between mt-4">
+                          <h3 className="text-md font-bold text-gray-500">
+                            <Link to={`/book-details/${item._id}`}>
+                              <span className="absolute inset-0" />
+                              {item.title}
+                            </Link>
+                          </h3>
+                          <h5 className="font-bold">${item.price}</h5>
+                        </div>
+                        <p className="text-base font-semibold text-gray-900">
+                          {item.author}
                         </p>
-                        <p className="text-gray-600 mb-2">
-                          Price: ${item.price}
+                        <p className="font-normal text-sm text-gray-900">
+                          {item.description.substring(0, 80) + "....."}
                         </p>
-                        <p className="text-gray-600">
-                          Category: {item.category.name}
-                        </p>
+                        <div className="flex justify-between mt-3">
+                          <button className="text-white font-semibold bg-slate-800 px-3 py-1 rounded-sm">
+                            Buy Now
+                          </button>
+                          <button
+                            className="relative z-10"
+                            onClick={() => handleAddToCart(item._id)}
+                            disabled={isInCart(item._id)}
+                          >
+                            <svg
+                              className="-ms-2 me-2 h-7 w-7"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={28}
+                              height={28}
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"
+                              />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     ) : null
                   )

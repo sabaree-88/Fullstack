@@ -28,7 +28,6 @@ export const UserProvider = ({ children }) => {
           headers,
         }
       );
-      console.log(response);
       const { users } = response.data;
       setUsers(users);
       return {

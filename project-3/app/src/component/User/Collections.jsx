@@ -33,13 +33,13 @@ const Collections = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="mt-4 text-red-500 text-center">
-        <p>{error}</p>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="mt-4 text-red-500 text-center">
+  //       <p>{error}</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="mt-4">

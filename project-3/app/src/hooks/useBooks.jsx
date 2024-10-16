@@ -56,13 +56,7 @@ const useBooks = (user, limit, page) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (cartRes.data.message && cartRes.data.message === "Cart not found") {
-          console.log("inside if");
-          setCartItems([]);
-        } else {
-          setCartItems(cartRes.data.items || []);
-        }
-
+        setCartItems(cartRes.data.items || []);
         setLoading(false);
       } catch (err) {
         setError(err.response.data.message || "Something went wrong");

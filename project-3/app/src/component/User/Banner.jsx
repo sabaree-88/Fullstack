@@ -27,7 +27,7 @@ const Banner = () => {
         </div>
         <div className="flex justify-center align-middle">
           <img
-            src="./public/hero-img.png"
+            src="/hero-img.png"
             alt="hero image"
             className="w-full object-cover"
           />

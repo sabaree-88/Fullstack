@@ -133,6 +133,7 @@ const Collections = () => {
               </div>
             ))}
           </div>
+          {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
     </div>

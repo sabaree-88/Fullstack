@@ -19,7 +19,7 @@ const Cart = () => {
     calculateTotal,
     handleProceedToCheckout,
   } = useBooks(user);
-  console.log(cartItems);
+  // console.log(cartItems);
   if (loading) {
     return <ProductLoading />;
   }

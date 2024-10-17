@@ -24,9 +24,6 @@ const Cart = () => {
     return <ProductLoading />;
   }
 
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
 
   return (
     <UserLayout>

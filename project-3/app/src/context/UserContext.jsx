@@ -29,6 +29,7 @@ export const UserProvider = ({ children }) => {
         }
       );
       const { users } = response.data;
+      console.log();
       setUsers(users);
       return {
         totalPages: response.data.totalPages,

@@ -33,13 +33,6 @@ const Collections = () => {
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <div className="mt-4 text-red-500 text-center">
-  //       <p>{error}</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="mt-4">
@@ -133,7 +126,6 @@ const Collections = () => {
               </div>
             ))}
           </div>
-          {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
     </div>

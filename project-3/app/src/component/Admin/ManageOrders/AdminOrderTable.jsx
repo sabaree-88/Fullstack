@@ -33,7 +33,7 @@ const AdminOrderTable = () => {
     setLoading(true);
     try {
       const data = await fetchOrders(currentPage, itemsPerPage);
-      setOrders(data.orders);
+      setOrders(data.orders || []);
       setTotalEntries(data.total);
       setTotalPages(Math.ceil(data.total / itemsPerPage));
     } catch (error) {

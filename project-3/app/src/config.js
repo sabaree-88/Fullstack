@@ -1,3 +1,3 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://bookstoreapi-production-ecd2.up.railway.app";
 
 export default API_BASE_URL;

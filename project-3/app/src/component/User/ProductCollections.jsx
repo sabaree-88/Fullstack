@@ -38,13 +38,7 @@ const ProductCollections = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasMore, loading]);
 
-  if (error) {
-    return (
-      <div className="mt-4 text-red-500 text-center">
-        <p>{error}</p>
-      </div>
-    );
-  }
+
 
   return (
     <UserLayout>
